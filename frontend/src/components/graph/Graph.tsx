@@ -29,7 +29,7 @@ function skillNameHTML(name: string) {
 
 function consultantInitials(name: string) {
     let initials = ""
-    const splitWords = name.split(" ")
+    const splitWords = name.trim().split(" ")
     splitWords.forEach((word) => {
         initials += word[0].toUpperCase()
     })
