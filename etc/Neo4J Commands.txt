@@ -1,0 +1,162 @@
+---------Clear Database-----------------------------------------------------------------------------
+MATCH (n) DETACH DELETE n;
+
+
+---------Load-----------------------------------------------------------------------------
+CREATE CONSTRAINT ON (c:Consultant) ASSERT c.Name IS UNIQUE
+CREATE CONSTRAINT ON (i:Industry) ASSERT i.Industry IS UNIQUE
+
+// Load Conultants and Industries
+LOAD CSV WITH HEADERS FROM "file:///Consultants-Industries.csv" AS line
+WITH line.consultant_id AS consultant_id, line.consultant_name AS consultant_name, line.industry_id AS industry_id, line.industry_name AS industry_name
+MERGE (c:Consultant {id: consultant_id})
+SET c.Name = consultant_name
+MERGE (i:Industry {id: industry_id})
+SET i.Industry = industry_name
+CREATE (c)-[:knows_industry]->(i);
+
+CREATE CONSTRAINT ON (d:Domain) ASSERT d.Domain IS UNIQUE
+
+LOAD CSV WITH HEADERS FROM "file:///Consultants-Domains.csv" AS line
+WITH line.consultant_id AS consultant_id, line.consultant_name AS consultant_name, line.domain_id AS domain_id, line.domain_name AS domain_name
+MERGE (c:Consultant {id: consultant_id})
+SET c.Name = consultant_name
+MERGE (d:Domain {id: domain_id})
+SET d.Domain = domain_name
+CREATE (c)-[:knows_domain]->(d);
+
+CREATE CONSTRAINT ON (p:Product) ASSERT p.Product IS UNIQUE
+
+LOAD CSV WITH HEADERS FROM "file:///Consultants-Products.csv" AS line
+WITH line.consultant_id AS consultant_id, line.consultant_name AS consultant_name, line.product_id AS product_id, line.product_name AS product_name
+MERGE (c:Consultant {id: consultant_id})
+SET c.Name = consultant_name
+MERGE (p:Product {id: product_id})
+SET p.Product = product_name
+CREATE (c)-[:knows_product]->(p);
+
+CREATE CONSTRAINT ON (t:Technology) ASSERT t.Technology IS UNIQUE
+
+LOAD CSV WITH HEADERS FROM "file:///Consultants-Technologies.csv" AS line
+WITH line.consultant_id AS consultant_id, line.consultant_name AS consultant_name, line.technology_id AS technology_id, line.technology_name AS technology_name
+MERGE (c:Consultant {id: consultant_id})
+SET c.Name = consultant_name
+MERGE (t:Technology {id: technology_id})
+SET t.Technology = technology_name
+CREATE (c)-[:has_techskill]->(t);
+
+CREATE CONSTRAINT ON (t:Team) ASSERT t.Team IS UNIQUE
+
+LOAD CSV WITH HEADERS FROM "file:///Consultants-Team.csv" AS line
+WITH line.consultant_id AS consultant_id, line.consultant_name AS consultant_name, line.team_id AS team_id, line.team_name AS team_name
+MERGE (c:Consultant {id: consultant_id})
+SET c.Name = consultant_name
+MERGE (t:Team {id: team_id})
+SET t.Team = team_name
+CREATE (c)-[:is_team]->(t);
+
+CREATE CONSTRAINT ON (e:Experience) ASSERT e.Experience IS UNIQUE
+
+LOAD CSV WITH HEADERS FROM "file:///Consultants-Experience.csv" AS line
+WITH line.consultant_id AS consultant_id, line.consultant_name AS consultant_name, line.experience_id AS experience_id, line.experience_name AS experience_name
+MERGE (c:Consultant {id: consultant_id})
+SET c.Name = consultant_name
+MERGE (e:Experience {id: experience_id})
+SET e.Experience = experience_name
+CREATE (c)-[:has_experience]->(e);
+---------------------------------------------------------------------------------------
+
+
+
+---------Queries-----------------------------------------------------------------------------
+
+//Show all nodes & relationships
+match (n) return n
+
+---------------------------------------------------------------------------------------
+//Find All Consultants
+match (n:Consultant) return n
+
+//What Industries do we know about?
+match (i:Industry) return i
+
+//What domains do we know about?
+match (d:Domain) return d
+
+//What technology skills do we know about?
+match (t:Technology) return t
+
+//What experience do we have?
+match (e:Experience) return e
+
+//What products do we know about?
+match (p:Product) return p
+
+//Find All Consultants in the Tech team
+MATCH (c:Consultant)-[:is_team]->(t) where t.Team = 'Tech'  return c,t
+
+---------------------------------------------------------------------------------------
+
+//Find Aruna Arasan
+MATCH (n:Consultant {Name: 'Aruna Arasan'}) return n
+
+//What Products does Aruna Arasan Know?
+MATCH (c:Consultant {Name: 'Aruna Arasan'})-[:knows_product]->(p) return c,p
+
+//What Industries does Aruna Arasan Know?
+MATCH (c:Consultant {Name: 'Aruna Arasan'})-[:knows_industry]->(i) return c,i
+
+//What experience does Aruna Arasan have?
+MATCH (c:Consultant {Name: 'Aruna Arasan'})-[:has_experience]->(e) return c,e
+
+//What technical skills does Aruna Arasan have?
+MATCH (c:Consultant {Name: 'Aruna Arasan'})-[:has_techskill]->(t) return c,t
+
+//What domain skills does Aruna Arasan have?
+MATCH (c:Consultant {Name: 'Aruna Arasan'})-[:knows_domain]->(d) return c,d
+
+---------------------------------------------------------------------------------------
+//Who knows Genedata?
+MATCH (c:Consultant)-[:knows_product]->(p) where p.Product = 'Genedata' return c,p
+
+//Who knows Genedata or benchling?
+MATCH (c:Consultant)-[:knows_product]->(p) where p.Product = 'Genedata' or  p.Product = 'Benchling' return c,p
+
+//Who knows Genedata AND benchling?
+MATCH (c:Consultant)-[:knows_product]->(p) where p.Product = 'Genedata' and p.Product = 'Benchling' return c,p
+
+// Who has experience of data modelling
+MATCH (c:Consultant)-[:has_experience]->(e) where e.Experience = 'Data Modeling' return c,e
+
+---------------------------------------------------------------------------------------
+
+
+// find all consultants and all domains
+MATCH (c:Consultant)-[:knows_domain]->(d) return *
+
+//Find Consultants that know about domain bioinformatics
+MATCH (c:Consultant)-[:knows_domain]->(d) where d.Domain ='BioInformatics' return d,c
+
+
+--------------------------------------------------------------------------------------------------------
+//Who in the Tech team knows Genedata or benchling?
+MATCH (c:Consultant)-[:knows_product]->(p) 
+MATCH (c:Consultant)-[:is_team]->(t) 
+where p.Product = 'Genedata' or  p.Product = 'Benchling' return c,p,t
+
+//Who in the Tech team knows Genedata or benchling and Small Molecule?
+MATCH (c:Consultant)-[:knows_product]->(p) 
+MATCH (c:Consultant)-[:is_team]->(t)
+MATCH (c:Consultant)-[:knows_domain]->(d)
+where d.Domain ='Small Molecule' AND
+(p.Product = 'Genedata' 
+or  p.Product = 'Benchling')
+return c,p,t,d
+
+----Export----------------------------------------------------------------------------------------------------
+CALL apoc.export.graphml.all("skills.graphml", {})
+CALL apoc.export.json.all("skills.json",{useTypes:true})
+
+
+----Dashboard----------------------------------------------------------------------------------------------------
+match (n) -[k:KNOWS]- (Consultant) WHERE toLower(n.Name) CONTAINS toLower($neodash_knows_name) return n, k, Consultant
