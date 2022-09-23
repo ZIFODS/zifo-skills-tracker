@@ -25,6 +25,7 @@ pytest-mock = "*"
 allow_prereleases = true
 
 [scripts]
+server = "hypercorn app.main:app --reload --bind 0.0.0.0:8080"
 test = "pytest -vv --cov --cov-report term-missing"
 coverage = "coverage html -d coverage"
 lint = "pylint ./pipeline"
