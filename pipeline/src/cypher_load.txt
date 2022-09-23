@@ -1,0 +1,82 @@
+---------Clear Database---------------------------------------------------------------------------------
+MATCH (n) DETACH DELETE n;
+
+---------Drop all Constraints---------------------------------------------------------------------------
+CALL apoc.schema.assert({}, {})
+
+---------CREATE CONSTRAINTS-----------------------------------------------------------------------------
+CREATE CONSTRAINT ON (c:Consultant) ASSERT c.Name IS UNIQUE
+CREATE CONSTRAINT ON (s:science_apps) ASSERT s.Name IS UNIQUE
+CREATE CONSTRAINT ON (s:Services) ASSERT s.Name IS UNIQUE
+CREATE CONSTRAINT ON (m:Methodogy) ASSERT m.Name IS UNIQUE
+CREATE CONSTRAINT ON (p:Process) ASSERT p.Name IS UNIQUE
+CREATE CONSTRAINT ON (o:Other_Applications) ASSERT o.Name IS UNIQUE
+CREATE CONSTRAINT ON (r:Regulatory) ASSERT r.Name IS UNIQUE
+CREATE CONSTRAINT ON (d:Data_Management) ASSERT d.Name IS UNIQUE
+CREATE CONSTRAINT ON (l:Languages) ASSERT l.Name IS UNIQUE
+CREATE CONSTRAINT ON (p:Programming) ASSERT p.Name IS UNIQUE
+CREATE CONSTRAINT ON (m:Miscellaneous) ASSERT m.Name IS UNIQUE
+CREATE CONSTRAINT ON (i:Infrastructure) ASSERT i.Name IS UNIQUE
+
+---------CREATE INDICES--------------------------------------------------------------------------------
+CREATE INDEX ON :Consultant(name)
+CREATE INDEX ON :science_apps(name)
+CREATE INDEX ON :Services(name)
+CREATE INDEX ON :Methodogy(name)
+CREATE INDEX ON :Process(name)
+CREATE INDEX ON :Other_Applications(name)
+CREATE INDEX ON :Regulatory(name)
+CREATE INDEX ON :Data_Management(name)
+CREATE INDEX ON :Languages(name)
+CREATE INDEX ON :Programming(name)
+CREATE INDEX ON :Miscellaneous(name)
+CREATE INDEX ON :Infrastructure(name)
+
+---------Load--------------------------------------------------------------------------------------------
+LOAD CSV WITH HEADERS FROM 'file:///neo4jimport.csv' AS row
+MERGE (c:Consultant{Name: row.fullname, email: row.email, id:row.id})
+
+FOREACH(x IN CASE WHEN row.science_apps IS NOT NULL THEN [1] END |
+MERGE (sa:ScienceApps{Name: row.science_apps})
+MERGE (c)-[:KNOWS]->(sa)
+)
+FOREACH(x IN CASE WHEN row.services IS NOT NULL THEN [1] END |
+MERGE (s:Services{Name:row.services})
+MERGE (c)-[:KNOWS]->(s)
+)
+FOREACH(x IN CASE WHEN row.methodogies IS NOT NULL THEN [1] END |
+MERGE (m:Methodologies{Name:row.methodogies})
+MERGE (c)-[:KNOWS]->(m)
+)
+FOREACH(x IN CASE WHEN row.process IS NOT NULL THEN [1] END |
+MERGE (p:Process{Name:row.process})
+MERGE (c)-[:KNOWS]->(p)
+)
+FOREACH(x IN CASE WHEN row.other_products IS NOT NULL THEN [1] END |
+MERGE (op:Other_Products{Name:row.other_products})
+MERGE (c)-[:KNOWS]->(op)
+)
+FOREACH(x IN CASE WHEN row.regulatory IS NOT NULL THEN [1] END |
+MERGE (r:Regulatory{Name:row.regulatory})
+MERGE (c)-[:KNOWS]->(r)
+)
+FOREACH(x IN CASE WHEN row.data_management IS NOT NULL THEN [1] END |
+MERGE (dm:Data_Management{Name:row.data_management})
+MERGE (c)-[:KNOWS]->(dm)
+)
+FOREACH(x IN CASE WHEN row.languages IS NOT NULL THEN [1] END |
+MERGE (l:Languages{Name:row.languages})
+MERGE (c)-[:KNOWS]->(l)
+)
+FOREACH(x IN CASE WHEN row.programming IS NOT NULL THEN [1] END |
+MERGE (pr:programming{Name:row.programming})
+MERGE (c)-[:KNOWS]->(pr)
+)
+FOREACH(x IN CASE WHEN row.misc IS NOT NULL THEN [1] END |
+MERGE (mi:Miscellaneous{Name:row.misc})
+MERGE (c)-[:KNOWS]->(mi)
+)
+FOREACH(x IN CASE WHEN row.infrastructure IS NOT NULL THEN [1] END |
+MERGE (i:Infrastructure{Name:row.infrastructure})
+MERGE (c)-[:KNOWS]->(i)
+)
