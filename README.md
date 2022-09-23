@@ -12,6 +12,6 @@ Once Python is installed, enter the following commands to launch the API:
 `python3.10 -m pipenv install`
 `python3.10 -m pipenv run server`
 
-To be able to visualise the d3 graph network, you'll first need to install `npm` and then use `npm install -g http-server`.
+To install required dependencies for the frontend, execute `npm install` from within the `frontend` directory.
 
-Following install, simply execute `http-server -c-1 frontend` to view the network.
+Run `npm start` from `frontend` to view the d3 graph visualisation.
