@@ -1,9 +1,14 @@
-import { useD3 } from "./hooks/useD3"
+import React from "react"
+import { useD3 } from "../../hooks/useD3"
 import * as d3 from "d3"
-import "./css/style.css"
+import "../../css/style.css"
 
-function GraphVis({graph}) {
-    const ref = useD3((svg) => {
+interface IGraphVis {
+    data: any
+}
+
+function GraphVis({data}: IGraphVis) {
+    const ref = useD3((svg: any) => {
         const width = 1000
         const height = 800
 
@@ -13,9 +18,9 @@ function GraphVis({graph}) {
         var simulation = d3.forceSimulation()
             .force("center", d3.forceCenter(width / 2, height / 2))
             .force("charge", d3.forceManyBody().strength(-20))
-            .force("link", d3.forceLink().id(function(d) { return d.id; }).strength(0));
+            .force("link", d3.forceLink().id(function(d: any) { return d.id; }).strength(0));
 
-        simulation.force("r", d3.forceRadial(function(d) {
+        simulation.force("r", d3.forceRadial(function(d: any) {
             if (d.group === "Consultant") {
                 return 5
             }
@@ -29,18 +34,18 @@ function GraphVis({graph}) {
         var link = svg.append("g")
             .attr("class", "links")
             .selectAll("line")
-            .data(graph.links)
+            .data(data.links)
             .enter().append("line")
-                .attr("stroke-width", function(d) { return Math.sqrt(d.value); });
+                .attr("stroke-width", 1);
 
         // Add circles for every node in the dataset
         var node = svg.append("g")
             .attr("class", "nodes")
             .selectAll("circle")
-            .data(graph.nodes)
+            .data(data.nodes)
             .enter().append("circle")
                 .attr("r", 10)
-                .attr("fill", function(d) { return color(d.group); })
+                .attr("fill", function(d: any) { return color(d.group); })
                 .call(d3.drag()
                     .on("start", dragstarted)
                     .on("drag", dragged)
@@ -49,44 +54,43 @@ function GraphVis({graph}) {
 
         // Basic tooltips
         node.append("title")
-            .text(function(d) { return d.name; });
+            .text(function(d: any) { return d.name; });
 
         // Attach nodes to the simulation, add listener on the "tick" event
         simulation
-            .nodes(graph.nodes)
+            .nodes(data.nodes)
             .on("tick", ticked);
 
         // Associate the lines with the "link" force
-        simulation.force("link")
-            .links(graph.links)
-
+        simulation.force<d3.ForceLink<any, any>>("link")?.links(data.links)
+            
         // Dynamically update the position of the nodes/links as time passes
         function ticked() {
             link
-                .attr("x1", function(d) { return d.source.x; })
-                .attr("y1", function(d) { return d.source.y; })
-                .attr("x2", function(d) { return d.target.x; })
-                .attr("y2", function(d) { return d.target.y; });
+                .attr("x1", function(d: any) { return d.source.x; })
+                .attr("y1", function(d: any) { return d.source.y; })
+                .attr("x2", function(d: any) { return d.target.x; })
+                .attr("y2", function(d: any) { return d.target.y; });
 
-            node.attr("cx", function(d) { return d.x; })
-                .attr("cy", function(d) { return d.y; });
+            node.attr("cx", function(d: any) { return d.x; })
+                .attr("cy", function(d: any) { return d.y; });
                 }
 
         // Change the value of alpha, so things move around when we drag a node
-        function dragstarted(event, d) {
+        function dragstarted(event: any, d: any) {
         if (!event.active) simulation.alphaTarget(0.9).restart();
             d.fx = d.x;
             d.fy = d.y;
         }
 
         // Fix the position of the node that we are looking at
-        function dragged(event, d) {
+        function dragged(event: any, d: any) {
             d.fx = event.x;
             d.fy = event.y;
         }
 
         // Let the node do what it wants again once we've looked at it
-        function dragended(event, d) {
+        function dragended(event: any, d: any) {
             if (!event.active) simulation.alphaTarget(0);
                 d.fx = null;
                 d.fy = null;
