@@ -57,6 +57,7 @@ function GraphVis({data}: IGraphVis) {
         var nodeText = node.selectAll("text")
             .data(data.nodes)
             .enter().append("text")
+                    .style("font-size", "8px")
                     .attr("text-anchor", "middle")
                     .text(function(d: any) {return d.name})
 
