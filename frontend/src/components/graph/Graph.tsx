@@ -17,15 +17,15 @@ function GraphVis({data}: IGraphVis) {
         // Add "forces" to the simulation here
         var simulation = d3.forceSimulation()
             .force("center", d3.forceCenter(width / 2, height / 2))
-            .force("charge", d3.forceManyBody().strength(-20))
+            .force("charge", d3.forceManyBody().strength(-30))
             .force("link", d3.forceLink().id(function(d: any) { return d.id; }).strength(0));
 
         simulation.force("r", d3.forceRadial(function(d: any) {
             if (d.group === "Consultant") {
-                return 5
+                return 0
             }
             else {
-                return 150
+                return 120
             }
             }, width/2, height/2)
         )
@@ -46,7 +46,7 @@ function GraphVis({data}: IGraphVis) {
         var nodeCircle = node.selectAll("circle")
             .data(data.nodes)
             .enter().append("circle")
-                    .attr("r", 10)
+                    .attr("r", 13)
                     .attr("fill", function(d: any) { return color(d.group); })
                     .call(d3.drag()
                         .on("start", dragstarted)
