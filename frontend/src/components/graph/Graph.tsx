@@ -41,19 +41,27 @@ function GraphVis({data}: IGraphVis) {
         // Add circles for every node in the dataset
         var node = svg.append("g")
             .attr("class", "nodes")
-            .selectAll("circle")
+
+            
+        var nodeCircle = node.selectAll("circle")
             .data(data.nodes)
             .enter().append("circle")
-                .attr("r", 10)
-                .attr("fill", function(d: any) { return color(d.group); })
-                .call(d3.drag()
-                    .on("start", dragstarted)
-                    .on("drag", dragged)
-                    .on("end", dragended)
-                );
+                    .attr("r", 10)
+                    .attr("fill", function(d: any) { return color(d.group); })
+                    .call(d3.drag()
+                        .on("start", dragstarted)
+                        .on("drag", dragged)
+                        .on("end", dragended)
+                    );
+
+        var nodeText = node.selectAll("text")
+            .data(data.nodes)
+            .enter().append("text")
+                    .attr("text-anchor", "middle")
+                    .text(function(d: any) {return d.name})
 
         // Basic tooltips
-        node.append("title")
+        nodeCircle.append("title")
             .text(function(d: any) { return d.name; });
 
         // Attach nodes to the simulation, add listener on the "tick" event
@@ -72,8 +80,12 @@ function GraphVis({data}: IGraphVis) {
                 .attr("x2", function(d: any) { return d.target.x; })
                 .attr("y2", function(d: any) { return d.target.y; });
 
-            node.attr("cx", function(d: any) { return d.x; })
+            nodeCircle.attr("cx", function(d: any) { return d.x; })
                 .attr("cy", function(d: any) { return d.y; });
+                
+
+            nodeText.attr("x", function(d: any) { return d.x; })
+                .attr("y", function(d: any) { return d.y; });
                 }
 
         // Change the value of alpha, so things move around when we drag a node
