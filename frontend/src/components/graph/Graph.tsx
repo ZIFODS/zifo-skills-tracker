@@ -83,32 +83,55 @@ function GraphVis({data}: IGraphVis) {
             .enter().append("line")
                 .attr("stroke-width", 1);
 
-        // Add circles for every node in the dataset
-        var node = svg.append("g")
+        const nodeRadius = 6;
+
+        // Nodes for consultants
+        var consultantNode = svg.append("g")
             .selectAll("g")
-            .data(data.nodes)
+            .data(data.nodes.filter(function(d: any) {return d.group==="Consultant"}))
             .enter()
             .append("g")
                 .attr("class", "nodes")
 
-        const nodeRadius = 6;
+        var consultantNodeCircle = consultantNode.append("circle")
+            .attr("r", nodeRadius)
+            .attr("fill", function(d: any) { return color(d.group); })
 
-        var nodeCircle = node.append("circle")
-        .attr("r", nodeRadius)
-        .attr("fill", function(d: any) { return color(d.group); })
+        consultantNodeCircle.append("title")
+            .text(function(d: any) { return d.name; });
 
-        var nodeForeignObj = node.append("foreignObject")
+        var consultantNodeText = consultantNode.append("foreignObject")
             .attr("width", 60)
             .attr("height", 100)
 
-        nodeForeignObj.append("xhtml:body")
+        consultantNodeText.append("xhtml:body")
             .style("font-size", "8px")
             .style("text-align", "center")
-            .html(function(d: any) {return generateNameHTML(d.name, d.group==="Consultant")})   
+            .html(function(d: any) {return generateNameHTML(d.name, true)})  
 
-        // Basic tooltips
-        nodeCircle.append("title")
-            .text(function(d: any) { return d.name; });
+        // Nodes for skills
+        var skillNode = svg.append("g")
+            .selectAll("g")
+            .data(data.nodes.filter(function(d: any) {return d.group!=="Consultant"}))
+            .enter()
+            .append("g")
+                .attr("class", "nodes")
+
+        var skillNodeCircle = skillNode.append("circle")
+            .attr("r", nodeRadius)
+            .attr("fill", function(d: any) { return color(d.group); }) 
+
+        skillNodeCircle.append("title")
+        .text(function(d: any) { return d.name; });
+
+        var skillNodeText = skillNode.append("foreignObject")
+            .attr("width", 60)
+            .attr("height", 100)
+
+        skillNodeText.append("xhtml:body")
+            .style("font-size", "8px")
+            .style("text-align", "center")
+            .html(function(d: any) {return generateNameHTML(d.name, false)})  
 
         // Attach nodes to the simulation, add listener on the "tick" event
         simulation
@@ -122,11 +145,16 @@ function GraphVis({data}: IGraphVis) {
         function ticked() {
             var k = simulation.alpha();
 
-            nodeCircle.attr("cx", function(d: any) {return d.x += (getCentralPoint(d.group)[0] - d.x) * k;})
+            consultantNodeCircle.attr("cx", function(d: any) {return d.x += (getCentralPoint(d.group)[0] - d.x) * k;})
                 .attr("cy", function(d: any) { return d.y += (getCentralPoint(d.group)[1] - d.y) * k;});
                 
+            consultantNodeText.attr("x", function(d: any) { return d.x - 30; })
+                .attr("y", function(d: any) { return d.y - 16; });
 
-            nodeForeignObj.attr("x", function(d: any) { return d.x - 30; })
+            skillNodeCircle.attr("cx", function(d: any) {return d.x += (getCentralPoint(d.group)[0] - d.x) * k;})
+                .attr("cy", function(d: any) { return d.y += (getCentralPoint(d.group)[1] - d.y) * k;});
+                
+            skillNodeText.attr("x", function(d: any) { return d.x - 30; })
                 .attr("y", function(d: any) { return d.y - 1; });
 
             link
