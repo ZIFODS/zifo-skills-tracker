@@ -7,6 +7,24 @@ interface IGraphVis {
     data: any
 }
 
+function generateNameHTML(name: string, consultant: boolean = false) {
+    let trimmedName = ""
+    const splitWords = name.split(" ")
+    splitWords.forEach((word, i) => {
+        if (word.length > 12) {
+            trimmedName += word.substring(0, 10) + "."
+        }
+        else {
+            trimmedName += word
+        }
+        if (i < splitWords.length - 1) {
+            trimmedName += " "
+        }
+    })
+    return `<p style="text-align: center ${consultant && '; font-weight: 600'}">${trimmedName}</p>`
+}
+
+
 function GraphVis({data}: IGraphVis) {
     const ref = useD3((svg: any) => {
         const width = 1000
@@ -17,7 +35,15 @@ function GraphVis({data}: IGraphVis) {
         // Add "forces" to the simulation here
         var simulation = d3.forceSimulation()
             .force("center", d3.forceCenter(width / 2, height / 2))
-            .force("charge", d3.forceManyBody().strength(-30))
+            .force("charge", d3.forceManyBody().strength(function(d: any) {
+                const nameLength = d.name.length
+                if (nameLength > 5) {
+                    return -4 * nameLength
+                }
+                else {
+                    return -10
+                }
+            }))
             .force("link", d3.forceLink().id(function(d: any) { return d.id; }).strength(0));
 
         simulation.force("r", d3.forceRadial(function(d: any) {
@@ -40,26 +66,31 @@ function GraphVis({data}: IGraphVis) {
 
         // Add circles for every node in the dataset
         var node = svg.append("g")
-            .attr("class", "nodes")
-
-            
-        var nodeCircle = node.selectAll("circle")
+            .selectAll("g")
             .data(data.nodes)
-            .enter().append("circle")
-                    .attr("r", 13)
-                    .attr("fill", function(d: any) { return color(d.group); })
+            .enter()
+            .append("g")
+                .attr("class", "nodes")
                     .call(d3.drag()
-                        .on("start", dragstarted)
-                        .on("drag", dragged)
-                        .on("end", dragended)
-                    );
+            .on("start", dragstarted)
+            .on("drag", dragged)
+            .on("end", dragended)
+        ); 
 
-        var nodeText = node.selectAll("text")
-            .data(data.nodes)
-            .enter().append("text")
-                    .style("font-size", "8px")
-                    .attr("text-anchor", "middle")
-                    .text(function(d: any) {return d.name})
+        const nodeRadius = 6;
+
+        var nodeCircle = node.append("circle")
+        .attr("r", nodeRadius)
+        .attr("fill", function(d: any) { return color(d.group); })
+
+        var nodeForeignObj = node.append("foreignObject")
+            .attr("width", 60)
+            .attr("height", 100)
+
+        nodeForeignObj.append("xhtml:body")
+            .style("font-size", "8px")
+            .style("text-align", "center")
+            .html(function(d: any) {return generateNameHTML(d.name, d.group==="Consultant")})   
 
         // Basic tooltips
         nodeCircle.append("title")
@@ -85,9 +116,10 @@ function GraphVis({data}: IGraphVis) {
                 .attr("cy", function(d: any) { return d.y; });
                 
 
-            nodeText.attr("x", function(d: any) { return d.x; })
-                .attr("y", function(d: any) { return d.y; });
-                }
+            nodeForeignObj.attr("x", function(d: any) { return d.x - 30; })
+                .attr("y", function(d: any) { return d.y - 1; });
+
+        }
 
         // Change the value of alpha, so things move around when we drag a node
         function dragstarted(event: any, d: any) {
@@ -122,4 +154,4 @@ function GraphVis({data}: IGraphVis) {
 }
 
 
-export default GraphVis
+export default GraphVis;
