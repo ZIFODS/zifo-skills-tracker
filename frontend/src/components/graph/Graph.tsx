@@ -7,7 +7,7 @@ interface IGraphVis {
     data: any
 }
 
-function generateNameHTML(name: string, consultant: boolean = false) {
+function skillNameHTML(name: string) {
     let trimmedName = ""
     const splitWords = name.split(" ")
     splitWords.forEach((word, i) => {
@@ -21,7 +21,16 @@ function generateNameHTML(name: string, consultant: boolean = false) {
             trimmedName += " "
         }
     })
-    return `<p style="text-align: center ${consultant && '; font-weight: 600'}">${trimmedName}</p>`
+    return `<p style="text-align: center;">${trimmedName}</p>`
+}
+
+function consultantNameHTML(name: string) {
+    let initials = ""
+    const splitWords = name.split(" ")
+    splitWords.forEach((word) => {
+        initials += word[0].toUpperCase()
+    })
+    return `<p style="text-align: center;">${initials}</p>`
 }
 
 const width = 1000
@@ -107,7 +116,7 @@ function GraphVis({data}: IGraphVis) {
         consultantNodeText.append("xhtml:body")
             .style("font-size", "8px")
             .style("text-align", "center")
-            .html(function(d: any) {return generateNameHTML(d.name, true)})  
+            .html(function(d: any) {return consultantNameHTML(d.name)})  
 
         // Nodes for skills
         var skillNode = svg.append("g")
@@ -131,7 +140,7 @@ function GraphVis({data}: IGraphVis) {
         skillNodeText.append("xhtml:body")
             .style("font-size", "8px")
             .style("text-align", "center")
-            .html(function(d: any) {return generateNameHTML(d.name, false)})  
+            .html(function(d: any) {return skillNameHTML(d.name)})  
 
         // Attach nodes to the simulation, add listener on the "tick" event
         simulation
