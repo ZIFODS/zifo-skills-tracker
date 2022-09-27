@@ -30,7 +30,7 @@ function consultantNameHTML(name: string) {
     splitWords.forEach((word) => {
         initials += word[0].toUpperCase()
     })
-    return `<p style="text-align: center;">${initials}</p>`
+    return `<p style="text-align: center; font-weight: 700">${initials}</p>`
 }
 
 const width = 1000
@@ -74,11 +74,14 @@ function GraphVis({data}: IGraphVis) {
             .force("center", d3.forceCenter(width/2, height/2))
             .force("charge", d3.forceManyBody().strength(function(d: any) {
                 const nameLength = d.name.length
-                if (nameLength > 5) {
+                if (d.group == "Consultant") {
+                    return -160
+                }
+                else if (nameLength > 5) {
                     return -20 * nameLength
                 }
                 else {
-                    return -80
+                    return -120
                 }
             }))
             .force("link", d3.forceLink().id(function(d: any) { return d.id; }).strength(0))
@@ -92,9 +95,9 @@ function GraphVis({data}: IGraphVis) {
             .enter().append("line")
                 .attr("stroke-width", 1);
 
-        const nodeRadius = 6;
-
         // Nodes for consultants
+        const consultantNodeRadius = 12;
+
         var consultantNode = svg.append("g")
             .selectAll("g")
             .data(data.nodes.filter(function(d: any) {return d.group==="Consultant"}))
@@ -103,7 +106,7 @@ function GraphVis({data}: IGraphVis) {
                 .attr("class", "nodes")
 
         var consultantNodeCircle = consultantNode.append("circle")
-            .attr("r", nodeRadius)
+            .attr("r", consultantNodeRadius)
             .attr("fill", function(d: any) { return color(d.group); })
 
         consultantNodeCircle.append("title")
@@ -111,7 +114,7 @@ function GraphVis({data}: IGraphVis) {
 
         var consultantNodeText = consultantNode.append("foreignObject")
             .attr("width", 60)
-            .attr("height", 100)
+            .attr("height", 50)
 
         consultantNodeText.append("xhtml:body")
             .style("font-size", "8px")
@@ -119,6 +122,8 @@ function GraphVis({data}: IGraphVis) {
             .html(function(d: any) {return consultantNameHTML(d.name)})  
 
         // Nodes for skills
+        const skillNodeRadius = 6;
+
         var skillNode = svg.append("g")
             .selectAll("g")
             .data(data.nodes.filter(function(d: any) {return d.group!=="Consultant"}))
@@ -127,7 +132,7 @@ function GraphVis({data}: IGraphVis) {
                 .attr("class", "nodes")
 
         var skillNodeCircle = skillNode.append("circle")
-            .attr("r", nodeRadius)
+            .attr("r", skillNodeRadius)
             .attr("fill", function(d: any) { return color(d.group); }) 
 
         skillNodeCircle.append("title")
@@ -158,7 +163,7 @@ function GraphVis({data}: IGraphVis) {
                 .attr("cy", function(d: any) { return d.y += (getCentralPoint(d.group)[1] - d.y) * k;});
                 
             consultantNodeText.attr("x", function(d: any) { return d.x - 30; })
-                .attr("y", function(d: any) { return d.y - 16; });
+                .attr("y", function(d: any) { return d.y - 14; });
 
             skillNodeCircle.attr("cx", function(d: any) {return d.x += (getCentralPoint(d.group)[0] - d.x) * k;})
                 .attr("cy", function(d: any) { return d.y += (getCentralPoint(d.group)[1] - d.y) * k;});
