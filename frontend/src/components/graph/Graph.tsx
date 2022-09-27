@@ -7,7 +7,7 @@ interface IGraphVis {
     data: any
 }
 
-function generateNameHTML(name: string, consultant: boolean = false) {
+function skillNameHTML(name: string) {
     let trimmedName = ""
     const splitWords = name.split(" ")
     splitWords.forEach((word, i) => {
@@ -21,7 +21,16 @@ function generateNameHTML(name: string, consultant: boolean = false) {
             trimmedName += " "
         }
     })
-    return `<p style="text-align: center ${consultant && '; font-weight: 600'}">${trimmedName}</p>`
+    return `<p style="text-align: center;">${trimmedName}</p>`
+}
+
+function consultantNameHTML(name: string) {
+    let initials = ""
+    const splitWords = name.split(" ")
+    splitWords.forEach((word) => {
+        initials += word[0].toUpperCase()
+    })
+    return `<p style="text-align: center; font-weight: 700">${initials}</p>`
 }
 
 const width = 1000
@@ -65,11 +74,14 @@ function GraphVis({data}: IGraphVis) {
             .force("center", d3.forceCenter(width/2, height/2))
             .force("charge", d3.forceManyBody().strength(function(d: any) {
                 const nameLength = d.name.length
-                if (nameLength > 5) {
+                if (d.group == "Consultant") {
+                    return -160
+                }
+                else if (nameLength > 5) {
                     return -20 * nameLength
                 }
                 else {
-                    return -80
+                    return -120
                 }
             }))
             .force("link", d3.forceLink().id(function(d: any) { return d.id; }).strength(0))
@@ -83,37 +95,57 @@ function GraphVis({data}: IGraphVis) {
             .enter().append("line")
                 .attr("stroke-width", 1);
 
-        // Add circles for every node in the dataset
-        var node = svg.append("g")
+        // Nodes for consultants
+        const consultantNodeRadius = 12;
+
+        var consultantNode = svg.append("g")
             .selectAll("g")
-            .data(data.nodes)
+            .data(data.nodes.filter(function(d: any) {return d.group==="Consultant"}))
             .enter()
             .append("g")
                 .attr("class", "nodes")
-        //     .call(d3.drag()
-        //     .on("start", dragstarted)
-        //     .on("drag", dragged)
-        //     .on("end", dragended)
-        // ); 
 
-        const nodeRadius = 6;
+        var consultantNodeCircle = consultantNode.append("circle")
+            .attr("r", consultantNodeRadius)
+            .attr("fill", function(d: any) { return color(d.group); })
 
-        var nodeCircle = node.append("circle")
-        .attr("r", nodeRadius)
-        .attr("fill", function(d: any) { return color(d.group); })
+        consultantNodeCircle.append("title")
+            .text(function(d: any) { return d.name; });
 
-        var nodeForeignObj = node.append("foreignObject")
+        var consultantNodeText = consultantNode.append("foreignObject")
+            .attr("width", 60)
+            .attr("height", 50)
+
+        consultantNodeText.append("xhtml:body")
+            .style("font-size", "8px")
+            .style("text-align", "center")
+            .html(function(d: any) {return consultantNameHTML(d.name)})  
+
+        // Nodes for skills
+        const skillNodeRadius = 6;
+
+        var skillNode = svg.append("g")
+            .selectAll("g")
+            .data(data.nodes.filter(function(d: any) {return d.group!=="Consultant"}))
+            .enter()
+            .append("g")
+                .attr("class", "nodes")
+
+        var skillNodeCircle = skillNode.append("circle")
+            .attr("r", skillNodeRadius)
+            .attr("fill", function(d: any) { return color(d.group); }) 
+
+        skillNodeCircle.append("title")
+        .text(function(d: any) { return d.name; });
+
+        var skillNodeText = skillNode.append("foreignObject")
             .attr("width", 60)
             .attr("height", 100)
 
-        nodeForeignObj.append("xhtml:body")
+        skillNodeText.append("xhtml:body")
             .style("font-size", "8px")
             .style("text-align", "center")
-            .html(function(d: any) {return generateNameHTML(d.name, d.group==="Consultant")})   
-
-        // Basic tooltips
-        nodeCircle.append("title")
-            .text(function(d: any) { return d.name; });
+            .html(function(d: any) {return skillNameHTML(d.name)})  
 
         // Attach nodes to the simulation, add listener on the "tick" event
         simulation
@@ -127,11 +159,16 @@ function GraphVis({data}: IGraphVis) {
         function ticked() {
             var k = simulation.alpha();
 
-            nodeCircle.attr("cx", function(d: any) {return d.x += (getCentralPoint(d.group)[0] - d.x) * k;})
+            consultantNodeCircle.attr("cx", function(d: any) {return d.x += (getCentralPoint(d.group)[0] - d.x) * k;})
                 .attr("cy", function(d: any) { return d.y += (getCentralPoint(d.group)[1] - d.y) * k;});
                 
+            consultantNodeText.attr("x", function(d: any) { return d.x - 30; })
+                .attr("y", function(d: any) { return d.y - 14; });
 
-            nodeForeignObj.attr("x", function(d: any) { return d.x - 30; })
+            skillNodeCircle.attr("cx", function(d: any) {return d.x += (getCentralPoint(d.group)[0] - d.x) * k;})
+                .attr("cy", function(d: any) { return d.y += (getCentralPoint(d.group)[1] - d.y) * k;});
+                
+            skillNodeText.attr("x", function(d: any) { return d.x - 30; })
                 .attr("y", function(d: any) { return d.y - 1; });
 
             link
@@ -141,26 +178,6 @@ function GraphVis({data}: IGraphVis) {
                 .attr("y2", function(d: any) { return d.target.y; });
 
         }
-
-        // // Change the value of alpha, so things move around when we drag a node
-        // function dragstarted(event: any, d: any) {
-        // if (!event.active) simulation.alphaTarget(0.3).restart();
-        //     d.fx = d.x;
-        //     d.fy = d.y;
-        // }
-
-        // // Fix the position of the node that we are looking at
-        // function dragged(event: any, d: any) {
-        //     d.fx = event.x;
-        //     d.fy = event.y;
-        // }
-
-        // // Let the node do what it wants again once we've looked at it
-        // function dragended(event: any, d: any) {
-        //     if (!event.active) simulation.alphaTarget(0);
-        //         d.fx = null;
-        //         d.fy = null;
-        // }
     })
 
     return(
