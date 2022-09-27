@@ -90,11 +90,11 @@ function GraphVis({data}: IGraphVis) {
             .enter()
             .append("g")
                 .attr("class", "nodes")
-            .call(d3.drag()
-            .on("start", dragstarted)
-            .on("drag", dragged)
-            .on("end", dragended)
-        ); 
+        //     .call(d3.drag()
+        //     .on("start", dragstarted)
+        //     .on("drag", dragged)
+        //     .on("end", dragended)
+        // ); 
 
         const nodeRadius = 6;
 
@@ -142,25 +142,25 @@ function GraphVis({data}: IGraphVis) {
 
         }
 
-        // Change the value of alpha, so things move around when we drag a node
-        function dragstarted(event: any, d: any) {
-        if (!event.active) simulation.alphaTarget(0.3).restart();
-            d.fx = d.x;
-            d.fy = d.y;
-        }
+        // // Change the value of alpha, so things move around when we drag a node
+        // function dragstarted(event: any, d: any) {
+        // if (!event.active) simulation.alphaTarget(0.3).restart();
+        //     d.fx = d.x;
+        //     d.fy = d.y;
+        // }
 
-        // Fix the position of the node that we are looking at
-        function dragged(event: any, d: any) {
-            d.fx = event.x;
-            d.fy = event.y;
-        }
+        // // Fix the position of the node that we are looking at
+        // function dragged(event: any, d: any) {
+        //     d.fx = event.x;
+        //     d.fy = event.y;
+        // }
 
-        // Let the node do what it wants again once we've looked at it
-        function dragended(event: any, d: any) {
-            if (!event.active) simulation.alphaTarget(0);
-                d.fx = null;
-                d.fy = null;
-        }
+        // // Let the node do what it wants again once we've looked at it
+        // function dragended(event: any, d: any) {
+        //     if (!event.active) simulation.alphaTarget(0);
+        //         d.fx = null;
+        //         d.fy = null;
+        // }
     })
 
     return(
