@@ -1,0 +1,70 @@
+version: "2.4"
+services:
+
+  neo4j-db:
+    image: neo4j:latest
+    container_name: zifo-skills-neo4j
+    environment:
+      - NEO4J_AUTH=neo4j/test
+      - NEO4JLABS_PLUGINS='["apoc"]'
+      - NEO4J_dbms_security_procedures_unrestricted=apoc.*
+    volumes:
+      - $HOME/neo4j/data:/data
+      - $HOME/neo4j/logs:/logs
+      - ./pipeline/src/import:/import
+      - $HOME/neo4j/plugins:/plugins
+    ports:
+      - "7474:7474"
+      - "7687:7687"
+    expose:
+      - 7474
+      - 7687
+    networks:
+      - zifo-skills-network
+    healthcheck:
+        test: wget http://localhost:7474 || exit 1
+        interval: 1s
+        timeout: 10s
+        retries: 20
+        start_period: 3s
+
+  python-api:
+    image: zifo-skills-api
+    build:
+      context: .
+      dockerfile: ./docker/api/Dockerfile
+    container_name: zifo-skills-api
+    ports:
+      - "8080:8080"
+    depends_on:
+      neo4j-db:
+        condition: service_healthy
+    networks:
+      - zifo-skills-network
+    healthcheck:
+        test: wget http://localhost:8080/docs || exit 1
+        interval: 1s
+        timeout: 10s
+        retries: 20
+        start_period: 3s
+
+  react-frontend:
+    image: zifo-skills-frontend
+    build:
+      context: .
+      dockerfile: ./docker/frontend/Dockerfile
+    container_name: zifo-skills-frontend
+    ports:
+      - 3000:3000
+    networks:
+      - zifo-skills-network
+    volumes:
+      - /node_modules
+    depends_on:
+      python-api:
+        condition: service_healthy
+
+networks:
+  zifo-skills-network:
+    driver: bridge
+    name: zifo-skills-network
