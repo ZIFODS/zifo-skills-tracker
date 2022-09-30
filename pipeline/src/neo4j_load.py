@@ -24,7 +24,7 @@ def get_cypher_queries():
 def load_neo4j():
     queries = get_cypher_queries()
 
-    conn = Neo4jConnection(uri="neo4j://localhost:7687", user="neo4j", password="test")
+    conn = Neo4jConnection(uri="neo4j://neo4j-db:7687", user="neo4j", password="test")
 
     for query in queries:
         conn.query(query)

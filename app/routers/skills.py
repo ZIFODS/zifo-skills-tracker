@@ -8,7 +8,7 @@ skills_router = APIRouter()
 
 @skills_router.get("/", name="Get all nodes and edges")
 async def get_all_nodes_edges():
-    conn = Neo4jConnection(uri="neo4j://localhost:7687", user="neo4j", password="test")
+    conn = Neo4jConnection(uri="neo4j://neo4j-db:7687", user="neo4j", password="test")
 
     result = conn.query('''CALL apoc.export.json.all(null, {stream: true})
         YIELD file, nodes, relationships, properties, data
