@@ -1,8 +1,8 @@
 ---------Clear Database---------------------------------------------------------------------------------
-MATCH (n) DETACH DELETE n;
+CALL apoc.periodic.iterate('MATCH (n) RETURN n', 'DETACH DELETE n', {batchSize:1000, iterateList:true})
 
 ---------Drop all Constraints---------------------------------------------------------------------------
-CALL apoc.schema.assert({}, {})
+CALL apoc.schema.assert({},{},true) YIELD label, key RETURN *
 
 ---------CREATE CONSTRAINTS-----------------------------------------------------------------------------
 CREATE CONSTRAINT ON (c:Consultant) ASSERT c.Name IS UNIQUE
