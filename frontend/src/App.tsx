@@ -1,6 +1,5 @@
 import React from 'react'
-import GraphVis from "./components/graph/Graph"
-import graphData from "./data/d3_skills.json"
+import GraphVis from "./components/graph/graph"
 
 function App(): JSX.Element {
   return (
@@ -12,7 +11,7 @@ function App(): JSX.Element {
         height: '100vh',
       }}
     >
-      <GraphVis data={graphData}/>
+      <GraphVis/>
     </div>
   );
 }
