@@ -2,10 +2,12 @@ import React from "react"
 import { useD3 } from "../../hooks/useD3"
 import * as d3 from "d3"
 import "../../css/style.css"
-
-interface IGraphVis {
-    data: any
-}
+import { useAppDispatch, useAppSelector } from "../../app/hooks"
+import { getGraphDataRequest, selectLinks, selectNodes } from "./graphSlice"
+import { useEffect } from "react";
+import { SimulationNodeDatum } from "d3"
+import graphData from "../../data/d3_skills.json"
+import { useSelector } from "react-redux"
 
 function skillNameHTML(name: string) {
     let trimmedName = ""
@@ -64,7 +66,19 @@ function getCentralPoint(groupName: string) {
 }
 
 
-function GraphVis({data}: IGraphVis) {
+function GraphVis() {
+    const dispatch = useAppDispatch();
+
+    useEffect(() => {
+        dispatch(getGraphDataRequest());
+      }, [dispatch]);
+
+    // var nodeData = useAppSelector(selectNodes);
+    // var linkData = useAppSelector(selectLinks);
+
+    var nodeData = graphData.nodes
+    var linkData = graphData.links
+
     const ref = useD3((svg: any) => {
 
         var color = d3.scaleOrdinal(d3.schemePaired);
@@ -91,7 +105,7 @@ function GraphVis({data}: IGraphVis) {
         var link = svg.append("g")
             .attr("class", "links")
             .selectAll("line")
-            .data(data.links)
+            .data(linkData)
             .enter().append("line")
                 .attr("stroke-width", 1);
 
@@ -100,7 +114,7 @@ function GraphVis({data}: IGraphVis) {
 
         var consultantNode = svg.append("g")
             .selectAll("g")
-            .data(data.nodes.filter(function(d: any) {return d.group==="Consultant"}))
+            .data(nodeData.filter(function(d: any) {return d.group==="Consultant"}))
             .enter()
             .append("g")
                 .attr("class", "nodes")
@@ -126,7 +140,7 @@ function GraphVis({data}: IGraphVis) {
 
         var skillNode = svg.append("g")
             .selectAll("g")
-            .data(data.nodes.filter(function(d: any) {return d.group!=="Consultant"}))
+            .data(nodeData.filter(function(d: any) {return d.group!=="Consultant"}))
             .enter()
             .append("g")
                 .attr("class", "nodes")
@@ -145,15 +159,33 @@ function GraphVis({data}: IGraphVis) {
         skillNodeText.append("xhtml:body")
             .style("font-size", "8px")
             .style("text-align", "center")
-            .html(function(d: any) {return skillNameHTML(d.name)})  
+            .html(function(d: any) {return skillNameHTML(d.name)})
+            
+        // consultantNode.on("mouseover", function(event: any, d: any) {
+        //     link
+        //         .filter(function(l: any) {return l.source.id === d.id || l.target.id === d.id})
+        //         .attr("class", "linksSelected")
+        //     skillNode
+        //         .filter(function(node: any) {return node.id === d.id})
+        //         .style("visibility", "hidden");
+        //       })
+        //       .on("mouseout", function(event: any, d: any) {
+        //         link
+        //         .filter(function(node: any) {return node.source.id !== d.id && node.target.id !== d.id})
+        //         .style("visibility", "visible")
+        //         skillNode
+        //         .filter(function(node: any) {return node.id === d.id})
+        //         .style("visibility", "visible");
+        //       });
 
         // Attach nodes to the simulation, add listener on the "tick" event
+        console.log(typeof nodeData)
         simulation
-            .nodes(data.nodes)
+            .nodes(nodeData as SimulationNodeDatum[])
             .on("tick", ticked);
 
         // Associate the lines with the "link" force
-        simulation.force<d3.ForceLink<any, any>>("link")?.links(data.links)
+        simulation.force<d3.ForceLink<any, any>>("link")?.links(linkData)
             
         // Dynamically update the position of the nodes/links as time passes
         function ticked() {
@@ -176,9 +208,10 @@ function GraphVis({data}: IGraphVis) {
                 .attr("y1", function(d: any) { return d.source.y; })
                 .attr("x2", function(d: any) { return d.target.x; })
                 .attr("y2", function(d: any) { return d.target.y; });
-
         }
-    })
+    },
+    [nodeData, linkData]
+    )
 
     return(
         <svg
