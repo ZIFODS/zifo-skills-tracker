@@ -35,35 +35,7 @@ function consultantNameHTML(name: string) {
     return `<p style="text-align: center; font-weight: 700">${initials}</p>`
 }
 
-const width = 1000
-const height = 800
 
-function getCentralPoint(groupName: string) {
-    if (groupName === "Consultant") {
-        return [width/2, height/2]
-    }
-    else {
-        const groups: Array<string> = [
-            "Consultant",
-            "ScienceApps",
-            "Services",
-            "Methodologies",
-            "Process",
-            "Other_Products",
-            "Regulatory",
-            "Data_Management",
-            "Languages",
-            "programming",
-            "Miscellaneous",
-            "Infrastructure"
-        ]
-        const i = groups.indexOf(groupName)
-        // (xk,yk)=(x0+rcos(2kπ/n),y0+rsin(2kπ/n)) for k=0 to n−1.
-        const x = width/2 + (height/2 - 350) * Math.cos((2 * i * Math.PI) / groups.length)
-        const y = height/2 + (height/2 - 350) * Math.sin((2 * i * Math.PI) / groups.length)
-        return [x, y]
-    }
-}
 
 
 function GraphVis() {
@@ -73,15 +45,47 @@ function GraphVis() {
         dispatch(getGraphDataRequest());
       }, [dispatch]);
 
-    // var nodeData = useAppSelector(selectNodes);
-    // var linkData = useAppSelector(selectLinks);
+    var nodeData = useAppSelector(selectNodes);
+    var linkData = useAppSelector(selectLinks);
 
-    var nodeData = graphData.nodes
-    var linkData = graphData.links
+    nodeData = JSON.parse(JSON.stringify(nodeData))
+    linkData = JSON.parse(JSON.stringify(linkData))
+
+    // var nodeData = graphData.nodes
+    // var linkData = graphData.links
 
     const ref = useD3((svg: any) => {
 
         var color = d3.scaleOrdinal(d3.schemePaired);
+
+        const width = 1500;
+        const height = 900;
+
+        const getCentralPoint = (groupName: string) => {
+            if (groupName === "Consultant") {
+                return [width/2, height/2]
+            }
+            else {
+                const groups: Array<string> = [
+                    "ScienceApps",
+                    "Services",
+                    "Methodologies",
+                    "Process",
+                    "Other_Products",
+                    "Regulatory",
+                    "Data_Management",
+                    "Languages",
+                    "programming",
+                    "Miscellaneous",
+                    "Infrastructure"
+                ]
+                const i = groups.indexOf(groupName)
+                // (xk,yk)=(x0+rcos(2kπ/n),y0+rsin(2kπ/n)) for k=0 to n−1.
+                const x = width/2 + (height/2 - 300) * Math.cos((2 * i * Math.PI) / groups.length)
+                const y = height/2 + (height/2 - 300) * Math.sin((2 * i * Math.PI) / groups.length)
+                return [x, y]
+            }
+        }
 
         // Add "forces" to the simulation here
         var simulation = d3.forceSimulation()
@@ -179,9 +183,8 @@ function GraphVis() {
         //       });
 
         // Attach nodes to the simulation, add listener on the "tick" event
-        console.log(typeof nodeData)
         simulation
-            .nodes(nodeData as SimulationNodeDatum[])
+            .nodes(nodeData)
             .on("tick", ticked);
 
         // Associate the lines with the "link" force
@@ -217,8 +220,7 @@ function GraphVis() {
         <svg
             ref={ref}
             style={{
-                height: 800,
-                width: 1000
+                height: "98vh",
             }}
         />
     )

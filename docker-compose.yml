@@ -6,13 +6,10 @@ services:
     container_name: zifo-skills-neo4j
     environment:
       - NEO4J_AUTH=neo4j/test
-      - NEO4JLABS_PLUGINS='["apoc"]'
+      - NEO4JLABS_PLUGINS=["apoc"]
       - NEO4J_dbms_security_procedures_unrestricted=apoc.*
     volumes:
-      - $HOME/neo4j/data:/data
-      - $HOME/neo4j/logs:/logs
       - ./pipeline/src/import:/import
-      - $HOME/neo4j/plugins:/plugins
     ports:
       - "7474:7474"
       - "7687:7687"
