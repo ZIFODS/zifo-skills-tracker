@@ -1,5 +1,5 @@
 import React from 'react'
-import GraphVis from "./components/graph/graph"
+import GraphVis from "./components/graph/Graph"
 import Predicate from "./components/predicate/predicate"
 import {Box, Stack} from "@mui/material"
 
