@@ -22,7 +22,7 @@ export default function PredicateList() {
     const predicateList = useAppSelector(selectPredicateList)
 
     return(
-        <Stack>
+        <Stack spacing={2}>
             {predicateList.map(function(pred: any) {
                 return(
                     <Paper>
