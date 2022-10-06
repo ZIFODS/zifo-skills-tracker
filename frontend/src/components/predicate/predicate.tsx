@@ -8,8 +8,6 @@ import SearchButton from "./searchButton";
 
 export default function Predicate() {
 
-    const [predicates, setPredicates] = React.useState([{group: "Consultant", node: "test"}])
-
     return(
         <Paper sx={{border:"1px solid black", p:2.5, backgroundColor: "#e5e5e5", display:"flex"}}>
             <Stack direction="column" justifyContent="space-between">
@@ -20,11 +18,11 @@ export default function Predicate() {
                         </Typography>
                     </Box>
                     <Stack direction="row" spacing={3} alignItems="flex-end">
-                        <GroupSelect/>
-                        <NodeAutocomplete/>
+                        <GroupSelect />
+                        <NodeAutocomplete />
                         <AddRuleButton/>
                     </Stack>
-                    <PredicateList predicates={predicates}/>
+                    <PredicateList/>
                 </Stack>
                 <SearchButton/>
             </Stack>
