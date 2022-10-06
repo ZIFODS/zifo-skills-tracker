@@ -22,10 +22,10 @@ const predicateSlice = createSlice({
   initialState,
   reducers: {
     // Reducer to update predicate state
-    setCurrentGroup: (state: any, action: any) => {
+    setCurrentPredicateGroup: (state: any, action: any) => {
       state.currentPredicate.group = action.payload
     },
-    setCurrentNode: (state: any, action: any) => {
+    setCurrentPredicateNode: (state: any, action: any) => {
       state.currentPredicate.name = action.payload
     },
     clearCurrentPredicate: (state: any) => {
@@ -42,8 +42,8 @@ const predicateSlice = createSlice({
 
 // Actions
 export const {
-  setCurrentGroup,
-  setCurrentNode,
+  setCurrentPredicateGroup,
+  setCurrentPredicateNode,
   clearCurrentPredicate,
   addCurrentPredicateToList,
   clearPredicateList
@@ -51,7 +51,7 @@ export const {
 
 // Selectors
 export const selectPredicateList = (state: RootState) => state.predicate && state.predicate.predicateList;
-export const selectCurrentGroup = (state: RootState) => state.predicate && state.predicate.currentPredicate.group
+export const selectCurrentPredicateGroup = (state: RootState) => state.predicate && state.predicate.currentPredicate.group
 export const selectCurrentPredicateNode = (state: RootState) => state.predicate && state.predicate.currentPredicate.name
 
 // Reducer
