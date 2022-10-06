@@ -25,7 +25,7 @@ const predicateSlice = createSlice({
       state.currentPredicate.group = action.payload
     },
     setCurrentNode: (state: any, action: any) => {
-      state.currentPredicate.node = action.payload
+      state.currentPredicate.name = action.payload
     },
     addCurrentPredicateToList: (state: any) => {
       state.predicateList.push(state.currentPredicate)

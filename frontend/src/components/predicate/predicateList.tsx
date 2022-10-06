@@ -28,7 +28,7 @@ export default function PredicateList() {
                     <Paper>
                       <Stack direction="row" alignItems="center">
                           <Typography sx={{backgroundColor: colorGroupLinks[pred.group], px:1.5, py:1}}>{pred.group}</Typography>
-                          <Typography sx={{pl:2}}>{pred.node}</Typography>
+                          <Typography sx={{pl:2}}>{pred.name}</Typography>
                       </Stack>
                     </Paper>
                 )
