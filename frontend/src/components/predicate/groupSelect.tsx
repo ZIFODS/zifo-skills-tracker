@@ -13,7 +13,10 @@ export default function GroupSelect() {
   const dispatch = useAppDispatch()
 
   const nodeData = useAppSelector(selectNodes)
-  const groups = getUniqueGroups(nodeData)
+  let groups = getUniqueGroups(nodeData)
+  groups = groups.filter(function(g: any) {
+    return g !== "Consultant"
+  })
 
   const handleChange = (event: SelectChangeEvent) => {
     dispatch(setCurrentPredicateGroup(event.target.value))
