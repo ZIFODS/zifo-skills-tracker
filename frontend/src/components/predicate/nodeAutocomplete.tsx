@@ -2,7 +2,7 @@ import React from "react"
 import { Autocomplete, TextField } from "@mui/material";
 import { GraphNode, selectNodes } from "../graph/graphSlice";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
-import { selectCurrentGroup, setCurrentNode } from "./predicateSlice";
+import { selectCurrentGroup, selectCurrentPredicateNode, setCurrentNode } from "./predicateSlice";
 
 function getNodeNamesInGroup(nodes: GraphNode[], group: string) {
     const groupNodes = nodes.filter(function(node: GraphNode) {return(node.group === group)})
@@ -15,6 +15,7 @@ export default function NodeAutocomplete() {
 
     const nodeData = useAppSelector(selectNodes)
     const currentGroup = useAppSelector(selectCurrentGroup)
+    const currentNode = useAppSelector(selectCurrentPredicateNode)
 
     const nodes = getNodeNamesInGroup(nodeData, currentGroup)
 
@@ -29,6 +30,7 @@ export default function NodeAutocomplete() {
             id="combo-box-demo"
             sx={{fontSize: 14}}
             options={nodes}
+            value={currentNode}
             onChange={handleChange}
             renderInput={
                 (params) => <TextField {...params} label="Node" variant="standard" sx={{minWidth:200}} InputLabelProps={{style: {fontSize: 14}}}/>}

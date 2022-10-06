@@ -1,4 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { stat } from "fs";
 import { RootState } from "../../app/store";
 
 interface IPredicate {
@@ -27,11 +28,14 @@ const predicateSlice = createSlice({
     setCurrentNode: (state: any, action: any) => {
       state.currentPredicate.name = action.payload
     },
+    clearCurrentPredicate: (state: any) => {
+      state.currentPredicate = initialState.currentPredicate
+    },
     addCurrentPredicateToList: (state: any) => {
       state.predicateList.push(state.currentPredicate)
     },
     clearPredicateList: (state: any) => {
-      state.predicateList = []
+      state.predicateList = initialState.predicateList
     },
   },
 });
@@ -40,6 +44,7 @@ const predicateSlice = createSlice({
 export const {
   setCurrentGroup,
   setCurrentNode,
+  clearCurrentPredicate,
   addCurrentPredicateToList,
   clearPredicateList
 } = predicateSlice.actions;
@@ -47,6 +52,7 @@ export const {
 // Selectors
 export const selectPredicateList = (state: RootState) => state.predicate && state.predicate.predicateList;
 export const selectCurrentGroup = (state: RootState) => state.predicate && state.predicate.currentPredicate.group
+export const selectCurrentPredicateNode = (state: RootState) => state.predicate && state.predicate.currentPredicate.name
 
 // Reducer
 export default predicateSlice.reducer;
