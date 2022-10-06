@@ -2,7 +2,8 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { SimulationLinkDatum, SimulationNodeDatum } from "d3";
 import { RootState } from "../../app/store";
 
-interface GraphNode extends SimulationNodeDatum {
+export interface GraphNode extends SimulationNodeDatum {
+    name: string;
     group: string;
 }
 

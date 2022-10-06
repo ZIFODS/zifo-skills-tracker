@@ -1,11 +1,9 @@
 import React from "react"
 import { Stack, Typography, Paper } from "@mui/material";
+import { useAppSelector } from "../../app/hooks";
+import { selectPredicateList } from "./predicateSlice";
 
-interface IPredicateList {
-    predicates: Array<Record<string, string>>
-}
-
-export default function PredicateList({predicates}: IPredicateList) {
+export default function PredicateList() {
     const colorGroupLinks: Record<string, string> = {
         Consultant: "#cbe4f9",
         ScienceApps: "#eff9da",
@@ -20,9 +18,12 @@ export default function PredicateList({predicates}: IPredicateList) {
         Miscellaneous: "#f9d8d6",
         Infrastructure: "#f9ebdf",
     }
+
+    const predicateList = useAppSelector(selectPredicateList)
+
     return(
         <Stack>
-            {predicates.map(function(pred: any) {
+            {predicateList.map(function(pred: any) {
                 return(
                     <Paper>
                       <Stack direction="row" alignItems="center">
