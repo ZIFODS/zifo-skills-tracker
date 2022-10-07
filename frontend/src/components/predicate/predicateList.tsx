@@ -5,22 +5,9 @@ import { selectPredicateList } from "./predicateSlice";
 import { selectAllNodes } from "../graph/graphSlice";
 import { getUniqueGroups } from "../../hooks/useD3";
 import * as d3 from "d3"
+import { groupDisplayNameLinks } from "../../constants/data";
 
 export default function PredicateList() {
-    const groupDisplayNameLinks: Record<string, string> = {
-        Consultant: "Consultant",
-        ScienceApps: "Science apps",
-        Services: "Services",
-        Methodologies: "Methodologies",
-        Process: "Processes",
-        Other_Products: "Other products",
-        Regulatory: "Regulatory",
-        Data_Management: "Data management",
-        Languages: "Languages",
-        programming: "Programming",
-        Miscellaneous: "Miscellaneous",
-        Infrastructure: "Infrastructure",
-    }
 
     const predicateList = useAppSelector(selectPredicateList)
     const nodeData = useAppSelector(selectAllNodes)
