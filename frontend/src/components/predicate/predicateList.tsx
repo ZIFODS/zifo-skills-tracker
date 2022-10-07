@@ -18,6 +18,20 @@ export default function PredicateList() {
         Miscellaneous: "#f9d8d6",
         Infrastructure: "#f9ebdf",
     }
+    const groupDisplayNameLinks: Record<string, string> = {
+        Consultant: "Consultant",
+        ScienceApps: "Science apps",
+        Services: "Services",
+        Methodologies: "Methodologies",
+        Process: "Processes",
+        Other_Products: "Other products",
+        Regulatory: "Regulatory",
+        Data_Management: "Data management",
+        Languages: "Languages",
+        programming: "Programming",
+        Miscellaneous: "Miscellaneous",
+        Infrastructure: "Infrastructure",
+    }
 
     const predicateList = useAppSelector(selectPredicateList)
 
@@ -27,8 +41,8 @@ export default function PredicateList() {
                 return(
                     <Paper>
                       <Stack direction="row" alignItems="center">
-                          <Typography sx={{backgroundColor: colorGroupLinks[pred.group], px:1.5, py:1}}>{pred.group}</Typography>
-                          <Typography sx={{pl:2}}>{pred.name}</Typography>
+                          <Typography sx={{backgroundColor: colorGroupLinks[pred.group], px:1.5, py:1, fontSize: 14}}>{groupDisplayNameLinks[pred.group]}</Typography>
+                          <Typography sx={{pl:2, fontSize: 14}}>{pred.name}</Typography>
                       </Stack>
                     </Paper>
                 )
