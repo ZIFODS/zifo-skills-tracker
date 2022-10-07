@@ -14,7 +14,24 @@ svg {
 	stroke-width: 1.5px;
 }
 
+.consultNodes text {
+	font-size: 10px;
+	font-weight: bold
+}
+
 .skillNodes circle {
 	stroke: #fff;
 	stroke-width: 1.5px;
 }
+
+div.tooltip {
+	position: absolute;
+	text-align: center;
+	padding: 6px;
+	font: 12px sans-serif;
+	background: rgb(230, 212, 170);
+	border: 1px solid black;
+	border-radius: 8px;
+	pointer-events: none;
+	font-weight: bold
+  }
