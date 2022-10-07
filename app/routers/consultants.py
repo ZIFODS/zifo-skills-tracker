@@ -30,7 +30,7 @@ async def filter_consultants_by_skills(skills: List[str] = Query(default=...)):
             query += f" unwind nodes(p{char(i-1)}) as n{char(i-1)}"
             query += f" MATCH p{char(i)}=(n{char(i-1)})-[:KNOWS]->(s{char(i)}) where s{char(i)}.Name = '{skill}'"
 
-    query += neo4j_to_d3_cypher(char(i))
+    query += neo4j_to_d3_cypher(char(len(skills)))
 
     print(query)
 
