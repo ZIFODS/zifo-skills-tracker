@@ -26,13 +26,13 @@ function skillNameHTML(name: string) {
     return `<p style="text-align: center;">${trimmedName}</p>`
 }
 
-function consultantNameHTML(name: string) {
+function consultantInitials(name: string) {
     let initials = ""
     const splitWords = name.split(" ")
     splitWords.forEach((word) => {
         initials += word[0].toUpperCase()
     })
-    return `<p style="text-align: center; font-weight: 700">${initials}</p>`
+    return initials
 }
 
 function GraphVis() {
@@ -95,7 +95,7 @@ function GraphVis() {
             .force("charge", d3.forceManyBody().strength(function(d: any) {
                 const nameLength = d.name.length
                 if (d.group == "Consultant") {
-                    return -160
+                    return -200
                 }
                 else if (nameLength > 5) {
                     return -20 * nameLength
@@ -123,7 +123,7 @@ function GraphVis() {
             .attr("stroke-width", 1);
 
         // Nodes for consultants
-        const consultantNodeRadius = 12;
+        const consultantNodeRadius = 14;
 
         svg
         .selectAll("g.consultNodes")
@@ -141,17 +141,9 @@ function GraphVis() {
             .attr("r", consultantNodeRadius)
             .attr("fill", function(d: any) { return color(d.group); })
 
-        consultantNodeCircle.append("title")
-            .text(function(d: any) { return d.name; });
-
-        var consultantNodeText = consultantNode.append("foreignObject")
-            .attr("width", 60)
-            .attr("height", 50)
-
-        consultantNodeText.append("xhtml:body")
-            .style("font-size", "8px")
-            .style("text-align", "center")
-            .html(function(d: any) {return consultantNameHTML(d.name)}) 
+        var consultantNodeText = consultantNode.append("text")
+            .text(function(d: any) {return consultantInitials(d.name)})
+            .style("text-anchor", "middle")
 
         // Nodes for skills
         const skillNodeRadius = 6;
@@ -171,9 +163,6 @@ function GraphVis() {
         var skillNodeCircle = skillNode.append("circle")
             .attr("r", skillNodeRadius)
             .attr("fill", function(d: any) { return color(d.group); })
-
-        skillNodeCircle.append("title")
-        .text(function(d: any) { return d.name; });
 
         var skillNodeText = skillNode.append("foreignObject")
             .attr("width", 60)
@@ -209,7 +198,7 @@ function GraphVis() {
                 .style("opacity", .9);
             div.html(d.name.split(" ").join("<br/>"))
                 .style("left", (event.pageX) + "px")
-                .style("top", (event.pageY - 28) + "px");
+                .style("top", (event.pageY) + "px");
             })
             .on("mouseout", function(d: any) {
             div.transition()
@@ -237,8 +226,8 @@ function GraphVis() {
             consultantNodeCircle.attr("cx", function(d: any) {return d.x += (getCentralPoint(d.group)[0] - d.x) * k;})
                 .attr("cy", function(d: any) { return d.y += (getCentralPoint(d.group)[1] - d.y) * k;});
                 
-            consultantNodeText.attr("x", function(d: any) { return d.x - 30; })
-                .attr("y", function(d: any) { return d.y - 14; });
+            consultantNodeText.attr("x", function(d: any) { return d.x; })
+                .attr("y", function(d: any) { return d.y + 3 });
 
             skillNodeCircle.attr("cx", function(d: any) {return d.x += (getCentralPoint(d.group)[0] - d.x) * k;})
                 .attr("cy", function(d: any) { return d.y += (getCentralPoint(d.group)[1] - d.y) * k;});
