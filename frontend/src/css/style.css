@@ -9,7 +9,12 @@ svg {
 	stroke-opacity: 0.1;
 }
 
-.nodes circle {
+.consultNodes circle {
+	stroke: #fff;
+	stroke-width: 1.5px;
+}
+
+.skillNodes circle {
 	stroke: #fff;
 	stroke-width: 1.5px;
 }
