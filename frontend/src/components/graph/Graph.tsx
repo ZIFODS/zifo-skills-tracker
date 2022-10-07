@@ -183,23 +183,39 @@ function GraphVis() {
             .style("font-size", "8px")
             .style("text-align", "center")
             .html(function(d: any) {return skillNameHTML(d.name)})
+
+        var div = d3.select("body").append("div")
+            .attr("class", "tooltip")
+            .style("opacity", 0);
             
-        // consultantNode.on("mouseover", function(event: any, d: any) {
-        //     link
-        //         .filter(function(l: any) {return l.source.id === d.id || l.target.id === d.id})
-        //         .attr("class", "linksSelected")
-        //     skillNode
-        //         .filter(function(node: any) {return node.id === d.id})
-        //         .style("visibility", "hidden");
-        //       })
-        //       .on("mouseout", function(event: any, d: any) {
-        //         link
-        //         .filter(function(node: any) {return node.source.id !== d.id && node.target.id !== d.id})
-        //         .style("visibility", "visible")
-        //         skillNode
-        //         .filter(function(node: any) {return node.id === d.id})
-        //         .style("visibility", "visible");
-        //       });
+        consultantNode.on("mouseover", function(event: any, d: any) {
+            // link
+            //     .filter(function(l: any) {return l.source.id === d.id || l.target.id === d.id})
+            //     .attr("class", "linksSelected")
+            // skillNode
+            //     .filter(function(node: any) {return node.id === d.id})
+            //     .style("visibility", "hidden");
+            //   })
+            //   .on("mouseout", function(event: any, d: any) {
+            //     link
+            //     .filter(function(node: any) {return node.source.id !== d.id && node.target.id !== d.id})
+            //     .style("visibility", "visible")
+            //     skillNode
+            //     .filter(function(node: any) {return node.id === d.id})
+            //     .style("visibility", "visible");
+            //   });
+            div.transition()
+                .duration(200)
+                .style("opacity", .9);
+            div.html(d.name.split(" ").join("<br/>"))
+                .style("left", (event.pageX) + "px")
+                .style("top", (event.pageY - 28) + "px");
+            })
+            .on("mouseout", function(d: any) {
+            div.transition()
+                .duration(500)
+                .style("opacity", 0);
+            });
 
         // Attach nodes to the simulation, add listener on the "tick" event
         simulation
