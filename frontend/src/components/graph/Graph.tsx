@@ -195,7 +195,7 @@ function GraphVis() {
             //   });
             div.transition()
                 .duration(200)
-                .style("opacity", .9);
+                .style("opacity", 1);
             div.html(d.name.split(" ").join("<br/>"))
                 .style("left", (event.pageX) + "px")
                 .style("top", (event.pageY) + "px");
