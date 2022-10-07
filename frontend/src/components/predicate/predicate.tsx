@@ -1,6 +1,5 @@
 import React from "react"
 import { Stack, Typography, Paper, Box } from "@mui/material";
-import GroupSelect from "./groupSelect";
 import NodeAutocomplete from "./nodeAutocomplete";
 import AddRuleButton from "./addRuleButton";
 import PredicateList from "./predicateList";
@@ -18,7 +17,6 @@ export default function Predicate() {
                         </Typography>
                     </Box>
                     <Stack direction="row" spacing={3} alignItems="flex-end">
-                        <GroupSelect />
                         <NodeAutocomplete />
                         <AddRuleButton/>
                     </Stack>
