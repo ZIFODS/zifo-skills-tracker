@@ -1,6 +1,6 @@
 import React from "react"
 import { Autocomplete, TextField } from "@mui/material";
-import { GraphNode, selectNodes } from "../graph/graphSlice";
+import { GraphNode, selectAllNodes } from "../graph/graphSlice";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { selectCurrentPredicateGroup, selectCurrentPredicateNode, setCurrentPredicateGroup, setCurrentPredicateNode } from "./predicateSlice";
 
@@ -17,7 +17,7 @@ export default function NodeAutocomplete() {
 
     const dispatch = useAppDispatch()
 
-    const nodeData = useAppSelector(selectNodes)
+    const nodeData = useAppSelector(selectAllNodes)
     const currentGroup = useAppSelector(selectCurrentPredicateGroup)
     const currentNode = useAppSelector(selectCurrentPredicateNode)
 

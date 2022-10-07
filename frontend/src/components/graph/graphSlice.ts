@@ -12,14 +12,18 @@ export interface GraphLink extends SimulationLinkDatum<GraphNode> {
 }
 
 export interface GraphState {
-  nodes: GraphNode[];
-  links: GraphLink[];
+  allNodes: GraphNode[];
+  allLinks: GraphLink[];
+  currentNodes: GraphNode[];
+  currentLinks: GraphLink[];
   loading: boolean;
 }
 
 const initialState: GraphState = {
-  nodes: [],
-  links: [],
+  allNodes: [],
+  allLinks: [],
+  currentNodes: [],
+  currentLinks: [],
   loading: false,
 };
 
@@ -33,8 +37,10 @@ const graphSlice = createSlice({
     },
     getGraphDataSuccess: (state: any, action: any) => {
       state.loading = false;
-      state.nodes = action.payload.data.nodes;
-      state.links = action.payload.data.links;
+      state.allNodes = action.payload.data.nodes;
+      state.allLinks = action.payload.data.links;
+      state.currentNodes = action.payload.data.nodes;
+      state.currentLinks = action.payload.data.links;
     },
     getGraphDataFail: (state: any) => {
       state.loading = false;
@@ -44,9 +50,8 @@ const graphSlice = createSlice({
     },
     filterGraphDataSuccess: (state: any, action: any) => {
       state.loading = false;
-      console.log(action.payload)
-      state.nodes = action.payload.data.nodes;
-      state.links = action.payload.data.links;
+      state.currentNodes = action.payload.data.nodes;
+      state.currentLinks = action.payload.data.links;
     },
     filterGraphDataFail: (state: any) => {
       state.loading = false;
@@ -65,8 +70,10 @@ export const {
 } = graphSlice.actions;
 
 // Selectors
-export const selectNodes = (state: RootState) => state.graph && state.graph.nodes;
-export const selectLinks = (state: RootState) => state.graph && state.graph.links;
+export const selectAllNodes = (state: RootState) => state.graph && state.graph.allNodes;
+export const selectAllLinks = (state: RootState) => state.graph && state.graph.allLinks;
+export const selectCurrentNodes = (state: RootState) => state.graph && state.graph.currentNodes;
+export const selectCurrentLinks = (state: RootState) => state.graph && state.graph.currentLinks;
 
 // Reducer
 export default graphSlice.reducer;
