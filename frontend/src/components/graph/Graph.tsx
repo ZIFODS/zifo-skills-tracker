@@ -1,13 +1,10 @@
 import React from "react"
-import { useD3 } from "../../hooks/useD3"
+import { getUniqueGroups, useD3 } from "../../hooks/useD3"
 import * as d3 from "d3"
 import "../../css/style.css"
 import { useAppDispatch, useAppSelector } from "../../app/hooks"
 import { getGraphDataRequest, selectCurrentLinks, selectCurrentNodes } from "./graphSlice"
 import { useEffect } from "react";
-import { SimulationNodeDatum } from "d3"
-import graphData from "../../data/d3_skills.json"
-import { useSelector } from "react-redux"
 
 function skillNameHTML(name: string) {
     let trimmedName = ""
@@ -48,6 +45,8 @@ function GraphVis() {
     nodeData = JSON.parse(JSON.stringify(nodeData))
     linkData = JSON.parse(JSON.stringify(linkData))
 
+    const groups = getUniqueGroups(nodeData)
+
     // nodeData = graphData.nodes
     // linkData = graphData.links
 
@@ -55,13 +54,13 @@ function GraphVis() {
 
         const t = d3.transition().duration(250)
 
-        var color = d3.scaleOrdinal(d3.schemePaired);
+        const color = d3.scaleOrdinal()
+            .domain(groups)
+            .range(d3.schemePaired)
 
         var parent = svg.node().parentElement;
         var svgWidth = parent.clientWidth;
         var svgHeight = parent.clientHeight;
-
-        console.log(svg.node().getBoundingClientRect())
 
         const getCentralPoint = (groupName: string) => {
             if (groupName === "Consultant") {
