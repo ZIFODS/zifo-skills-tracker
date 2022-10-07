@@ -1,7 +1,7 @@
 import React from "react"
 import { Stack, Typography, Paper, Box, FormGroup, FormControlLabel, Checkbox, FormControl } from "@mui/material";
-import { useAppSelector } from "../../app/hooks";
-import { selectAllNodes, selectCurrentNodes } from "../graph/graphSlice";
+import { useAppDispatch, useAppSelector } from "../../app/hooks";
+import { selectHiddenGroups, selectAllNodes, selectCurrentNodes, setHiddenGroups } from "../graph/graphSlice";
 import { getUniqueGroups } from "../../hooks/useD3";
 import {groupDisplayNameLinks} from "../../constants/data"
 
@@ -16,13 +16,25 @@ const groupsIntoChunks = (groups: string[]) => {
 
 export default function Filter() {
 
+  const dispatch = useAppDispatch()
+
   const allNodeData = useAppSelector(selectAllNodes)
   const currentNodeData = useAppSelector(selectCurrentNodes)
+  const hiddenGroups = useAppSelector(selectHiddenGroups)
   
   const allGroups = getUniqueGroups(allNodeData)
   const currentGroups = getUniqueGroups(currentNodeData)
 
   const allGroupsChunked = groupsIntoChunks(allGroups)
+
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const group = Object.keys(groupDisplayNameLinks).find(key => groupDisplayNameLinks[key] === event.target.name);
+    if (group !== undefined) {
+      if (!hiddenGroups.includes(group)) {
+        dispatch(setHiddenGroups(group))
+      }
+    }
+  }
 
   return(
     <Paper sx={{border:"1px solid black", p:2.5, backgroundColor: "#e5e5e5", display:"flex"}}>
@@ -41,9 +53,9 @@ export default function Filter() {
               <FormControl component="fieldset" variant="outlined">
                 <FormGroup>
                   {currentGroups.includes(group) ?
-                  <FormControlLabel control={<Checkbox defaultChecked />} label={<Typography sx={{fontSize:14}}>{groupDisplayNameLinks[group]}</Typography> }/>
+                  <FormControlLabel control={<Checkbox defaultChecked onChange={handleChange} />} label={<Typography sx={{fontSize:14}}>{groupDisplayNameLinks[group]}</Typography> }/>
                   :
-                  <FormControlLabel disabled control={<Checkbox defaultChecked />} label={groupDisplayNameLinks[group]} />
+                  <FormControlLabel disabled control={<Checkbox defaultChecked onChange={handleChange} />} label={groupDisplayNameLinks[group]} />
                   }
                 </FormGroup>
               </FormControl>
