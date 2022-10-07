@@ -3,7 +3,7 @@ import { getUniqueGroups, useD3 } from "../../hooks/useD3"
 import * as d3 from "d3"
 import "../../css/style.css"
 import { useAppDispatch, useAppSelector } from "../../app/hooks"
-import { getGraphDataRequest, selectCurrentLinks, selectCurrentNodes } from "./graphSlice"
+import { getGraphDataRequest, GraphNode, selectCurrentLinks, selectCurrentNodes, selectHiddenGroups } from "./graphSlice"
 import { useEffect } from "react";
 
 function skillNameHTML(name: string) {
@@ -44,6 +44,9 @@ function GraphVis() {
 
     nodeData = JSON.parse(JSON.stringify(nodeData))
     linkData = JSON.parse(JSON.stringify(linkData))
+
+    const hiddenGroups = useAppSelector(selectHiddenGroups)
+    nodeData = nodeData.filter(function(d: GraphNode) {return !hiddenGroups.includes(d.group)})
 
     const groups = getUniqueGroups(nodeData)
 
@@ -241,7 +244,7 @@ function GraphVis() {
                 .attr("y2", function(d: any) { return d.target.y; });
         }
     },
-    [nodeData, linkData]
+    [nodeData, linkData, hiddenGroups]
     )
 
     return(

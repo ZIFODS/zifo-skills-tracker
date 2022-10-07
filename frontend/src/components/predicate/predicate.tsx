@@ -9,7 +9,7 @@ import ClearButton from "./clearButton";
 export default function Predicate() {
 
     return(
-        <Paper sx={{border:"1px solid black", p:2.5, backgroundColor: "#e5e5e5", display:"flex"}}>
+        <Paper sx={{border:"1px solid black", p:2.5, backgroundColor: "#e5e5e5", display:"flex", flexGrow: 1}}>
             <Stack justifyContent="space-between">
                 <Stack spacing={4}>
                     <Box sx={{borderBottom:"1px solid black", pb: 1}}>

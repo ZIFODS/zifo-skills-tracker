@@ -16,6 +16,7 @@ export interface GraphState {
   allLinks: GraphLink[];
   currentNodes: GraphNode[];
   currentLinks: GraphLink[];
+  hiddenGroups: string[];
   loading: boolean;
 }
 
@@ -24,6 +25,7 @@ const initialState: GraphState = {
   allLinks: [],
   currentNodes: [],
   currentLinks: [],
+  hiddenGroups: [],
   loading: false,
 };
 
@@ -56,6 +58,9 @@ const graphSlice = createSlice({
     filterGraphDataFail: (state: any) => {
       state.loading = false;
     },
+    setHiddenGroups: (state: any, action: any) => {
+      state.hiddenGroups = action.payload
+    }
   },
 });
 
@@ -67,6 +72,7 @@ export const {
   filterGraphDataRequest,
   filterGraphDataSuccess,
   filterGraphDataFail,
+  setHiddenGroups,
 } = graphSlice.actions;
 
 // Selectors
@@ -74,6 +80,7 @@ export const selectAllNodes = (state: RootState) => state.graph && state.graph.a
 export const selectAllLinks = (state: RootState) => state.graph && state.graph.allLinks;
 export const selectCurrentNodes = (state: RootState) => state.graph && state.graph.currentNodes;
 export const selectCurrentLinks = (state: RootState) => state.graph && state.graph.currentLinks;
+export const selectHiddenGroups = (state: RootState) => state.graph && state.graph.hiddenGroups;
 
 // Reducer
 export default graphSlice.reducer;
