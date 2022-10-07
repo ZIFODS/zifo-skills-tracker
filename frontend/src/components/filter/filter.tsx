@@ -6,7 +6,7 @@ import { getUniqueGroups } from "../../hooks/useD3";
 import {groupDisplayNameLinks} from "../../constants/data"
 
 const groupsIntoChunks = (groups: string[]) => {
-  const chunkSize = 2;
+  const chunkSize = 6;
   const chunkedGroups = []
   for (let i = 0; i < groups.length; i += chunkSize) {
       chunkedGroups.push(groups.slice(i, i + chunkSize));
@@ -32,27 +32,28 @@ export default function Filter() {
                 Filter
             </Typography>
           </Box>
+          <Stack direction="row" spacing={3}>
         {allGroupsChunked.map(function(chunk: string[]) {
           return(
-            <Box sx={{display: "flex"}}>
-              
+            <Stack>
             {chunk.map(function(group: string) {
             return(
               <FormControl component="fieldset" variant="outlined">
-                  <FormGroup>
-                    {currentGroups.includes(group) ?
-                    <FormControlLabel control={<Checkbox defaultChecked />} label={<Typography sx={{fontSize:14}}>{groupDisplayNameLinks[group]}</Typography> }/>
-                    :
-                    <FormControlLabel disabled control={<Checkbox defaultChecked />} label={groupDisplayNameLinks[group]} />
-                    }
-                  </FormGroup>
-                  </FormControl>
+                <FormGroup>
+                  {currentGroups.includes(group) ?
+                  <FormControlLabel control={<Checkbox defaultChecked />} label={<Typography sx={{fontSize:14}}>{groupDisplayNameLinks[group]}</Typography> }/>
+                  :
+                  <FormControlLabel disabled control={<Checkbox defaultChecked />} label={groupDisplayNameLinks[group]} />
+                  }
+                </FormGroup>
+              </FormControl>
             )
           })}
               
-              </Box>
+              </Stack>
           )
         })}
+        </Stack>
         </Stack>
     </Paper>
   )
