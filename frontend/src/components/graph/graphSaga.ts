@@ -4,6 +4,9 @@ import {
   getGraphDataRequest,
   getGraphDataSuccess,
   getGraphDataFail,
+  filterGraphDataRequest,
+  filterGraphDataSuccess,
+  filterGraphDataFail,
 } from "./graphSlice";
 import GraphService from "./graphService";
 
@@ -18,6 +21,18 @@ export function* getGraphData(_action: PayloadAction<any>): any {
   }
 }
 
+// Generator to filter Graph List
+export function* filterGraphData(action: PayloadAction<any>): any {
+  try {
+    const response = yield call(GraphService.filterGraphData, action.payload);
+    yield put(filterGraphDataSuccess(response));
+  } catch (e: any) {
+    console.log("Graph filter API failed");
+    yield put(filterGraphDataFail());
+  }
+}
+
 export default function* watchGraphSaga() {
   yield takeLatest(getGraphDataRequest.type, getGraphData);
+  yield takeLatest(filterGraphDataRequest.type, filterGraphData);
 }

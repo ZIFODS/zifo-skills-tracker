@@ -7,9 +7,13 @@ export interface GraphNode extends SimulationNodeDatum {
     group: string;
 }
 
+export interface GraphLink extends SimulationLinkDatum<GraphNode> {
+  id: number;
+}
+
 export interface GraphState {
   nodes: GraphNode[];
-  links: SimulationLinkDatum<GraphNode>[];
+  links: GraphLink[];
   loading: boolean;
 }
 
@@ -35,6 +39,18 @@ const graphSlice = createSlice({
     getGraphDataFail: (state: any) => {
       state.loading = false;
     },
+    filterGraphDataRequest: (state: any, _action: any) => {
+      state.loading = true;
+    },
+    filterGraphDataSuccess: (state: any, action: any) => {
+      state.loading = false;
+      console.log(action.payload)
+      state.nodes = action.payload.data.nodes;
+      state.links = action.payload.data.links;
+    },
+    filterGraphDataFail: (state: any) => {
+      state.loading = false;
+    },
   },
 });
 
@@ -43,6 +59,9 @@ export const {
   getGraphDataRequest,
   getGraphDataSuccess,
   getGraphDataFail,
+  filterGraphDataRequest,
+  filterGraphDataSuccess,
+  filterGraphDataFail,
 } = graphSlice.actions;
 
 // Selectors

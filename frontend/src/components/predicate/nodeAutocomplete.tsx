@@ -20,7 +20,6 @@ export default function NodeAutocomplete() {
     const nodes = getNodeNamesInGroup(nodeData, currentGroup)
 
     const handleChange = (event: any, value: string | null) => {
-        console.log(event)
         dispatch(setCurrentPredicateNode(value))
     }
 

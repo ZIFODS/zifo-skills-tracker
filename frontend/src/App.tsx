@@ -11,7 +11,8 @@ function App(): JSX.Element {
         spacing={2}
         sx={{
           m:0,
-          p:0
+          p:0,
+          height: "98vh"
         }}>
         <Predicate/>
         <Box sx={{display:"flex", border:"1px solid #1a6714"}}>

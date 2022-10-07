@@ -35,9 +35,6 @@ function consultantNameHTML(name: string) {
     return `<p style="text-align: center; font-weight: 700">${initials}</p>`
 }
 
-
-
-
 function GraphVis() {
     const dispatch = useAppDispatch();
 
@@ -51,19 +48,24 @@ function GraphVis() {
     nodeData = JSON.parse(JSON.stringify(nodeData))
     linkData = JSON.parse(JSON.stringify(linkData))
 
-    // var nodeData = graphData.nodes
-    // var linkData = graphData.links
+    // nodeData = graphData.nodes
+    // linkData = graphData.links
 
     const ref = useD3((svg: any) => {
 
+        const t = d3.transition().duration(250)
+
         var color = d3.scaleOrdinal(d3.schemePaired);
 
-        const width = 1500;
-        const height = 900;
+        var parent = svg.node().parentElement;
+        var svgWidth = parent.clientWidth;
+        var svgHeight = parent.clientHeight;
+
+        console.log(svg.node().getBoundingClientRect())
 
         const getCentralPoint = (groupName: string) => {
             if (groupName === "Consultant") {
-                return [width/2, height/2]
+                return [svgWidth/2, svgHeight/2]
             }
             else {
                 const groups: Array<string> = [
@@ -81,15 +83,15 @@ function GraphVis() {
                 ]
                 const i = groups.indexOf(groupName)
                 // (xk,yk)=(x0+rcos(2kπ/n),y0+rsin(2kπ/n)) for k=0 to n−1.
-                const x = width/2 + (height/2 - 300) * Math.cos((2 * i * Math.PI) / groups.length)
-                const y = height/2 + (height/2 - 300) * Math.sin((2 * i * Math.PI) / groups.length)
+                const x = svgWidth/2 + (svgHeight/2 - 300) * Math.cos((2 * i * Math.PI) / groups.length)
+                const y = svgHeight/2 + (svgHeight/2 - 300) * Math.sin((2 * i * Math.PI) / groups.length)
                 return [x, y]
             }
         }
 
         // Add "forces" to the simulation here
         var simulation = d3.forceSimulation()
-            .force("center", d3.forceCenter(width/2, height/2))
+            .force("center", d3.forceCenter(svgWidth/2, svgHeight/2))
             .force("charge", d3.forceManyBody().strength(function(d: any) {
                 const nameLength = d.name.length
                 if (d.group == "Consultant") {
@@ -103,25 +105,37 @@ function GraphVis() {
                 }
             }))
             .force("link", d3.forceLink().id(function(d: any) { return d.id; }).strength(0))
-            .alphaDecay(0.05)
 
         // Add lines for every link in the dataset
-        var link = svg.append("g")
+        svg
+            .selectAll("g.links")
+                .remove()
+
+        var linkG = svg
+            .selectAll("g.links")
+            .data(linkData, function(d: any) {return d.id})
+
+        const link = linkG.enter()
+            .append("g")
             .attr("class", "links")
-            .selectAll("line")
-            .data(linkData)
-            .enter().append("line")
-                .attr("stroke-width", 1);
+
+        const linkLine = link.append("line")
+            .attr("stroke-width", 1);
 
         // Nodes for consultants
         const consultantNodeRadius = 12;
 
-        var consultantNode = svg.append("g")
-            .selectAll("g")
-            .data(nodeData.filter(function(d: any) {return d.group==="Consultant"}))
-            .enter()
+        svg
+        .selectAll("g.consultNodes")
+            .remove()
+
+        var consultantG = svg
+            .selectAll("g.consultNodes")
+            .data(nodeData.filter(function(d: any) {return d.group==="Consultant"}), function(d: any) {return d.id})
+
+        const consultantNode = consultantG.enter()
             .append("g")
-                .attr("class", "nodes")
+                .attr("class", "consultNodes")
 
         var consultantNodeCircle = consultantNode.append("circle")
             .attr("r", consultantNodeRadius)
@@ -137,21 +151,26 @@ function GraphVis() {
         consultantNodeText.append("xhtml:body")
             .style("font-size", "8px")
             .style("text-align", "center")
-            .html(function(d: any) {return consultantNameHTML(d.name)})  
+            .html(function(d: any) {return consultantNameHTML(d.name)}) 
 
         // Nodes for skills
         const skillNodeRadius = 6;
 
-        var skillNode = svg.append("g")
-            .selectAll("g")
-            .data(nodeData.filter(function(d: any) {return d.group!=="Consultant"}))
-            .enter()
+        svg
+            .selectAll("g.skillNodes")
+                .remove()
+
+        var skillG = svg
+            .selectAll("g.skillNodes")
+            .data(nodeData.filter(function(d: any) {return d.group!=="Consultant"}), function(d: any) {return d.id})
+
+        const skillNode = skillG.enter()
             .append("g")
-                .attr("class", "nodes")
+                .attr("class", "skillNodes")
 
         var skillNodeCircle = skillNode.append("circle")
             .attr("r", skillNodeRadius)
-            .attr("fill", function(d: any) { return color(d.group); }) 
+            .attr("fill", function(d: any) { return color(d.group); })
 
         skillNodeCircle.append("title")
         .text(function(d: any) { return d.name; });
@@ -185,11 +204,16 @@ function GraphVis() {
         // Attach nodes to the simulation, add listener on the "tick" event
         simulation
             .nodes(nodeData)
-            .on("tick", ticked);
+            .on("tick", ticked)
 
         // Associate the lines with the "link" force
-        simulation.force<d3.ForceLink<any, any>>("link")?.links(linkData)
-            
+        simulation.force<d3.ForceLink<any, any>>("link")?.links(linkData) 
+        
+        simulation
+            .alpha(1)
+            .alphaDecay(0.05)
+            .restart();
+
         // Dynamically update the position of the nodes/links as time passes
         function ticked() {
             var k = simulation.alpha();
@@ -206,7 +230,7 @@ function GraphVis() {
             skillNodeText.attr("x", function(d: any) { return d.x - 30; })
                 .attr("y", function(d: any) { return d.y - 1; });
 
-            link
+            linkLine
                 .attr("x1", function(d: any) { return d.source.x; })
                 .attr("y1", function(d: any) { return d.source.y; })
                 .attr("x2", function(d: any) { return d.target.x; })
@@ -219,9 +243,6 @@ function GraphVis() {
     return(
         <svg
             ref={ref}
-            style={{
-                height: "98vh",
-            }}
         />
     )
 }
