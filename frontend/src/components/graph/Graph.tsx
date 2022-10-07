@@ -3,7 +3,7 @@ import { useD3 } from "../../hooks/useD3"
 import * as d3 from "d3"
 import "../../css/style.css"
 import { useAppDispatch, useAppSelector } from "../../app/hooks"
-import { getGraphDataRequest, selectLinks, selectNodes } from "./graphSlice"
+import { getGraphDataRequest, selectCurrentLinks, selectCurrentNodes } from "./graphSlice"
 import { useEffect } from "react";
 import { SimulationNodeDatum } from "d3"
 import graphData from "../../data/d3_skills.json"
@@ -42,8 +42,8 @@ function GraphVis() {
         dispatch(getGraphDataRequest());
       }, [dispatch]);
 
-    var nodeData = useAppSelector(selectNodes);
-    var linkData = useAppSelector(selectLinks);
+    var nodeData = useAppSelector(selectCurrentNodes);
+    var linkData = useAppSelector(selectCurrentLinks);
 
     nodeData = JSON.parse(JSON.stringify(nodeData))
     linkData = JSON.parse(JSON.stringify(linkData))
