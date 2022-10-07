@@ -9,13 +9,13 @@ function App(): JSX.Element {
   return (
     <Stack 
       direction="row"
-      spacing={2}
+      spacing={1}
       sx={{
         m:0,
         p:0,
         height: "98vh"
     }}>
-      <Stack>
+      <Stack spacing={1}>
         <Predicate/>
         <Filter/>
       </Stack>
