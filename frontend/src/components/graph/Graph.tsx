@@ -45,9 +45,6 @@ function GraphVis() {
     nodeData = JSON.parse(JSON.stringify(nodeData))
     linkData = JSON.parse(JSON.stringify(linkData))
 
-    const hiddenGroups = useAppSelector(selectHiddenGroups)
-    nodeData = nodeData.filter(function(d: GraphNode) {return !hiddenGroups.includes(d.group)})
-
     const groups = getUniqueGroups(nodeData)
 
     // nodeData = graphData.nodes
@@ -244,7 +241,7 @@ function GraphVis() {
                 .attr("y2", function(d: any) { return d.target.y; });
         }
     },
-    [nodeData, linkData, hiddenGroups]
+    [nodeData, linkData]
     )
 
     return(

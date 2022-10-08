@@ -1,9 +1,10 @@
 import React from "react"
 import { Stack, Typography, Paper, Box, FormGroup, FormControlLabel, Checkbox, FormControl } from "@mui/material";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
-import { selectHiddenGroups, selectAllNodes, selectCurrentNodes, setHiddenGroups } from "../graph/graphSlice";
+import { selectHiddenGroups, selectAllNodes, selectCurrentNodes, setHiddenGroups, filterGraphDataRequest } from "../graph/graphSlice";
 import { getUniqueGroups } from "../../hooks/useD3";
 import {groupDisplayNameLinks} from "../../constants/data"
+import { selectPredicateList } from "../predicate/predicateSlice";
 
 const groupsIntoChunks = (groups: string[]) => {
   const chunkSize = 6;
@@ -20,7 +21,12 @@ export default function Filter() {
 
   const allNodeData = useAppSelector(selectAllNodes)
   const currentNodeData = useAppSelector(selectCurrentNodes)
-  const hiddenGroups = useAppSelector(selectHiddenGroups)
+
+  let hiddenGroups = useAppSelector(selectHiddenGroups)
+  hiddenGroups = JSON.parse(JSON.stringify(hiddenGroups))
+
+  let skills = useAppSelector(selectPredicateList)
+  skills = skills.map(function(skill: any) {return skill.name})
   
   const allGroups = getUniqueGroups(allNodeData)
   const currentGroups = getUniqueGroups(currentNodeData)
@@ -28,13 +34,15 @@ export default function Filter() {
   const allGroupsChunked = groupsIntoChunks(allGroups)
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const group = Object.keys(groupDisplayNameLinks).find(key => groupDisplayNameLinks[key] === event.target.name);
+    const group = event.target.name
     if (group !== undefined) {
       if (!hiddenGroups.includes(group)) {
+        hiddenGroups.push(group)
         dispatch(setHiddenGroups(group))
       }
     }
-  }
+    skills.length && dispatch(filterGraphDataRequest({skills: skills, hiddenGroups: hiddenGroups}))
+    }
 
   return(
     <Paper sx={{border:"1px solid black", p:2.5, backgroundColor: "#e5e5e5", display:"flex"}}>
@@ -53,9 +61,9 @@ export default function Filter() {
               <FormControl component="fieldset" variant="outlined">
                 <FormGroup>
                   {currentGroups.includes(group) ?
-                  <FormControlLabel control={<Checkbox defaultChecked onChange={handleChange} />} label={<Typography sx={{fontSize:14}}>{groupDisplayNameLinks[group]}</Typography> }/>
+                  <FormControlLabel control={<Checkbox defaultChecked onChange={handleChange} />} label={<Typography sx={{fontSize:14}}>{groupDisplayNameLinks[group]}</Typography> } name={group}/>
                   :
-                  <FormControlLabel disabled control={<Checkbox defaultChecked onChange={handleChange} />} label={groupDisplayNameLinks[group]} />
+                  <FormControlLabel disabled control={<Checkbox defaultChecked onChange={handleChange} />} label={<Typography sx={{fontSize:14}}>{groupDisplayNameLinks[group]}</Typography>} name={group}/>
                   }
                 </FormGroup>
               </FormControl>

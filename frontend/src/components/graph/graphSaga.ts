@@ -24,7 +24,11 @@ export function* getGraphData(_action: PayloadAction<any>): any {
 // Generator to filter Graph List
 export function* filterGraphData(action: PayloadAction<any>): any {
   try {
-    const response = yield call(GraphService.filterGraphData, action.payload);
+    const response = yield call(
+      GraphService.filterGraphData, 
+      action.payload.skills, 
+      action.payload.hiddenGroups
+      );
     yield put(filterGraphDataSuccess(response));
   } catch (e: any) {
     console.log("Graph filter API failed");
