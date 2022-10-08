@@ -18,7 +18,10 @@ def char(num: int):
     return chr(num + 97)
 
 @consultants_router.get("/", name="Filter by skills")
-async def filter_consultants_by_skills(skills: List[str] = Query(default=...)):
+async def filter_consultants_by_skills(
+    skills: List[str] = Query(default=...),
+    hidden_groups: List[str] = Query(default=[])
+    ):
     conn = Neo4jConnection(uri="neo4j://neo4j-db:7687", user="neo4j", password="test")
 
     query = "MATCH pa=(c:Consultant)-[:KNOWS]->(sa) "
@@ -30,7 +33,22 @@ async def filter_consultants_by_skills(skills: List[str] = Query(default=...)):
             query += f" unwind nodes(p{char(i-1)}) as n{char(i-1)}"
             query += f" MATCH p{char(i)}=(n{char(i-1)})-[:KNOWS]->(s{char(i)}) where s{char(i)}.Name = '{skill}'"
 
-    query += neo4j_to_d3_cypher(char(len(skills)))
+    penult_char = char(len(skills) - 1)
+    final_char = char(len(skills))
+
+    query += f"unwind nodes(p{penult_char}) as n{penult_char} "
+    query += f" MATCH p{final_char}=(n{penult_char})-[:KNOWS]->()"
+
+    if hidden_groups:
+        query += f" WHERE NONE(n IN nodes(p{final_char}) WHERE"
+        for i, group in enumerate(hidden_groups):
+            query += f" n:{group}"
+            if i != len(hidden_groups) - 1:
+                query += " OR"
+            else:
+                query += ")"
+
+    query += neo4j_to_d3_cypher(final_char)
 
     print(query)
 
