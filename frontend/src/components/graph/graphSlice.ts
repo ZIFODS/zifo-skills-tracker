@@ -2,6 +2,11 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { SimulationLinkDatum, SimulationNodeDatum } from "d3";
 import { RootState } from "../../app/store";
 
+export interface FilterGraphDataQuery {
+  skills: string[];
+  hiddenQuery: string[];
+}
+
 export interface GraphNode extends SimulationNodeDatum {
     name: string;
     group: string;
@@ -59,7 +64,7 @@ const graphSlice = createSlice({
       state.loading = false;
     },
     setHiddenGroups: (state: any, action: any) => {
-      state.hiddenGroups = action.payload
+      state.hiddenGroups.push(action.payload)
     }
   },
 });
