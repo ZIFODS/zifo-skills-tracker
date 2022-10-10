@@ -9,6 +9,11 @@ svg {
 	stroke-opacity: 0.1;
 }
 
+.linksDeselected line {
+	stroke: #999;
+	stroke-opacity: 0.9;
+}
+
 .consultNodes circle {
 	stroke: #fff;
 	stroke-width: 1.5px;
@@ -19,9 +24,27 @@ svg {
 	font-weight: bold
 }
 
+.consultNodesDeselected text {
+	font-size: 10px;
+	font-weight: bold;
+	opacity: 0.2;
+}
+
+.consultNodesDeselected circle {
+	stroke: #fff;
+	stroke-width: 1.5px;
+	opacity: 0.2;
+}
+
 .skillNodes circle {
 	stroke: #fff;
 	stroke-width: 1.5px;
+}
+
+.skillNodesDeselected circle {
+	stroke: #fff;
+	stroke-width: 1.5px;
+	opacity: 0.2;
 }
 
 div.tooltip {
