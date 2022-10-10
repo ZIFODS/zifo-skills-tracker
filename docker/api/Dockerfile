@@ -14,7 +14,7 @@ RUN pip install pipenv
 # Install python dependencies in /.venv
 COPY Pipfile .
 COPY Pipfile.lock .
-RUN PIPENV_VENV_IN_PROJECT=1 pipenv install --deploy --dev
+RUN PIPENV_VENV_IN_PROJECT=1 pipenv install
 
 FROM base AS runtime
 
