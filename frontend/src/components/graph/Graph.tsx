@@ -169,6 +169,7 @@ function GraphVis() {
 
         skillNodeText.append("xhtml:body")
             .style("font-size", "8px")
+            .style("font-family", "helvetica")
             .style("text-align", "center")
             .html(function(d: any) {return skillNameHTML(d.name)})
 
@@ -177,21 +178,30 @@ function GraphVis() {
             .style("opacity", 0);
             
         consultantNode.on("mouseover", function(event: any, d: any) {
-            // link
-            //     .filter(function(l: any) {return l.source.id === d.id || l.target.id === d.id})
-            //     .attr("class", "linksSelected")
-            // skillNode
-            //     .filter(function(node: any) {return node.id === d.id})
-            //     .style("visibility", "hidden");
-            //   })
-            //   .on("mouseout", function(event: any, d: any) {
-            //     link
-            //     .filter(function(node: any) {return node.source.id !== d.id && node.target.id !== d.id})
-            //     .style("visibility", "visible")
-            //     skillNode
-            //     .filter(function(node: any) {return node.id === d.id})
-            //     .style("visibility", "visible");
-            //   });
+            const linkedSkills = link.filter(function(l: any) {return l.source.id === d.id || l.target.id === d.id})._groups[0]
+            const linkedSkillIds = linkedSkills.map(function(g: any) {return g.__data__.target.id})
+            link
+                .filter(function(l: any) {return l.source.id === d.id || l.target.id === d.id})
+                .attr("class", "linksSelected")
+            link
+                .filter(function(l: any) {return l.source.id !== d.id && l.target.id !== d.id})
+                .attr("class", "linksDeselected")
+            consultantNode
+                .filter(function(node: any) {return node.id !== d.id})
+                .attr("class", "consultNodesDeselected");
+            console.log(skillNode
+                .filter(function(node: any) {return !linkedSkillIds.includes(node.id)})
+                .attr("class", "skillNodesDeselected")
+                .select("foreignObject"))
+            skillNode
+                .filter(function(node: any) {return !linkedSkillIds.includes(node.id)})
+                .attr("class", "skillNodesDeselected")
+                .select("foreignObject")
+                        .style("opacity", "0.1")
+            skillNode
+                .filter(function(node: any) {return linkedSkillIds.includes(node.id)})
+                .select("foreignObject")
+                        .style("font-weight", "bold")
             div.transition()
                 .duration(200)
                 .style("opacity", 1);
@@ -200,6 +210,15 @@ function GraphVis() {
                 .style("top", (event.pageY) + "px");
             })
             .on("mouseout", function(d: any) {
+            link
+                .attr("class", "links")
+            consultantNode
+                .attr("class", "consultNodes")
+            skillNode
+                .attr("class", "skillNodes")
+                .select("foreignObject")
+                    .style("opacity", "1")
+                    .style("font-weight", "normal")
             div.transition()
                 .duration(500)
                 .style("opacity", 0);
