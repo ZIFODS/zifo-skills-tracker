@@ -10,13 +10,13 @@ FROM base AS runtime
 WORKDIR /app
 
 # Install npm packages
-COPY ./frontend/package.json /app
-COPY ./frontend/package-lock.json /app
+COPY ./frontend/package.json .
+COPY ./frontend/package-lock.json .
 
 RUN npm install
 
 # Copy source code
-COPY ./frontend /app
+COPY ./frontend .
 
 # Run the application with Docker run
 CMD ["npm", "start"]
