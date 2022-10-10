@@ -45,7 +45,7 @@ export default function Filter() {
     }
 
   return(
-    <Paper sx={{border:"1px solid black", p:2.5, backgroundColor: "#e5e5e5", display:"flex"}}>
+    <Paper sx={{border:"1px solid black", p:2.5, backgroundColor: "#e5e5e5"}}>
         <Stack>
           <Box sx={{borderBottom:"1px solid black", pb: 1, mb: 1}}>
             <Typography variant="h5" sx={{color: "#1f226a", fontWeight: "bold"}}>
@@ -59,11 +59,11 @@ export default function Filter() {
             {chunk.map(function(group: string) {
             return(
               <FormControl component="fieldset" variant="outlined">
-                <FormGroup>
+                <FormGroup >
                   {currentGroups.includes(group) ?
-                  <FormControlLabel control={<Checkbox defaultChecked onChange={handleChange} />} label={<Typography sx={{fontSize:14}}>{groupDisplayNameLinks[group]}</Typography> } name={group}/>
+                  <FormControlLabel control={<Checkbox defaultChecked onChange={handleChange} sx={{transform: "scale(0.8)", p:0.5, pl:1.5}} />} label={<Typography sx={{fontSize:14}}>{groupDisplayNameLinks[group]}</Typography> } name={group}/>
                   :
-                  <FormControlLabel disabled control={<Checkbox defaultChecked onChange={handleChange} />} label={<Typography sx={{fontSize:14}}>{groupDisplayNameLinks[group]}</Typography>} name={group}/>
+                  <FormControlLabel disabled control={<Checkbox defaultChecked onChange={handleChange} sx={{transform: "scale(0.8)"}}/>} label={<Typography sx={{fontSize:14}}>{groupDisplayNameLinks[group]}</Typography>} name={group}/>
                   }
                 </FormGroup>
               </FormControl>
