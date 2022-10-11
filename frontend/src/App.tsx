@@ -19,7 +19,7 @@ function App(): JSX.Element {
         <Predicate/>
         <Filter/>
       </Stack>
-      <Box sx={{display:"flex", border:"1px solid #1a6714"}}>
+      <Box sx={{display:"flex", flexGrow: 1, border:"1px solid #1a6714"}}>
         <GraphVis/>
       </Box>
     </Stack>
