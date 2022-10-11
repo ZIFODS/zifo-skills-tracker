@@ -1,21 +1,21 @@
 import React from "react"
 import { Stack, Typography, Paper } from "@mui/material";
 import { useAppSelector } from "../../app/hooks";
-import { selectPredicateList } from "./predicateSlice";
+import { selectSearchList } from "./searchSlice";
 import { selectAllNodes } from "../graph/graphSlice";
 import { getUniqueGroups } from "../../hooks/useD3";
 import * as d3 from "d3"
 import { groupDisplayNameLinks } from "../../constants/data";
 
-export default function PredicateList() {
+export default function SearchList() {
 
-    const predicateList = useAppSelector(selectPredicateList)
+    const searchList = useAppSelector(selectSearchList)
     const nodeData = useAppSelector(selectAllNodes)
     const groups = getUniqueGroups(nodeData)
 
     return(
         <Stack spacing={2}>
-            {predicateList.map(function(pred: any) {
+            {searchList.map(function(pred: any) {
                 return(
                     <Paper>
                       <Stack direction="row" alignItems="center">
