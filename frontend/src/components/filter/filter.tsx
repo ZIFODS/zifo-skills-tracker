@@ -49,7 +49,7 @@ export default function Filter() {
         <Stack>
           <Box sx={{borderBottom:"1px solid black", pb: 1, mb: 1}}>
             <Typography variant="h5" sx={{color: "#1f226a", fontWeight: "bold"}}>
-                Filter
+                Categories
             </Typography>
           </Box>
           <Stack direction="row" spacing={3}>
