@@ -67,19 +67,6 @@ function GraphVis() {
                 return [svgWidth/2, svgHeight/2]
             }
             else {
-                const groups: Array<string> = [
-                    "ScienceApps",
-                    "Services",
-                    "Methodologies",
-                    "Process",
-                    "Other_Products",
-                    "Regulatory",
-                    "Data_Management",
-                    "Languages",
-                    "programming",
-                    "Miscellaneous",
-                    "Infrastructure"
-                ]
                 const i = groups.indexOf(groupName)
                 // (xk,yk)=(x0+rcos(2kπ/n),y0+rsin(2kπ/n)) for k=0 to n−1.
                 const x = svgWidth/2 + (svgHeight/2 - 300) * Math.cos((2 * i * Math.PI) / groups.length)
