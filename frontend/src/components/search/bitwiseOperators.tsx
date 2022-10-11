@@ -11,7 +11,13 @@ export default function BitwiseOperators() {
 
   const searchList = useAppSelector(selectSearchList)
 
-  const [operator, setOperator] = React.useState<string | null>("AND")
+  const [operator, setOperator] = React.useState<string | null>("")
+
+  useEffect(() => {
+    if (searchList.length > 0 && operator === "") {
+      setOperator("AND")
+    }
+  }, [searchList])
 
   const handleOperatorChange = (
     _event: React.MouseEvent<HTMLElement>,
@@ -36,16 +42,17 @@ export default function BitwiseOperators() {
         exclusive
         onChange={handleOperatorChange}
       >
-        <ToggleButton value="AND">
+        <ToggleButton value="AND" disabled={searchList.length === 0}>
           AND
         </ToggleButton>
-        <ToggleButton value="OR">
+        <ToggleButton value="OR" disabled={searchList.length === 0}>
           OR
         </ToggleButton>
       </ToggleButtonGroup>
       <ToggleButtonGroup
         value={parentheses}
         onChange={handleParenthesesChange}
+        exclusive
       >
         <ToggleButton value="[">
           [
