@@ -38,7 +38,7 @@ export default function NodeAutocomplete() {
             value={currentNode}
             onChange={handleChange}
             renderInput={
-                (params) => <TextField {...params} label="Node" variant="standard" sx={{minWidth:280}} InputLabelProps={{style: {fontSize: 14}}}/>}
+                (params) => <TextField {...params} label="Filter" variant="standard" sx={{minWidth:280}} InputLabelProps={{style: {fontSize: 14}}}/>}
         />
     )
 }
