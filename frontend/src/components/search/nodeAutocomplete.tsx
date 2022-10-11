@@ -33,12 +33,11 @@ export default function NodeAutocomplete() {
         <Autocomplete
             disablePortal
             id="combo-box-demo"
-            sx={{fontSize: 14}}
             options={nodes}
             value={currentNode}
             onChange={handleChange}
             renderInput={
-                (params) => <TextField {...params} label="Filter" variant="standard" sx={{minWidth:280}} InputLabelProps={{style: {fontSize: 14}}}/>}
+                (params) => <TextField {...params} label="Filter" variant="standard" sx={{minWidth:280}} InputLabelProps={{style: {fontSize: 14, margin:0, padding:0}}}/>}
         />
     )
 }
