@@ -1,6 +1,6 @@
 import React from 'react'
 import GraphVis from "./components/graph/Graph"
-import Predicate from "./components/predicate/predicate"
+import Search from "./components/search/search"
 import {Box, Stack} from "@mui/material"
 import Filter from './components/filter/filter';
 
@@ -16,7 +16,7 @@ function App(): JSX.Element {
         height: "98vh"
     }}>
       <Stack spacing={1}>
-        <Predicate/>
+        <Search/>
         <Filter/>
       </Stack>
       <Box sx={{display:"flex", flexGrow: 1, border:"1px solid #1a6714"}}>
