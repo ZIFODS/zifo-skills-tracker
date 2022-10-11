@@ -266,6 +266,8 @@ function GraphVis() {
     return(
         <svg
             ref={ref}
+            height="100%"
+            width="100%"
         />
     )
 }
