@@ -4,7 +4,7 @@ import { useAppDispatch, useAppSelector } from "../../app/hooks"
 import { filterGraphDataRequest, selectHiddenGroups } from "../graph/graphSlice"
 import { selectPredicateList } from "./predicateSlice"
 
-export default function SearchButton() {
+export default function ApplyButton() {
 
   const dispatch = useAppDispatch()
 
@@ -22,7 +22,7 @@ export default function SearchButton() {
       sx={{ mb: 1, p: 2, fontSize: 15, fontWeight: "bold", color: "white", backgroundColor: "#1f226a", border: "2px solid #1a6714" }}
       onClick={handleChange}
       >
-      Search
+      Apply
     </Button>
   )
 }

@@ -3,7 +3,7 @@ import { Stack, Typography, Paper, Box, Grid } from "@mui/material";
 import NodeAutocomplete from "./nodeAutocomplete";
 import AddRuleButton from "./addRuleButton";
 import PredicateList from "./predicateList";
-import SearchButton from "./searchButton";
+import SearchButton from "./applyButton";
 import ClearButton from "./clearButton";
 
 export default function Predicate() {
