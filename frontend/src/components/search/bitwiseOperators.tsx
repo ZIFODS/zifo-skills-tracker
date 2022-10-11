@@ -17,6 +17,9 @@ export default function BitwiseOperators() {
     if (searchList.length > 0 && operator === "") {
       setOperator("AND")
     }
+    else if (searchList.length === 0) {
+      setOperator("")
+    }
   }, [searchList])
 
   const handleOperatorChange = (
