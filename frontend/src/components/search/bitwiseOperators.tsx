@@ -1,24 +1,23 @@
 import React from "react"
-import { Button, Stack, ToggleButtonGroup, ToggleButton } from "@mui/material"
+import { Stack, ToggleButtonGroup, ToggleButton } from "@mui/material"
 import { useAppDispatch, useAppSelector } from "../../app/hooks"
-import { clearSearchList, selectSearchList } from "./searchSlice"
-import { getGraphDataRequest } from "../graph/graphSlice"
+import { selectCurrentSearchOperator, selectCurrentSearchParenthesis, selectRuleList, setCurrentBitwiseOperatorSearch } from "./searchSlice"
 import { useEffect } from "react"
 
 export default function BitwiseOperators() {
 
   const dispatch = useAppDispatch()
 
-  const searchList = useAppSelector(selectSearchList)
-
-  const [operator, setOperator] = React.useState<string | null>("")
+  const operator = useAppSelector(selectCurrentSearchOperator)
+  const parenthesis = useAppSelector(selectCurrentSearchParenthesis)
+  const searchList = useAppSelector(selectRuleList)
 
   useEffect(() => {
     if (searchList.length > 0 && operator === "") {
-      setOperator("AND")
+      dispatch(setCurrentBitwiseOperatorSearch({operator: "AND", parenthesis: parenthesis}))
     }
     else if (searchList.length === 0) {
-      setOperator("")
+      dispatch(setCurrentBitwiseOperatorSearch({operator: "", parenthesis: ""}))
     }
   }, [searchList])
 
@@ -26,16 +25,14 @@ export default function BitwiseOperators() {
     _event: React.MouseEvent<HTMLElement>,
     newOperator: string | null,
   )  => {
-    setOperator(newOperator);
+    dispatch(setCurrentBitwiseOperatorSearch({operator: newOperator, parenthesis: parenthesis}));
   }
 
-  const [parentheses, setParentheses] = React.useState<string | null>("")
-
-  const handleParenthesesChange = (
+  const handleParenthesisChange = (
     _event: React.MouseEvent<HTMLElement>,
     newParentheses: string | null,
   )  => {
-    setParentheses(newParentheses);
+    dispatch(setCurrentBitwiseOperatorSearch({operator: operator, parenthesis: newParentheses}));
   }
 
   return(
@@ -53,8 +50,8 @@ export default function BitwiseOperators() {
         </ToggleButton>
       </ToggleButtonGroup>
       <ToggleButtonGroup
-        value={parentheses}
-        onChange={handleParenthesesChange}
+        value={parenthesis}
+        onChange={handleParenthesisChange}
         exclusive
       >
         <ToggleButton value="[">
