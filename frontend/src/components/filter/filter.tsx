@@ -55,7 +55,7 @@ export default function Filter() {
           <Stack direction="row" spacing={3}>
         {allGroupsChunked.map(function(chunk: string[]) {
           return(
-            <Stack>
+            <Stack sx={{pt:0.5}}>
             {chunk.map(function(group: string) {
             return(
               <FormControl component="fieldset" variant="outlined">
