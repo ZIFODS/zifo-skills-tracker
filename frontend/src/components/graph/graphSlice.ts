@@ -63,6 +63,10 @@ const graphSlice = createSlice({
     },
     setHiddenGroups: (state: any, action: any) => {
       state.hiddenGroups.push(action.payload)
+    },
+    clearCurrentGraph: (state: any) => {
+      state.currentNodes = initialState.currentNodes
+      state.currentLinks = initialState.currentLinks
     }
   },
 });
@@ -76,6 +80,7 @@ export const {
   filterGraphDataSuccess,
   filterGraphDataFail,
   setHiddenGroups,
+  clearCurrentGraph
 } = graphSlice.actions;
 
 // Selectors
