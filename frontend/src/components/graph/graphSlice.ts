@@ -21,6 +21,8 @@ export interface GraphState {
   allLinks: GraphLink[];
   currentNodes: GraphNode[];
   currentLinks: GraphLink[];
+  selectedNodes: GraphNode[];
+  selectedLinks: GraphLink[];
   hiddenGroups: string[];
   loading: boolean;
 }
@@ -30,6 +32,8 @@ const initialState: GraphState = {
   allLinks: [],
   currentNodes: [],
   currentLinks: [],
+  selectedNodes: [],
+  selectedLinks: [],
   hiddenGroups: [],
   loading: false,
 };
@@ -55,8 +59,17 @@ const graphSlice = createSlice({
     },
     filterGraphDataSuccess: (state: any, action: any) => {
       state.loading = false;
-      state.currentNodes = action.payload.data.nodes;
-      state.currentLinks = action.payload.data.links;
+      console.log(state.hiddenGroups.length)
+      if (state.hiddenGroups.length > 0) {
+        state.selectedNodes = action.payload.data.nodes;
+        state.selectedLinks = action.payload.data.links;
+      }
+      else {
+        state.currentNodes = action.payload.data.nodes;
+        state.currentLinks = action.payload.data.links;
+        state.selectedNodes = action.payload.data.nodes;
+        state.selectedLinks = action.payload.data.links;
+      }
     },
     filterGraphDataFail: (state: any) => {
       state.loading = false;
@@ -64,9 +77,17 @@ const graphSlice = createSlice({
     setHiddenGroups: (state: any, action: any) => {
       state.hiddenGroups.push(action.payload)
     },
+    clearHiddenGroups: (state: any) => {
+      state.hiddenGroups = initialState.hiddenGroups
+    },
+    removeHiddenGroup: (state: any, action: any) => {
+      state.hiddenGroups = state.hiddenGroups.filter(function(group: string) {return group !== action.payload})
+    },
     clearCurrentGraph: (state: any) => {
       state.currentNodes = initialState.currentNodes
       state.currentLinks = initialState.currentLinks
+      state.selectedNodes = initialState.selectedNodes
+      state.selectedLinks = initialState.selectedLinks
     }
   },
 });
@@ -80,6 +101,8 @@ export const {
   filterGraphDataSuccess,
   filterGraphDataFail,
   setHiddenGroups,
+  clearHiddenGroups,
+  removeHiddenGroup,
   clearCurrentGraph
 } = graphSlice.actions;
 
@@ -89,6 +112,8 @@ export const selectAllLinks = (state: RootState) => state.graph && state.graph.a
 export const isGraphDisplayable = (state: RootState) => state.graph && state.graph.currentNodes.length > 0;
 export const selectCurrentNodes = (state: RootState) => state.graph && state.graph.currentNodes;
 export const selectCurrentLinks = (state: RootState) => state.graph && state.graph.currentLinks;
+export const selectSelectedNodes = (state: RootState) => state.graph && state.graph.selectedNodes;
+export const selectSelectedLinks = (state: RootState) => state.graph && state.graph.selectedLinks;
 export const selectHiddenGroups = (state: RootState) => state.graph && state.graph.hiddenGroups;
 
 // Reducer
