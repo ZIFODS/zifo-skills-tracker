@@ -46,8 +46,6 @@ const graphSlice = createSlice({
       state.loading = false;
       state.allNodes = action.payload.data.nodes;
       state.allLinks = action.payload.data.links;
-      state.currentNodes = action.payload.data.nodes;
-      state.currentLinks = action.payload.data.links;
     },
     getGraphDataFail: (state: any) => {
       state.loading = false;
