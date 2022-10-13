@@ -176,10 +176,6 @@ function GraphVis() {
             consultantNode
                 .filter(function(node: any) {return node.id !== d.id})
                 .attr("class", "consultNodesDeselected");
-            console.log(skillNode
-                .filter(function(node: any) {return !linkedSkillIds.includes(node.id)})
-                .attr("class", "skillNodesDeselected")
-                .select("foreignObject"))
             skillNode
                 .filter(function(node: any) {return !linkedSkillIds.includes(node.id)})
                 .attr("class", "skillNodesDeselected")
