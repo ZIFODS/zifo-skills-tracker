@@ -9,8 +9,25 @@ export default function BitwiseOperators() {
   const dispatch = useAppDispatch()
 
   const operator = useAppSelector(selectCurrentSearchOperator)
-  const parenthesis = useAppSelector(selectCurrentSearchParenthesis)
+  let parenthesis = useAppSelector(selectCurrentSearchParenthesis)
   const searchList = useAppSelector(selectRuleList)
+
+  const numOpenParentheses = searchList.filter(function(rule: any) {return rule.parenthesis === "["}).length
+  const numClosedParentheses = searchList.filter(function(rule: any) {return rule.parenthesis === "]"}).length
+  let parenthesesOpen = false
+  if (numOpenParentheses > 0) {
+    if (numClosedParentheses === 0) {
+      parenthesesOpen = true
+      if (parenthesis !== "]") {
+        parenthesis = ""
+      } 
+    }
+    if (numClosedParentheses > 0) {
+      if (parenthesis !== "[") {
+        parenthesis = ""
+      } 
+    }
+  }
 
   useEffect(() => {
     if (searchList.length > 0 && operator === "") {
@@ -54,10 +71,10 @@ export default function BitwiseOperators() {
         onChange={handleParenthesisChange}
         exclusive
       >
-        <ToggleButton value="[">
+        <ToggleButton value="[" disabled={parenthesesOpen}>
           [
         </ToggleButton>
-        <ToggleButton value="]">
+        <ToggleButton value="]" disabled={!parenthesesOpen}>
           ]
         </ToggleButton>
       </ToggleButtonGroup>
