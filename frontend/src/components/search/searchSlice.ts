@@ -1,31 +1,22 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { stat } from "fs";
 import { RootState } from "../../app/store";
 
-interface NodeSearch {
+export interface IRule {
   group: string;
   name: string;
-}
-
-interface BitwiseOperatorSearch {
   operator: string;
   parenthesis: string;
 }
 
-interface IRule {
-  type: string;
-  value: NodeSearch | BitwiseOperatorSearch
-}
-
 export interface SearchState {
   ruleList: IRule[]
-  currentNodeSearch: NodeSearch
-  currentBitwiseOperatorSearch: BitwiseOperatorSearch
+  currentRule: IRule
 }
 
 const initialState: SearchState = {
   ruleList: [],
-  currentNodeSearch: {group: "", name: ""},
-  currentBitwiseOperatorSearch: {operator: "", parenthesis: ""}
+  currentRule: {group: "", name: "", operator: "", parenthesis: ""},
 };
 
 const searchSlice = createSlice({
@@ -34,20 +25,23 @@ const searchSlice = createSlice({
   reducers: {
     // Reducer to update search state
     setCurrentNodeSearch: (state: any, action: any) => {
-      state.currentNodeSearch = action.payload
+      state.currentRule.group = action.payload.group
+      state.currentRule.name = action.payload.name
     },
     setCurrentBitwiseOperatorSearch: (state: any, action: any) => {
-      state.currentBitwiseOperatorSearch = action.payload
+      state.currentRule.operator = action.payload.operator
+      state.currentRule.parenthesis = action.payload.parenthesis
     },
     addCurrentRulesToList: (state: any) => {
-      state.ruleList.push({type: "bitwise", value: state.currentBitwiseOperatorSearch})
-      state.ruleList.push({type: "node", value: state.currentNodeSearch})
+      state.ruleList.push(state.currentRule)
     },
     clearCurrentNodeSearch: (state: any) => {
-      state.currentNodeSearch = initialState.currentNodeSearch
+      state.currentRule.group = initialState.currentRule.group
+      state.currentRule.name = initialState.currentRule.name
     },
     clearCurrentBitwiseOperatorSearch: (state: any) => {
-      state.currentBitwiseSearch = initialState.currentBitwiseOperatorSearch
+      state.currentRule.operator = initialState.currentRule.operator
+      state.currentRule.parenthesis = initialState.currentRule.parenthesis
     },
     clearRuleList: (state: any) => {
       state.ruleList = initialState.ruleList
@@ -67,10 +61,10 @@ export const {
 
 // Selectors
 export const selectRuleList = (state: RootState) => state.search && state.search.ruleList;
-export const selectCurrentSearchGroup = (state: RootState) => state.search && state.search.currentNodeSearch.group
-export const selectCurrentSearchNode = (state: RootState) => state.search && state.search.currentNodeSearch.name
-export const selectCurrentSearchOperator = (state: RootState) => state.search && state.search.currentBitwiseOperatorSearch.operator
-export const selectCurrentSearchParenthesis = (state: RootState) => state.search && state.search.currentBitwiseOperatorSearch.parenthesis
+export const selectCurrentSearchGroup = (state: RootState) => state.search && state.search.currentRule.group
+export const selectCurrentSearchNode = (state: RootState) => state.search && state.search.currentRule.name
+export const selectCurrentSearchOperator = (state: RootState) => state.search && state.search.currentRule.operator
+export const selectCurrentSearchParenthesis = (state: RootState) => state.search && state.search.currentRule.parenthesis
 
 // Reducer
 export default searchSlice.reducer;
