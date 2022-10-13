@@ -1,7 +1,7 @@
 import axios from "axios";
 
-const baseURL = "ec2-35-176-61-224.eu-west-2.compute.amazonaws.com"
-// baseURL = "localhost"
+let baseURL = "ec2-35-176-61-224.eu-west-2.compute.amazonaws.com"
+baseURL = "localhost"
 
 export default class GraphDataService {
   public static fetchGraphData = () =>
