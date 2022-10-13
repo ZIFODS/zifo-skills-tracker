@@ -3,7 +3,7 @@ import { getUniqueGroups, useD3 } from "../../hooks/useD3"
 import * as d3 from "d3"
 import "../../css/style.css"
 import { useAppSelector } from "../../app/hooks"
-import { selectCurrentLinks, selectCurrentNodes } from "./graphSlice"
+import { selectSelectedLinks, selectSelectedNodes } from "./graphSlice"
 
 
 function processSkillName(name: string) {
@@ -53,8 +53,8 @@ const calculateChargeStrength = (node: any) => {
 
 function GraphVis() {
 
-    var nodeData = useAppSelector(selectCurrentNodes);
-    var linkData = useAppSelector(selectCurrentLinks);
+    var nodeData = useAppSelector(selectSelectedNodes);
+    var linkData = useAppSelector(selectSelectedLinks);
 
     nodeData = JSON.parse(JSON.stringify(nodeData))
     linkData = JSON.parse(JSON.stringify(linkData))

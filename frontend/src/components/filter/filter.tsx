@@ -1,10 +1,11 @@
 import React from "react"
 import { Stack, Typography, Paper, Box, FormGroup, FormControlLabel, Checkbox, FormControl } from "@mui/material";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
-import { selectHiddenGroups, selectAllNodes, selectCurrentNodes, setHiddenGroups, filterGraphDataRequest } from "../graph/graphSlice";
+import { selectHiddenGroups, selectAllNodes, selectCurrentNodes, setHiddenGroups, filterGraphDataRequest, selectSelectedNodes, removeHiddenGroup } from "../graph/graphSlice";
 import { getUniqueGroups } from "../../hooks/useD3";
 import {groupDisplayNameLinks} from "../../constants/data"
 import { selectRuleList } from "../search/searchSlice";
+import ShowAllButton from "./showAllButton";
 
 const groupsIntoChunks = (groups: string[]) => {
   const chunkSize = 6;
@@ -21,6 +22,7 @@ export default function Filter() {
 
   const allNodeData = useAppSelector(selectAllNodes)
   const currentNodeData = useAppSelector(selectCurrentNodes)
+  const selectedNodeData = useAppSelector(selectSelectedNodes)
 
   let hiddenGroups = useAppSelector(selectHiddenGroups)
   hiddenGroups = JSON.parse(JSON.stringify(hiddenGroups))
@@ -30,15 +32,22 @@ export default function Filter() {
   
   const allGroups = getUniqueGroups(allNodeData)
   const currentGroups = getUniqueGroups(currentNodeData)
+  let selectedGroups = getUniqueGroups(selectedNodeData)
 
   const allGroupsChunked = groupsIntoChunks(allGroups)
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const group = event.target.name
     if (group !== undefined) {
-      if (!hiddenGroups.includes(group)) {
-        hiddenGroups.push(group)
-        dispatch(setHiddenGroups(group))
+      if (!event.target.checked) {
+        if (!hiddenGroups.includes(group)) {
+          hiddenGroups.push(group)
+          dispatch(setHiddenGroups(group))
+        }
+      }
+      else {
+        hiddenGroups = hiddenGroups.filter(function(g: string) {return g !== group})
+        dispatch(removeHiddenGroup(group))
       }
     }
     skills.length && dispatch(filterGraphDataRequest({skills: skills, hiddenGroups: hiddenGroups}))
@@ -46,12 +55,14 @@ export default function Filter() {
 
   return(
     <Paper sx={{border:"1px solid black", p:2.5, backgroundColor: "#e5e5e5"}}>
-        <Stack>
-          <Box sx={{borderBottom:"1px solid black", pb: 1, mb: 1}}>
-            <Typography variant="h5" sx={{color: "#1f226a", fontWeight: "bold"}}>
-                Categories
-            </Typography>
-          </Box>
+          <Stack direction="row" justifyContent="space-between" alignItems="center">
+            <Box sx={{borderBottom:"1px solid #1f226a", pb: 1, mb: 1}}>
+              <Typography variant="h5" sx={{color: "#1f226a", fontWeight: "bold"}}>
+                  Categories
+              </Typography>
+            </Box>
+            <ShowAllButton/>
+          </Stack>
           <Stack direction="row" spacing={3}>
         {allGroupsChunked.map(function(chunk: string[]) {
           return(
@@ -61,9 +72,9 @@ export default function Filter() {
               <FormControl component="fieldset" variant="outlined">
                 <FormGroup >
                   {currentGroups.includes(group) ?
-                  <FormControlLabel control={<Checkbox defaultChecked onChange={handleChange} sx={{transform: "scale(0.8)", p:0.5, pl:1.5}} />} label={<Typography sx={{fontSize:14}}>{groupDisplayNameLinks[group]}</Typography> } name={group}/>
+                  <FormControlLabel control={<Checkbox checked={selectedGroups.includes(group)} onChange={handleChange} sx={{transform: "scale(0.8)", p:0.5, pl:1.5}} />} label={<Typography sx={{fontSize:14}}>{groupDisplayNameLinks[group]}</Typography> } name={group}/>
                   :
-                  <FormControlLabel disabled control={<Checkbox defaultChecked onChange={handleChange} sx={{transform: "scale(0.8)", p:0.5, pl:1.5}}/>} label={<Typography sx={{fontSize:14}}>{groupDisplayNameLinks[group]}</Typography>} name={group}/>
+                  <FormControlLabel disabled control={<Checkbox checked={true} disabled onChange={handleChange} sx={{transform: "scale(0.8)", p:0.5, pl:1.5}}/>} label={<Typography sx={{fontSize:14}}>{groupDisplayNameLinks[group]}</Typography>} name={group}/>
                   }
                 </FormGroup>
               </FormControl>
@@ -73,7 +84,6 @@ export default function Filter() {
               </Stack>
           )
         })}
-        </Stack>
         </Stack>
     </Paper>
   )
