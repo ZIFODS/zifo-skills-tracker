@@ -6,6 +6,7 @@ import { getUniqueGroups } from "../../hooks/useD3";
 import {groupDisplayNameLinks} from "../../constants/data"
 import { selectRuleList } from "../search/searchSlice";
 import ShowAllButton from "./showAllButton";
+import HideAllButton from "./hideAllButton";
 
 const groupsIntoChunks = (groups: string[]) => {
   const chunkSize = 6;
@@ -61,7 +62,10 @@ export default function Filter() {
                   Categories
               </Typography>
             </Box>
-            <ShowAllButton/>
+            <Stack spacing={1} direction="row" justifyContent="flex-end">
+              <HideAllButton/>
+              <ShowAllButton/>
+            </Stack>
           </Stack>
           <Stack direction="row" spacing={3}>
         {allGroupsChunked.map(function(chunk: string[]) {
@@ -71,7 +75,10 @@ export default function Filter() {
             return(
               <FormControl component="fieldset" variant="outlined">
                 <FormGroup >
-                  {currentGroups.includes(group) ?
+                  {group === "Consultant" ?
+                  <FormControlLabel disabled control={<Checkbox checked={true} disabled onChange={handleChange} sx={{transform: "scale(0.8)", p:0.5, pl:1.5}}/>} label={<Typography sx={{fontSize:14}}>{groupDisplayNameLinks[group]}</Typography>} name={group}/>
+                  :
+                  currentGroups.includes(group) ?
                   <FormControlLabel control={<Checkbox checked={selectedGroups.includes(group)} onChange={handleChange} sx={{transform: "scale(0.8)", p:0.5, pl:1.5}} />} label={<Typography sx={{fontSize:14}}>{groupDisplayNameLinks[group]}</Typography> } name={group}/>
                   :
                   <FormControlLabel disabled control={<Checkbox checked={true} disabled onChange={handleChange} sx={{transform: "scale(0.8)", p:0.5, pl:1.5}}/>} label={<Typography sx={{fontSize:14}}>{groupDisplayNameLinks[group]}</Typography>} name={group}/>
