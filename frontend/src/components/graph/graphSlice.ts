@@ -46,8 +46,6 @@ const graphSlice = createSlice({
       state.loading = false;
       state.allNodes = action.payload.data.nodes;
       state.allLinks = action.payload.data.links;
-      state.currentNodes = action.payload.data.nodes;
-      state.currentLinks = action.payload.data.links;
     },
     getGraphDataFail: (state: any) => {
       state.loading = false;
@@ -65,6 +63,10 @@ const graphSlice = createSlice({
     },
     setHiddenGroups: (state: any, action: any) => {
       state.hiddenGroups.push(action.payload)
+    },
+    clearCurrentGraph: (state: any) => {
+      state.currentNodes = initialState.currentNodes
+      state.currentLinks = initialState.currentLinks
     }
   },
 });
@@ -78,11 +80,13 @@ export const {
   filterGraphDataSuccess,
   filterGraphDataFail,
   setHiddenGroups,
+  clearCurrentGraph
 } = graphSlice.actions;
 
 // Selectors
 export const selectAllNodes = (state: RootState) => state.graph && state.graph.allNodes;
 export const selectAllLinks = (state: RootState) => state.graph && state.graph.allLinks;
+export const isGraphDisplayable = (state: RootState) => state.graph && state.graph.currentNodes.length > 0;
 export const selectCurrentNodes = (state: RootState) => state.graph && state.graph.currentNodes;
 export const selectCurrentLinks = (state: RootState) => state.graph && state.graph.currentLinks;
 export const selectHiddenGroups = (state: RootState) => state.graph && state.graph.hiddenGroups;

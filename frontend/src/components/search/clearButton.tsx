@@ -2,7 +2,7 @@ import React from "react"
 import { Button } from "@mui/material"
 import { useAppDispatch, useAppSelector } from "../../app/hooks"
 import { clearRuleList, selectRuleList } from "./searchSlice"
-import { getGraphDataRequest } from "../graph/graphSlice"
+import { clearCurrentGraph, getGraphDataRequest } from "../graph/graphSlice"
 import { useEffect } from "react"
 
 export default function ClearButton() {
@@ -13,6 +13,7 @@ export default function ClearButton() {
 
   const handleClearChange = () => {
     dispatch(clearRuleList());
+    dispatch(clearCurrentGraph())
     dispatch(getGraphDataRequest());
   }
 
