@@ -63,7 +63,7 @@ export default function Filter() {
                   {currentGroups.includes(group) ?
                   <FormControlLabel control={<Checkbox defaultChecked onChange={handleChange} sx={{transform: "scale(0.8)", p:0.5, pl:1.5}} />} label={<Typography sx={{fontSize:14}}>{groupDisplayNameLinks[group]}</Typography> } name={group}/>
                   :
-                  <FormControlLabel disabled control={<Checkbox defaultChecked onChange={handleChange} sx={{transform: "scale(0.8)"}}/>} label={<Typography sx={{fontSize:14}}>{groupDisplayNameLinks[group]}</Typography>} name={group}/>
+                  <FormControlLabel disabled control={<Checkbox defaultChecked onChange={handleChange} sx={{transform: "scale(0.8)", p:0.5, pl:1.5}}/>} label={<Typography sx={{fontSize:14}}>{groupDisplayNameLinks[group]}</Typography>} name={group}/>
                   }
                 </FormGroup>
               </FormControl>
