@@ -2,9 +2,9 @@ import React from "react"
 import { getUniqueGroups, useD3 } from "../../hooks/useD3"
 import * as d3 from "d3"
 import "../../css/style.css"
-import { useAppDispatch, useAppSelector } from "../../app/hooks"
-import { getGraphDataRequest, GraphNode, selectCurrentLinks, selectCurrentNodes, selectHiddenGroups } from "./graphSlice"
-import { useEffect } from "react";
+import { useAppSelector } from "../../app/hooks"
+import { selectCurrentLinks, selectCurrentNodes } from "./graphSlice"
+
 
 function processSkillName(name: string) {
     let trimmedName = ""
@@ -52,11 +52,6 @@ const calculateChargeStrength = (node: any) => {
 }
 
 function GraphVis() {
-    const dispatch = useAppDispatch();
-
-    useEffect(() => {
-        dispatch(getGraphDataRequest());
-      }, [dispatch]);
 
     var nodeData = useAppSelector(selectCurrentNodes);
     var linkData = useAppSelector(selectCurrentLinks);
@@ -65,9 +60,6 @@ function GraphVis() {
     linkData = JSON.parse(JSON.stringify(linkData))
 
     const groups = getUniqueGroups(nodeData)
-
-    // nodeData = graphData.nodes
-    // linkData = graphData.links
 
     const ref = useD3((svg: any) => {
 

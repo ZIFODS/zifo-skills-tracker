@@ -1,11 +1,23 @@
 import React from 'react'
 import GraphVis from "./components/graph/Graph"
 import Search from "./components/search/search"
-import {Box, Stack} from "@mui/material"
+import {Box, Stack, Typography} from "@mui/material"
 import Filter from './components/filter/filter';
+import { useAppDispatch, useAppSelector } from './app/hooks';
+import { getGraphDataRequest, isGraphDisplayable } from './components/graph/graphSlice';
+import { useEffect } from "react";
 
 
 function App(): JSX.Element {
+
+  const dispatch = useAppDispatch();
+
+  useEffect(() => {
+      dispatch(getGraphDataRequest());
+    }, [dispatch]);
+
+  var graphDisplayable = useAppSelector(isGraphDisplayable);
+
   return (
     <Stack 
       direction="row"
@@ -19,8 +31,16 @@ function App(): JSX.Element {
         <Search/>
         <Filter/>
       </Stack>
-      <Box sx={{display:"flex", flexGrow: 1, border:"1px solid #1a6714"}}>
-        <GraphVis/>
+      <Box sx={{display:"flex", flexGrow: 1, border:"1px solid #1a6714", alignItems:"center", justifyContent:"center"}}>
+        {graphDisplayable ?
+          <GraphVis/>
+          :
+          <Typography variant="h4" sx={{color: "#808080", pb: 30}}>
+            Enter a search query to display the graph
+          </Typography>
+        }
+
+        
       </Box>
     </Stack>
   );

@@ -81,6 +81,7 @@ export const {
 // Selectors
 export const selectAllNodes = (state: RootState) => state.graph && state.graph.allNodes;
 export const selectAllLinks = (state: RootState) => state.graph && state.graph.allLinks;
+export const isGraphDisplayable = (state: RootState) => state.graph && state.graph.currentNodes.length > 0;
 export const selectCurrentNodes = (state: RootState) => state.graph && state.graph.currentNodes;
 export const selectCurrentLinks = (state: RootState) => state.graph && state.graph.currentLinks;
 export const selectHiddenGroups = (state: RootState) => state.graph && state.graph.hiddenGroups;
