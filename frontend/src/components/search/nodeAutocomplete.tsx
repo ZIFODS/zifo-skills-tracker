@@ -2,7 +2,7 @@ import React from "react"
 import { Autocomplete, TextField } from "@mui/material";
 import { GraphNode, selectAllNodes } from "../graph/graphSlice";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
-import { selectCurrentSearchGroup, selectCurrentSearchNode, setCurrentSearchGroup, setCurrentSearchNode } from "./searchSlice";
+import { selectCurrentSearchGroup, selectCurrentSearchNode, setCurrentNodeSearch } from "./searchSlice";
 
 function getNodeNames(nodes: GraphNode[], group: string) {
     nodes = nodes.filter(function(node: GraphNode) {return(node.group !== "Consultant")})
@@ -21,12 +21,12 @@ export default function NodeAutocomplete() {
     const currentGroup = useAppSelector(selectCurrentSearchGroup)
     const currentNode = useAppSelector(selectCurrentSearchNode)
 
+
     const nodes = getNodeNames(nodeData, currentGroup)
 
-    const handleChange = (event: any, value: string | null) => {
+    const handleChange = (_event: any, value: string | null) => {
         const group = getGroupFromNodeName(nodeData, value)
-        dispatch(setCurrentSearchGroup(group))
-        dispatch(setCurrentSearchNode(value))
+        dispatch(setCurrentNodeSearch({group: group, name: value}))
     }
 
     return(

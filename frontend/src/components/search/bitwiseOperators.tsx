@@ -1,32 +1,56 @@
 import React from "react"
-import { Button, Stack, ToggleButtonGroup, ToggleButton } from "@mui/material"
+import { Stack, ToggleButtonGroup, ToggleButton } from "@mui/material"
 import { useAppDispatch, useAppSelector } from "../../app/hooks"
-import { clearSearchList, selectSearchList } from "./searchSlice"
-import { getGraphDataRequest } from "../graph/graphSlice"
+import { selectCurrentSearchOperator, selectCurrentSearchParenthesis, selectRuleList, setCurrentBitwiseOperatorSearch } from "./searchSlice"
 import { useEffect } from "react"
 
 export default function BitwiseOperators() {
 
   const dispatch = useAppDispatch()
 
-  const searchList = useAppSelector(selectSearchList)
+  const operator = useAppSelector(selectCurrentSearchOperator)
+  let parenthesis = useAppSelector(selectCurrentSearchParenthesis)
+  const searchList = useAppSelector(selectRuleList)
 
-  const [operator, setOperator] = React.useState<string | null>("AND")
+  let disableParentheses = false
+  const numOpenParentheses = searchList.filter(function(rule: any) {return rule.parenthesis === "["}).length
+  const numClosedParentheses = searchList.filter(function(rule: any) {return rule.parenthesis === "]"}).length
+  let parenthesesOpen = false
+  if (numOpenParentheses > 0) {
+    if (numClosedParentheses === 0) {
+      parenthesesOpen = true
+      if (parenthesis !== "]") {
+        parenthesis = ""
+      } 
+    }
+    if (numClosedParentheses > 0) {
+      // only allow one set of parentheses for now
+      parenthesis = ""
+      disableParentheses = true
+    }
+  }
+
+  useEffect(() => {
+    if (searchList.length > 0 && operator === "") {
+      dispatch(setCurrentBitwiseOperatorSearch({operator: "AND", parenthesis: parenthesis}))
+    }
+    else if (searchList.length === 0) {
+      dispatch(setCurrentBitwiseOperatorSearch({operator: "", parenthesis: ""}))
+    }
+  }, [searchList])
 
   const handleOperatorChange = (
     _event: React.MouseEvent<HTMLElement>,
     newOperator: string | null,
   )  => {
-    setOperator(newOperator);
+    dispatch(setCurrentBitwiseOperatorSearch({operator: newOperator, parenthesis: parenthesis}));
   }
 
-  const [parentheses, setParentheses] = React.useState<string | null>("")
-
-  const handleParenthesesChange = (
+  const handleParenthesisChange = (
     _event: React.MouseEvent<HTMLElement>,
     newParentheses: string | null,
   )  => {
-    setParentheses(newParentheses);
+    dispatch(setCurrentBitwiseOperatorSearch({operator: operator, parenthesis: newParentheses}));
   }
 
   return(
@@ -36,21 +60,22 @@ export default function BitwiseOperators() {
         exclusive
         onChange={handleOperatorChange}
       >
-        <ToggleButton value="AND">
+        <ToggleButton value="AND" disabled={searchList.length === 0}>
           AND
         </ToggleButton>
-        <ToggleButton value="OR">
+        <ToggleButton value="OR" disabled={searchList.length === 0}>
           OR
         </ToggleButton>
       </ToggleButtonGroup>
       <ToggleButtonGroup
-        value={parentheses}
-        onChange={handleParenthesesChange}
+        value={parenthesis}
+        onChange={handleParenthesisChange}
+        exclusive
       >
-        <ToggleButton value="[">
+        <ToggleButton value="[" disabled={parenthesesOpen || disableParentheses}>
           [
         </ToggleButton>
-        <ToggleButton value="]">
+        <ToggleButton value="]" disabled={!parenthesesOpen || disableParentheses}>
           ]
         </ToggleButton>
       </ToggleButtonGroup>

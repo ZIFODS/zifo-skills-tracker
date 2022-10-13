@@ -2,14 +2,14 @@ import React from "react"
 import { Button } from "@mui/material"
 import { useAppDispatch, useAppSelector } from "../../app/hooks"
 import { filterGraphDataRequest, selectHiddenGroups } from "../graph/graphSlice"
-import { selectSearchList } from "./searchSlice"
+import { selectRuleList } from "./searchSlice"
 
 export default function ApplyButton() {
 
   const dispatch = useAppDispatch()
 
   const hiddenGroups = useAppSelector(selectHiddenGroups)
-  let skills = useAppSelector(selectSearchList)
+  let skills = useAppSelector(selectRuleList)
   skills = skills.map(function(skill: any) {return skill.name})
 
   const handleChange = () => {

@@ -4,5 +4,5 @@ import searchReducer from "../components/search/searchSlice";
 
 export const rootReducer = combineReducers({
     graph: graphReducer,
-    search: searchReducer
+    search: searchReducer,
   });

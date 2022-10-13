@@ -4,7 +4,7 @@ import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { selectHiddenGroups, selectAllNodes, selectCurrentNodes, setHiddenGroups, filterGraphDataRequest } from "../graph/graphSlice";
 import { getUniqueGroups } from "../../hooks/useD3";
 import {groupDisplayNameLinks} from "../../constants/data"
-import { selectSearchList } from "../search/searchSlice";
+import { selectRuleList } from "../search/searchSlice";
 
 const groupsIntoChunks = (groups: string[]) => {
   const chunkSize = 6;
@@ -25,7 +25,7 @@ export default function Filter() {
   let hiddenGroups = useAppSelector(selectHiddenGroups)
   hiddenGroups = JSON.parse(JSON.stringify(hiddenGroups))
 
-  let skills = useAppSelector(selectSearchList)
+  let skills = useAppSelector(selectRuleList)
   skills = skills.map(function(skill: any) {return skill.name})
   
   const allGroups = getUniqueGroups(allNodeData)
