@@ -6,12 +6,12 @@ import { useAppDispatch, useAppSelector } from "../../app/hooks"
 import { getGraphDataRequest, GraphNode, selectCurrentLinks, selectCurrentNodes, selectHiddenGroups } from "./graphSlice"
 import { useEffect } from "react";
 
-function skillNameHTML(name: string) {
+function processSkillName(name: string) {
     let trimmedName = ""
     const splitWords = name.split(" ")
     splitWords.forEach((word, i) => {
         if (word.length > 12) {
-            trimmedName += word.substring(0, 10) + "."
+            trimmedName += word.substring(0, 12) + "."
         }
         else {
             trimmedName += word
@@ -20,6 +20,11 @@ function skillNameHTML(name: string) {
             trimmedName += " "
         }
     })
+    return trimmedName
+}
+
+function skillNameHTML(name: string) {
+    const trimmedName = processSkillName(name);
     return `<p style="text-align: center;">${trimmedName}</p>`
 }
 
@@ -30,6 +35,20 @@ function consultantInitials(name: string) {
         initials += word[0].toUpperCase()
     })
     return initials
+}
+
+const calculateChargeStrength = (node: any) => {
+    const trimmedName = processSkillName(node.name)
+    const nameLength = trimmedName.length
+    if (node.group == "Consultant") {
+        return -200
+    }
+    else if (nameLength > 20) {
+        return -40 * nameLength
+    }
+    else {
+        return -550
+    }
 }
 
 function GraphVis() {
@@ -69,26 +88,17 @@ function GraphVis() {
             else {
                 const i = groups.indexOf(groupName)
                 // (xk,yk)=(x0+rcos(2kπ/n),y0+rsin(2kπ/n)) for k=0 to n−1.
-                const x = svgWidth/2 + (svgHeight/2 - 300) * Math.cos((2 * i * Math.PI) / groups.length)
-                const y = svgHeight/2 + (svgHeight/2 - 300) * Math.sin((2 * i * Math.PI) / groups.length)
+                const x = svgWidth/2 + (svgHeight/2 - 350) * Math.cos((2 * i * Math.PI) / groups.length)
+                const y = svgHeight/2 + (svgHeight/2 - 350) * Math.sin((2 * i * Math.PI) / groups.length)
                 return [x, y]
             }
         }
 
         // Add "forces" to the simulation here
         var simulation = d3.forceSimulation()
-            .force("center", d3.forceCenter(svgWidth/2, svgHeight/2))
+            // .force("center", d3.forceCenter(svgWidth/2, svgHeight/2))
             .force("charge", d3.forceManyBody().strength(function(d: any) {
-                const nameLength = d.name.length
-                if (d.group == "Consultant") {
-                    return -200
-                }
-                else if (nameLength > 5) {
-                    return -20 * nameLength
-                }
-                else {
-                    return -120
-                }
+                return calculateChargeStrength(d)
             }))
             .force("link", d3.forceLink().id(function(d: any) { return d.id; }).strength(0))
 
@@ -151,11 +161,11 @@ function GraphVis() {
             .attr("fill", function(d: any) { return color(d.group); })
 
         var skillNodeText = skillNode.append("foreignObject")
-            .attr("width", 60)
+            .attr("width", 80)
             .attr("height", 100)
 
         skillNodeText.append("xhtml:body")
-            .style("font-size", "8px")
+            .style("font-size", "10px")
             .style("font-family", "helvetica")
             .style("text-align", "center")
             .html(function(d: any) {return skillNameHTML(d.name)})
@@ -176,10 +186,6 @@ function GraphVis() {
             consultantNode
                 .filter(function(node: any) {return node.id !== d.id})
                 .attr("class", "consultNodesDeselected");
-            console.log(skillNode
-                .filter(function(node: any) {return !linkedSkillIds.includes(node.id)})
-                .attr("class", "skillNodesDeselected")
-                .select("foreignObject"))
             skillNode
                 .filter(function(node: any) {return !linkedSkillIds.includes(node.id)})
                 .attr("class", "skillNodesDeselected")
@@ -237,7 +243,7 @@ function GraphVis() {
             skillNodeCircle.attr("cx", function(d: any) {return d.x += (getCentralPoint(d.group)[0] - d.x) * k;})
                 .attr("cy", function(d: any) { return d.y += (getCentralPoint(d.group)[1] - d.y) * k;});
                 
-            skillNodeText.attr("x", function(d: any) { return d.x - 30; })
+            skillNodeText.attr("x", function(d: any) { return d.x - 40; })
                 .attr("y", function(d: any) { return d.y - 1; });
 
             linkLine
