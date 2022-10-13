@@ -12,6 +12,7 @@ export default function BitwiseOperators() {
   let parenthesis = useAppSelector(selectCurrentSearchParenthesis)
   const searchList = useAppSelector(selectRuleList)
 
+  let disableParentheses = false
   const numOpenParentheses = searchList.filter(function(rule: any) {return rule.parenthesis === "["}).length
   const numClosedParentheses = searchList.filter(function(rule: any) {return rule.parenthesis === "]"}).length
   let parenthesesOpen = false
@@ -23,9 +24,9 @@ export default function BitwiseOperators() {
       } 
     }
     if (numClosedParentheses > 0) {
-      if (parenthesis !== "[") {
-        parenthesis = ""
-      } 
+      // only allow one set of parentheses for now
+      parenthesis = ""
+      disableParentheses = true
     }
   }
 
@@ -71,10 +72,10 @@ export default function BitwiseOperators() {
         onChange={handleParenthesisChange}
         exclusive
       >
-        <ToggleButton value="[" disabled={parenthesesOpen}>
+        <ToggleButton value="[" disabled={parenthesesOpen || disableParentheses}>
           [
         </ToggleButton>
-        <ToggleButton value="]" disabled={!parenthesesOpen}>
+        <ToggleButton value="]" disabled={!parenthesesOpen || disableParentheses}>
           ]
         </ToggleButton>
       </ToggleButtonGroup>
