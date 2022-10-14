@@ -1,8 +1,7 @@
 import React from "react"
 import { Button } from "@mui/material";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
-import { selectHiddenGroups, filterGraphDataRequest, isGraphDisplayable, setHiddenGroups, selectCurrentNodes, selectAllNodes } from "../graph/graphSlice";
-import { selectRuleList } from "../search/searchSlice";
+import { filterGraphDataRequest, isGraphDisplayable, setHiddenGroups, selectAllNodes, selectCurrentSearchedNodes } from "../graph/graphSlice";
 import { getUniqueGroups } from "../../hooks/useD3";
 
 export default function HideAllButton() {
@@ -14,8 +13,7 @@ export default function HideAllButton() {
   const allNodeData = useAppSelector(selectAllNodes)
   const allGroups = getUniqueGroups(allNodeData)
 
-  let skills = useAppSelector(selectRuleList)
-  skills = skills.map(function(skill: any) {return skill.name})
+  let skills = useAppSelector(selectCurrentSearchedNodes)
 
   const handleClick = () => {
     const allSkillGroups = allGroups.filter(function(group: string) {return group !== "Consultant"})
