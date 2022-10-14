@@ -6,7 +6,7 @@ import { selectCurrentSearchGroup, selectCurrentSearchNode, setCurrentNodeSearch
 
 function getNodeNames(nodes: GraphNode[], group: string) {
     nodes = nodes.filter(function(node: GraphNode) {return(node.group !== "Consultant")})
-    return nodes.map(function(node: GraphNode) {return(node.name)})
+    return nodes.map(function(node: GraphNode) {return(node.name)}).sort()
   }
 
 function getGroupFromNodeName(nodes: GraphNode[], name: string | null) {
@@ -20,7 +20,6 @@ export default function NodeAutocomplete() {
     const nodeData = useAppSelector(selectAllNodes)
     const currentGroup = useAppSelector(selectCurrentSearchGroup)
     const currentNode = useAppSelector(selectCurrentSearchNode)
-
 
     const nodes = getNodeNames(nodeData, currentGroup)
 
