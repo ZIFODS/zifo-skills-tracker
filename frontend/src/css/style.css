@@ -65,3 +65,7 @@ div.tooltip {
 	pointer-events: none;
 	font-weight: bold
   }
+
+.foreignObject {
+	overflow: visible
+}

@@ -25,7 +25,7 @@ function processSkillName(name: string) {
 
 function skillNameHTML(name: string) {
     const trimmedName = processSkillName(name);
-    return `<p style="text-align: center;">${trimmedName}</p>`
+    return `<center style="display: inline-flex;">${trimmedName}</center>`
 }
 
 function consultantInitials(name: string) {
@@ -153,13 +153,13 @@ function GraphVis() {
             .attr("fill", function(d: any) { return color(d.group); })
 
         var skillNodeText = skillNode.append("foreignObject")
-            .attr("width", 80)
-            .attr("height", 100)
+            .attr("class", "foreignObject")
+            .attr("width", 1)
+            .attr("height", 1)
 
         skillNodeText.append("xhtml:body")
             .style("font-size", "10px")
             .style("font-family", "helvetica")
-            .style("text-align", "center")
             .html(function(d: any) {return skillNameHTML(d.name)})
 
         var div = d3.select("body").append("div")
@@ -209,6 +209,49 @@ function GraphVis() {
                 .style("opacity", 0);
             });
 
+        skillNode.on("mouseover", function(event: any, d: any) {
+            const linkedConsultants = link.filter(function(l: any) {return l.source.id === d.id || l.target.id === d.id})._groups[0]
+            const linkedConsultantIds = linkedConsultants.map(function(g: any) {return g.__data__.source.id})
+            link
+                .filter(function(l: any) {return l.source.id === d.id || l.target.id === d.id})
+                .attr("class", "linksSelected")
+            link
+                .filter(function(l: any) {return l.source.id !== d.id && l.target.id !== d.id})
+                .attr("class", "linksDeselected")
+            consultantNode
+                .filter(function(node: any) {return !linkedConsultantIds.includes(node.id)})
+                .attr("class", "consultNodesDeselected");
+            skillNode
+                .filter(function(node: any) {return node.id !== d.id})
+                .attr("class", "skillNodesDeselected")
+                .select("foreignObject")
+                        .style("opacity", "0.1")
+            skillNode
+                .filter(function(node: any) {return node.id === d.id})
+                .select("foreignObject")
+                        .style("font-weight", "bold")
+            // div.transition()
+            //     .duration(200)
+            //     .style("opacity", 1);
+            // div.html(d.name.split(" ").join("<br/>"))
+            //     .style("left", (event.pageX) + "px")
+            //     .style("top", (event.pageY) + "px");
+            })
+            .on("mouseout", function(d: any) {
+            link
+                .attr("class", "links")
+            consultantNode
+                .attr("class", "consultNodes")
+            skillNode
+                .attr("class", "skillNodes")
+                .select("foreignObject")
+                    .style("opacity", "1")
+                    .style("font-weight", "normal")
+            // div.transition()
+            //     .duration(500)
+            //     .style("opacity", 0);
+            });
+
         // Attach nodes to the simulation, add listener on the "tick" event
         simulation
             .nodes(nodeData)
@@ -235,7 +278,10 @@ function GraphVis() {
             skillNodeCircle.attr("cx", function(d: any) {return d.x += (getCentralPoint(d.group)[0] - d.x) * k;})
                 .attr("cy", function(d: any) { return d.y += (getCentralPoint(d.group)[1] - d.y) * k;});
                 
-            skillNodeText.attr("x", function(d: any) { return d.x - 40; })
+            skillNodeText.attr("x", function(d: any) { 
+                const width = skillNode.filter(function(s: any) {return d.id === s.id}).select("foreignObject")._groups[0][0].children[0].scrollWidth;
+                return d.x - width/2 - 8;
+            })
                 .attr("y", function(d: any) { return d.y - 1; });
 
             linkLine
