@@ -35,7 +35,7 @@ function App(): JSX.Element {
         {graphDisplayable ?
           <GraphVis/>
           :
-          <Typography variant="h4" sx={{color: "#808080", pb: 30}}>
+          <Typography variant="h4" sx={{color: "#808080"}}>
             Enter a search query to display the graph
           </Typography>
         }
