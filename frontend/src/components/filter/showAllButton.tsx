@@ -1,8 +1,7 @@
 import React from "react"
 import { Button } from "@mui/material";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
-import { selectHiddenGroups, filterGraphDataRequest, clearHiddenGroups, isGraphDisplayable } from "../graph/graphSlice";
-import { selectRuleList } from "../search/searchSlice";
+import { filterGraphDataRequest, clearHiddenGroups, isGraphDisplayable, selectCurrentSearchedNodes } from "../graph/graphSlice";
 
 export default function ShowAllButton() {
 
@@ -10,8 +9,7 @@ export default function ShowAllButton() {
 
   const dispatch = useAppDispatch()
 
-  let skills = useAppSelector(selectRuleList)
-  skills = skills.map(function(skill: any) {return skill.name})
+  let skills = useAppSelector(selectCurrentSearchedNodes)
 
   const handleClick = () => {
     dispatch(clearHiddenGroups())
