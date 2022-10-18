@@ -48,18 +48,27 @@ async def filter_consultants_by_skills(
 
     print(all_hidden)
 
+    path_count = 0
     query = "MATCH pa=(c:Consultant)-[:KNOWS]->(sa) "
+
     for i, rule in enumerate(rules):
+
         name = rule["name"]
         if i == 0:
-            query += f"where s{char(i)}.Name = '{name}'"
+            query += f"where s{char(0)}.Name = '{name}'"
+            path_count += 1
 
         else:
-            query += f" unwind nodes(p{char(i-1)}) as n{char(i-1)}"
-            query += f" MATCH p{char(i)}=(n{char(i-1)})-[:KNOWS]->(s{char(i)}) where s{char(i)}.Name = '{name}'"
+            if rule["operator"] == "AND":
+                query += f" unwind nodes(p{char(path_count-1)}) as n{char(path_count-1)}"
+                query += f" MATCH p{char(path_count)}=(n{char(path_count-1)})-[:KNOWS]->(s{char(path_count)}) where s{char(path_count)}.Name = '{name}'"
+                path_count += 1
 
-    penult_char = char(len(rules) - 1)
-    final_char = char(len(rules))
+            elif rule["operator"] == "OR":
+                query += f" OR s{char(0)}.Name = '{name}'"
+
+    penult_char = char(path_count - 1)
+    final_char = char(path_count)
 
     query += f"unwind nodes(p{penult_char}) as n{penult_char} "
 
