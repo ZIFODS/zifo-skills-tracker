@@ -1,6 +1,8 @@
+import base64
 from typing import List
 from fastapi import APIRouter, Query
 from app.utils import neo4j_to_d3_cypher
+import json
 
 from pipeline.src.neo4j_connect import Neo4jConnection
 
@@ -24,10 +26,13 @@ def char(num: int):
 
 @consultants_router.get("/", name="Filter by skills")
 async def filter_consultants_by_skills(
-    skills: List[str] = Query(default=...),
+    skills: str = Query(default=...),
     hidden_groups: List[str] = Query(default=[])
     ):
     conn = Neo4jConnection(uri="neo4j://neo4j-db:7687", user="neo4j", password="test")
+
+    rules_str = base64.urlsafe_b64decode(skills)
+    rules = json.loads(rules_str)
 
     all_hidden = False
     if hidden_groups:
@@ -44,16 +49,17 @@ async def filter_consultants_by_skills(
     print(all_hidden)
 
     query = "MATCH pa=(c:Consultant)-[:KNOWS]->(sa) "
-    for i, skill in enumerate(skills):
+    for i, rule in enumerate(rules):
+        name = rule["name"]
         if i == 0:
-            query += f"where s{char(i)}.Name = '{skill}'"
+            query += f"where s{char(i)}.Name = '{name}'"
 
         else:
             query += f" unwind nodes(p{char(i-1)}) as n{char(i-1)}"
-            query += f" MATCH p{char(i)}=(n{char(i-1)})-[:KNOWS]->(s{char(i)}) where s{char(i)}.Name = '{skill}'"
+            query += f" MATCH p{char(i)}=(n{char(i-1)})-[:KNOWS]->(s{char(i)}) where s{char(i)}.Name = '{name}'"
 
-    penult_char = char(len(skills) - 1)
-    final_char = char(len(skills))
+    penult_char = char(len(rules) - 1)
+    final_char = char(len(rules))
 
     query += f"unwind nodes(p{penult_char}) as n{penult_char} "
 

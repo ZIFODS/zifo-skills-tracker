@@ -1,7 +1,7 @@
 import React from "react"
 import { Stack, Typography, Paper, Box, FormGroup, FormControlLabel, Checkbox, FormControl } from "@mui/material";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
-import { selectHiddenGroups, selectAllNodes, selectCurrentNodes, setHiddenGroups, filterGraphDataRequest, selectSelectedNodes, removeHiddenGroup, selectCurrentSearchedNodes } from "../graph/graphSlice";
+import { selectHiddenGroups, selectAllNodes, selectCurrentNodes, setHiddenGroups, filterGraphDataRequest, selectSelectedNodes, removeHiddenGroup, selectCurrentSearchedList } from "../graph/graphSlice";
 import { getUniqueGroups } from "../../hooks/useD3";
 import {groupDisplayNameLinks} from "../../constants/data"
 import ShowAllButton from "./showAllButton";
@@ -27,7 +27,7 @@ export default function Filter() {
   let hiddenGroups = useAppSelector(selectHiddenGroups)
   hiddenGroups = JSON.parse(JSON.stringify(hiddenGroups))
 
-  let skills = useAppSelector(selectCurrentSearchedNodes)
+  let skills = useAppSelector(selectCurrentSearchedList)
   
   const allGroups = getUniqueGroups(allNodeData)
   const currentGroups = getUniqueGroups(currentNodeData)

@@ -23,7 +23,7 @@ export interface GraphState {
   currentLinks: GraphLink[];
   selectedNodes: GraphNode[];
   selectedLinks: GraphLink[];
-  currentSearchedNodes: string[]
+  currentSearchedList: string[]
   hiddenGroups: string[];
   loading: boolean;
 }
@@ -35,7 +35,7 @@ const initialState: GraphState = {
   currentLinks: [],
   selectedNodes: [],
   selectedLinks: [],
-  currentSearchedNodes: [],
+  currentSearchedList: [],
   hiddenGroups: [],
   loading: false,
 };
@@ -58,7 +58,7 @@ const graphSlice = createSlice({
     },
     filterGraphDataRequest: (state: any, action: any) => {
       state.loading = true;
-      state.currentSearchedNodes = action.payload.skills
+      state.currentSearchedList = action.payload.skills
     },
     filterGraphDataSuccess: (state: any, action: any) => {
       state.loading = false;
@@ -117,7 +117,7 @@ export const selectCurrentNodes = (state: RootState) => state.graph && state.gra
 export const selectCurrentLinks = (state: RootState) => state.graph && state.graph.currentLinks;
 export const selectSelectedNodes = (state: RootState) => state.graph && state.graph.selectedNodes;
 export const selectSelectedLinks = (state: RootState) => state.graph && state.graph.selectedLinks;
-export const selectCurrentSearchedNodes = (state: RootState) => state.graph && state.graph.currentSearchedNodes;
+export const selectCurrentSearchedList = (state: RootState) => state.graph && state.graph.currentSearchedList;
 export const selectHiddenGroups = (state: RootState) => state.graph && state.graph.hiddenGroups;
 
 // Reducer
