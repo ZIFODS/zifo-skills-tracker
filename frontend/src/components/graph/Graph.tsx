@@ -5,7 +5,6 @@ import "../../css/style.css"
 import { useAppSelector } from "../../app/hooks"
 import { selectCurrentSearchedNodes, selectSelectedLinks, selectSelectedNodes } from "./graphSlice"
 
-
 function processSkillName(name: string) {
     let trimmedName = ""
     const splitWords = name.split(" ")
@@ -92,6 +91,18 @@ function GraphVis() {
         var parent = svg.node().parentElement;
         var svgWidth = parent.clientWidth;
         var svgHeight = parent.clientHeight;
+
+        const imgWidth = 100
+        const imgHeight = 50
+        const imgMargin = 10
+ 
+        svg
+            .append("svg:image")
+                .attr("xlink:href", require("../../images/zifo-logo.png"))
+                .attr("x", svgWidth - imgWidth - imgMargin)
+                .attr("y", svgHeight - imgHeight - imgMargin)
+                .attr("width", imgWidth)
+                .attr("height", imgHeight);
 
         const getCentralPoint = (groupName: string) => {
             if (groupName === "Consultant") {

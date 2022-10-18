@@ -35,9 +35,12 @@ function App(): JSX.Element {
         {graphDisplayable ?
           <GraphVis/>
           :
-          <Typography variant="h4" sx={{color: "#808080"}}>
-            Enter a search query to display the graph
-          </Typography>
+          <Stack spacing={5} alignItems="center">
+            <Typography variant="h4" sx={{color: "#808080"}}>
+              Search with a set of skills to visualise Consultants
+            </Typography>
+            <img src={require("./images/zifo-logo.png")} width="150" height="75"/>
+          </Stack>
         }
 
         
