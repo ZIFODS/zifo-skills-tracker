@@ -1,7 +1,7 @@
 import React from "react"
 import { Button } from "@mui/material"
 import { useAppDispatch, useAppSelector } from "../../app/hooks"
-import { filterGraphDataRequest, selectCurrentSearchedNodes, selectHiddenGroups } from "../graph/graphSlice"
+import { filterGraphDataRequest, selectCurrentSearchedList, selectHiddenGroups } from "../graph/graphSlice"
 import { selectRuleList } from "./searchSlice"
 
 export default function ApplyButton() {
@@ -10,17 +10,17 @@ export default function ApplyButton() {
 
   const hiddenGroups = useAppSelector(selectHiddenGroups)
   const searchList = useAppSelector(selectRuleList)
-  const searchedNodes = useAppSelector(selectCurrentSearchedNodes)
+  const currentSearchedList = useAppSelector(selectCurrentSearchedList)
   
   const searchListSkills = searchList.map(function(skill: any) {return skill.name})
   searchListSkills.sort()
-  searchedNodes.slice().sort()
+  currentSearchedList.slice().sort()
 
   const handleChange = () => {
-    searchListSkills.length && dispatch(filterGraphDataRequest({skills: searchListSkills, hiddenGroups: hiddenGroups}))
+    searchListSkills.length && dispatch(filterGraphDataRequest({skills: searchList, hiddenGroups: hiddenGroups}))
   }
 
-  const isDisabled = (JSON.stringify(searchListSkills) === JSON.stringify(searchedNodes) || searchListSkills.length === 0)
+  const isDisabled = (JSON.stringify(searchListSkills) === JSON.stringify(currentSearchedList) || searchListSkills.length === 0)
 
   return(
     <Button 

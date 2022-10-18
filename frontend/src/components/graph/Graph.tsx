@@ -3,7 +3,7 @@ import { getUniqueGroups, useD3 } from "../../hooks/useD3"
 import * as d3 from "d3"
 import "../../css/style.css"
 import { useAppSelector } from "../../app/hooks"
-import { selectCurrentSearchedNodes, selectSelectedLinks, selectSelectedNodes } from "./graphSlice"
+import { selectCurrentSearchedList, selectSelectedLinks, selectSelectedNodes } from "./graphSlice"
 
 function processSkillName(name: string) {
     let trimmedName = ""
@@ -74,10 +74,10 @@ function GraphVis() {
 
     const groups = getUniqueGroups(nodeData)
 
-    const searchedNodes = useAppSelector(selectCurrentSearchedNodes)
+    const currentSearchedList = useAppSelector(selectCurrentSearchedList)
 
     const isSkillInSearchList = (node: any) => {
-        return searchedNodes.filter(function(s: any) {return s === node.name}).length > 0
+        return currentSearchedList.filter(function(s: any) {return s.name === node.name}).length > 0
     }
 
     const ref = useD3((svg: any) => {
