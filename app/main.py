@@ -7,6 +7,7 @@ from app.routers.consultants import consultants_router
 app = FastAPI()
 
 origins = [
+    "http://ec2-35-176-61-224.eu-west-2.compute.amazonaws.com:3000",
     "http://localhost:3000",
     "http://react-frontend:3000",
 ]

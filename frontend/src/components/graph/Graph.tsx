@@ -2,16 +2,15 @@ import React from "react"
 import { getUniqueGroups, useD3 } from "../../hooks/useD3"
 import * as d3 from "d3"
 import "../../css/style.css"
-import { useAppDispatch, useAppSelector } from "../../app/hooks"
-import { getGraphDataRequest, GraphNode, selectCurrentLinks, selectCurrentNodes, selectHiddenGroups } from "./graphSlice"
-import { useEffect } from "react";
+import { useAppSelector } from "../../app/hooks"
+import { selectCurrentSearchedList, selectSelectedLinks, selectSelectedNodes } from "./graphSlice"
 
-function skillNameHTML(name: string) {
+function processSkillName(name: string) {
     let trimmedName = ""
     const splitWords = name.split(" ")
     splitWords.forEach((word, i) => {
         if (word.length > 12) {
-            trimmedName += word.substring(0, 10) + "."
+            trimmedName += word.substring(0, 12) + "."
         }
         else {
             trimmedName += word
@@ -20,7 +19,12 @@ function skillNameHTML(name: string) {
             trimmedName += " "
         }
     })
-    return `<p style="text-align: center;">${trimmedName}</p>`
+    return trimmedName
+}
+
+function skillNameHTML(name: string) {
+    const trimmedName = processSkillName(name);
+    return `<center style="display: inline-flex;">${trimmedName}</center>`
 }
 
 function consultantInitials(name: string) {
@@ -32,23 +36,49 @@ function consultantInitials(name: string) {
     return initials
 }
 
+const calculateChargeStrength = (node: any, highlighted: boolean = false) => {
+    const trimmedName = processSkillName(node.name)
+    const nameLength = trimmedName.length
+    if (node.group == "Consultant") {
+        return -200
+    }
+    else if (nameLength > 20) {
+        if (highlighted) {
+            return - 50 * nameLength
+        }
+        else {
+            return -40 * nameLength
+        }
+    }
+    else {
+        if (highlighted) {
+            return -550
+        }
+        else {
+            return -700
+        }
+        
+    }
+}
+
+
+
+
 function GraphVis() {
-    const dispatch = useAppDispatch();
 
-    useEffect(() => {
-        dispatch(getGraphDataRequest());
-      }, [dispatch]);
-
-    var nodeData = useAppSelector(selectCurrentNodes);
-    var linkData = useAppSelector(selectCurrentLinks);
+    var nodeData = useAppSelector(selectSelectedNodes);
+    var linkData = useAppSelector(selectSelectedLinks);
 
     nodeData = JSON.parse(JSON.stringify(nodeData))
     linkData = JSON.parse(JSON.stringify(linkData))
 
     const groups = getUniqueGroups(nodeData)
 
-    // nodeData = graphData.nodes
-    // linkData = graphData.links
+    const currentSearchedList = useAppSelector(selectCurrentSearchedList)
+
+    const isSkillInSearchList = (node: any) => {
+        return currentSearchedList.filter(function(s: any) {return s.name === node.name}).length > 0
+    }
 
     const ref = useD3((svg: any) => {
 
@@ -62,46 +92,36 @@ function GraphVis() {
         var svgWidth = parent.clientWidth;
         var svgHeight = parent.clientHeight;
 
+        const imgWidth = 100
+        const imgHeight = 50
+        const imgMargin = 10
+ 
+        svg
+            .append("svg:image")
+                .attr("xlink:href", require("../../images/zifo-logo.png"))
+                .attr("x", svgWidth - imgWidth - imgMargin)
+                .attr("y", svgHeight - imgHeight - imgMargin)
+                .attr("width", imgWidth)
+                .attr("height", imgHeight);
+
         const getCentralPoint = (groupName: string) => {
             if (groupName === "Consultant") {
                 return [svgWidth/2, svgHeight/2]
             }
             else {
-                const groups: Array<string> = [
-                    "ScienceApps",
-                    "Services",
-                    "Methodologies",
-                    "Process",
-                    "Other_Products",
-                    "Regulatory",
-                    "Data_Management",
-                    "Languages",
-                    "programming",
-                    "Miscellaneous",
-                    "Infrastructure"
-                ]
                 const i = groups.indexOf(groupName)
                 // (xk,yk)=(x0+rcos(2kπ/n),y0+rsin(2kπ/n)) for k=0 to n−1.
-                const x = svgWidth/2 + (svgHeight/2 - 300) * Math.cos((2 * i * Math.PI) / groups.length)
-                const y = svgHeight/2 + (svgHeight/2 - 300) * Math.sin((2 * i * Math.PI) / groups.length)
+                const x = svgWidth/2 + (svgHeight/2 - 350) * Math.cos((2 * i * Math.PI) / groups.length)
+                const y = svgHeight/2 + (svgHeight/2 - 350) * Math.sin((2 * i * Math.PI) / groups.length)
                 return [x, y]
             }
         }
 
         // Add "forces" to the simulation here
         var simulation = d3.forceSimulation()
-            .force("center", d3.forceCenter(svgWidth/2, svgHeight/2))
+            // .force("center", d3.forceCenter(svgWidth/2, svgHeight/2))
             .force("charge", d3.forceManyBody().strength(function(d: any) {
-                const nameLength = d.name.length
-                if (d.group == "Consultant") {
-                    return -200
-                }
-                else if (nameLength > 5) {
-                    return -20 * nameLength
-                }
-                else {
-                    return -120
-                }
+                return calculateChargeStrength(d)
             }))
             .force("link", d3.forceLink().id(function(d: any) { return d.id; }).strength(0))
 
@@ -148,28 +168,32 @@ function GraphVis() {
         const skillNodeRadius = 6;
 
         svg
-            .selectAll("g.skillNodes")
+            .selectAll("g.skillNodes, g.skillNodesHighlighted")
                 .remove()
 
         var skillG = svg
-            .selectAll("g.skillNodes")
+            .selectAll("g.skillNodes, g.skillNodesHighlighted")
             .data(nodeData.filter(function(d: any) {return d.group!=="Consultant"}), function(d: any) {return d.id})
 
         const skillNode = skillG.enter()
             .append("g")
-                .attr("class", "skillNodes")
+                .attr("class", function(d: any) {return isSkillInSearchList(d) ? "skillNodesHighlighted" : "skillNodes"})
 
         var skillNodeCircle = skillNode.append("circle")
-            .attr("r", skillNodeRadius)
+            .attr("r", function(d: any) {return isSkillInSearchList(d) ? 10 : skillNodeRadius})
             .attr("fill", function(d: any) { return color(d.group); })
 
         var skillNodeText = skillNode.append("foreignObject")
-            .attr("width", 60)
-            .attr("height", 100)
+            .attr("class", "foreignObject")
+            .attr("width", 1)
+            .attr("height", 1)
 
         skillNodeText.append("xhtml:body")
-            .style("font-size", "8px")
-            .style("text-align", "center")
+            .style("font-size", "10px")
+            .style("font-weight", function(d: any) {return isSkillInSearchList(d) && "900"})
+            .style("font-family", "helvetica")
+            .style("position", "relative")
+            .style("z-index", 5)
             .html(function(d: any) {return skillNameHTML(d.name)})
 
         var div = d3.select("body").append("div")
@@ -177,21 +201,26 @@ function GraphVis() {
             .style("opacity", 0);
             
         consultantNode.on("mouseover", function(event: any, d: any) {
-            // link
-            //     .filter(function(l: any) {return l.source.id === d.id || l.target.id === d.id})
-            //     .attr("class", "linksSelected")
-            // skillNode
-            //     .filter(function(node: any) {return node.id === d.id})
-            //     .style("visibility", "hidden");
-            //   })
-            //   .on("mouseout", function(event: any, d: any) {
-            //     link
-            //     .filter(function(node: any) {return node.source.id !== d.id && node.target.id !== d.id})
-            //     .style("visibility", "visible")
-            //     skillNode
-            //     .filter(function(node: any) {return node.id === d.id})
-            //     .style("visibility", "visible");
-            //   });
+            const linkedSkills = link.filter(function(l: any) {return l.source.id === d.id || l.target.id === d.id})._groups[0]
+            const linkedSkillIds = linkedSkills.map(function(g: any) {return g.__data__.target.id})
+            link
+                .filter(function(l: any) {return l.source.id === d.id || l.target.id === d.id})
+                .attr("class", "linksSelected")
+            link
+                .filter(function(l: any) {return l.source.id !== d.id && l.target.id !== d.id})
+                .attr("class", "linksDeselected")
+            consultantNode
+                .filter(function(node: any) {return node.id !== d.id})
+                .attr("class", "consultNodesDeselected");
+            skillNode
+                .filter(function(node: any) {return !linkedSkillIds.includes(node.id)})
+                .attr("class", "skillNodesDeselected")
+                .select("foreignObject")
+                        .style("opacity", "0.1")
+            skillNode
+                .filter(function(node: any) {return linkedSkillIds.includes(node.id)})
+                .select("foreignObject")
+                        .style("font-weight", "bold")
             div.transition()
                 .duration(200)
                 .style("opacity", 1);
@@ -200,9 +229,61 @@ function GraphVis() {
                 .style("top", (event.pageY) + "px");
             })
             .on("mouseout", function(d: any) {
+            link
+                .attr("class", "links")
+            consultantNode
+                .attr("class", "consultNodes")
+            skillNode
+                .attr("class", function(d: any) {return isSkillInSearchList(d) ? "skillNodesHighlighted" : "skillNodes"})
+                .select("foreignObject")
+                    .style("opacity", "1")
+                    .style("font-weight", "normal")
             div.transition()
                 .duration(500)
                 .style("opacity", 0);
+            });
+
+        skillNode.on("mouseover", function(event: any, d: any) {
+            const linkedConsultants = link.filter(function(l: any) {return l.source.id === d.id || l.target.id === d.id})._groups[0]
+            const linkedConsultantIds = linkedConsultants.map(function(g: any) {return g.__data__.source.id})
+            link
+                .filter(function(l: any) {return l.source.id === d.id || l.target.id === d.id})
+                .attr("class", "linksSelected")
+            link
+                .filter(function(l: any) {return l.source.id !== d.id && l.target.id !== d.id})
+                .attr("class", "linksDeselected")
+            consultantNode
+                .filter(function(node: any) {return !linkedConsultantIds.includes(node.id)})
+                .attr("class", "consultNodesDeselected");
+            skillNode
+                .filter(function(node: any) {return node.id !== d.id})
+                .attr("class", "skillNodesDeselected")
+                .select("foreignObject")
+                        .style("opacity", "0.1")
+            skillNode
+                .filter(function(node: any) {return node.id === d.id})
+                .select("foreignObject")
+                    .style("font-weight", "bold")
+            // div.transition()
+            //     .duration(200)
+            //     .style("opacity", 1);
+            // div.html(d.name.split(" ").join("<br/>"))
+            //     .style("left", (event.pageX) + "px")
+            //     .style("top", (event.pageY) + "px");
+            })
+            .on("mouseout", function(d: any) {
+            link
+                .attr("class", "links")
+            consultantNode
+                .attr("class", "consultNodes")
+            skillNode
+                .attr("class", function(d: any) {return isSkillInSearchList(d) ? "skillNodesHighlighted" : "skillNodes"})
+                .select("foreignObject")
+                    .style("opacity", "1")
+                    .style("font-weight", "normal")
+            // div.transition()
+            //     .duration(500)
+            //     .style("opacity", 0);
             });
 
         // Attach nodes to the simulation, add listener on the "tick" event
@@ -231,8 +312,11 @@ function GraphVis() {
             skillNodeCircle.attr("cx", function(d: any) {return d.x += (getCentralPoint(d.group)[0] - d.x) * k;})
                 .attr("cy", function(d: any) { return d.y += (getCentralPoint(d.group)[1] - d.y) * k;});
                 
-            skillNodeText.attr("x", function(d: any) { return d.x - 30; })
-                .attr("y", function(d: any) { return d.y - 1; });
+            skillNodeText.attr("x", function(d: any) { 
+                const width = skillNode.filter(function(s: any) {return d.id === s.id}).select("foreignObject")._groups[0][0].children[0].scrollWidth;
+                return d.x - width/2 - 8;
+            })
+                .attr("y", function(d: any) {return isSkillInSearchList(d) ? d.y + 4 : d.y - 1 });
 
             linkLine
                 .attr("x1", function(d: any) { return d.source.x; })
@@ -240,6 +324,7 @@ function GraphVis() {
                 .attr("x2", function(d: any) { return d.target.x; })
                 .attr("y2", function(d: any) { return d.target.y; });
         }
+
     },
     [nodeData, linkData]
     )
@@ -247,6 +332,8 @@ function GraphVis() {
     return(
         <svg
             ref={ref}
+            height="100%"
+            width="100%"
         />
     )
 }

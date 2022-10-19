@@ -1,11 +1,23 @@
 import React from 'react'
 import GraphVis from "./components/graph/Graph"
-import Predicate from "./components/predicate/predicate"
-import {Box, Stack} from "@mui/material"
+import Search from "./components/search/search"
+import {Box, Stack, Typography} from "@mui/material"
 import Filter from './components/filter/filter';
+import { useAppDispatch, useAppSelector } from './app/hooks';
+import { getGraphDataRequest, isGraphDisplayable } from './components/graph/graphSlice';
+import { useEffect } from "react";
 
 
 function App(): JSX.Element {
+
+  const dispatch = useAppDispatch();
+
+  useEffect(() => {
+      dispatch(getGraphDataRequest());
+    }, [dispatch]);
+
+  var graphDisplayable = useAppSelector(isGraphDisplayable);
+
   return (
     <Stack 
       direction="row"
@@ -16,11 +28,22 @@ function App(): JSX.Element {
         height: "98vh"
     }}>
       <Stack spacing={1}>
-        <Predicate/>
+        <Search/>
         <Filter/>
       </Stack>
-      <Box sx={{display:"flex", border:"1px solid #1a6714"}}>
-        <GraphVis/>
+      <Box sx={{display:"flex", flexGrow: 1, border:"1px solid #1a6714", alignItems:"center", justifyContent:"center"}}>
+        {graphDisplayable ?
+          <GraphVis/>
+          :
+          <Stack spacing={5} alignItems="center">
+            <Typography variant="h4" sx={{color: "#808080"}}>
+              Search with a set of skills to visualise Consultants
+            </Typography>
+            <img src={require("./images/zifo-logo.png")} width="150" height="75"/>
+          </Stack>
+        }
+
+        
       </Box>
     </Stack>
   );
