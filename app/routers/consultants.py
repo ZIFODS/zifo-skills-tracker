@@ -12,7 +12,7 @@ consultants_router = APIRouter()
 Get consultants who know BIOVIA ONELab along with their known skills but don't return skills in ScienceApps or Process categories:
 
 MATCH pa=(c:Consultant)-[:KNOWS]->(sa) where sa.Name = 'BIOVIA ONELab'
-unwind nodes(pa) as na  
+unwind nodes(pa) as na
 MATCH pb=(na)-[:KNOWS]->() 
 WHERE NONE(n IN nodes(pb) WHERE n:ScienceApps OR n:Process) 
 unwind nodes(pb) as nb unwind relationships(pb) as rb 
@@ -46,31 +46,75 @@ async def filter_consultants_by_skills(
         if all_groups == hidden_groups:
             all_hidden = True
 
-    print(all_hidden)
-
     path_count = 0
-    query = "MATCH pa=(c:Consultant)-[:KNOWS]->(sa) "
+    initial_or = False
+    end_or = False
+    is_or = False
+    query = "MATCH pa=(c:Consultant)-[:KNOWS]->(sa)"
 
     for i, rule in enumerate(rules):
 
+        match_start = ""
+        where_q = ""
+        or_q = ""
+        unwind_q = ""
+
         name = rule["name"]
-        if i == 0:
-            query += f"where s{char(0)}.Name = '{name}'"
+
+        final_i = len(rules) - 1
+
+        # Determine or sequence status
+        if rule["operator"] == "AND":
+            is_or = False
+            initial_or = False
+
+        if rule["operator"] == "OR":
+            is_or = True
+            if i == final_i:
+                initial_or = False
+                end_or = True
+            elif rules[i+1]["operator"] != "OR":
+                initial_or = False
+                end_or = True
+
+        if i != final_i:
+            if rules[i+1]["operator"] == "OR":
+                initial_or = True
+                is_or = True
+                end_or = False
+
+        ## match
+        if i != 0:
+            if rule["parenthesis"] == "[" or initial_or:
+                match_start = f" MATCH p{char(path_count)}=()-[:KNOWS]->(s{char(path_count)})"
+
+            elif not is_or:
+                match_start = f" MATCH p{char(path_count)}=(n{char(path_count-1)})-[:KNOWS]->(s{char(path_count)})"
+
+        ## where
+        if not is_or or initial_or:
+            where_q = f" where s{char(path_count)}.Name = '{name}'"
+
+        ## or_q
+        if is_or and not initial_or:
+            or_q = f" OR s{char(path_count)}.Name = '{name}'"
+
+        ## unwind_q
+        if not initial_or:
+            unwind_q = f" unwind nodes(p{char(path_count)}) as n{char(path_count)}"
+
+        # Move to next path
+        if rule["parenthesis"] == "]":
+            path_count += 1
+        elif not is_or:
+            path_count += 1
+        elif end_or:
             path_count += 1
 
-        else:
-            if rule["operator"] == "AND":
-                query += f" unwind nodes(p{char(path_count-1)}) as n{char(path_count-1)}"
-                query += f" MATCH p{char(path_count)}=(n{char(path_count-1)})-[:KNOWS]->(s{char(path_count)}) where s{char(path_count)}.Name = '{name}'"
-                path_count += 1
-
-            elif rule["operator"] == "OR":
-                query += f" OR s{char(0)}.Name = '{name}'"
+        query += match_start + where_q + or_q + unwind_q
 
     penult_char = char(path_count - 1)
     final_char = char(path_count)
-
-    query += f"unwind nodes(p{penult_char}) as n{penult_char} "
 
     if not all_hidden:
         query += f" MATCH p{final_char}=(n{penult_char})-[:KNOWS]->()"
