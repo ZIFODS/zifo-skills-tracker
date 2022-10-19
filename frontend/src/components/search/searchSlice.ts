@@ -46,6 +46,9 @@ const searchSlice = createSlice({
     clearRuleList: (state: any) => {
       state.ruleList = initialState.ruleList
     },
+    clearCurrentParenthesis: (state: any) => {
+      state.currentRule.parenthesis = initialState.currentRule.parenthesis
+    },
   },
 });
 
@@ -57,6 +60,7 @@ export const {
   clearCurrentNodeSearch,
   clearCurrentBitwiseOperatorSearch,
   clearRuleList,
+  clearCurrentParenthesis,
 } = searchSlice.actions;
 
 // Selectors
