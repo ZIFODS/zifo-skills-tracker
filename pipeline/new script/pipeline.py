@@ -57,7 +57,7 @@ def loadData(path):
     readdata = namedata.join(readdata_sep)
 
     #save to csv
-    outputpath = 'neo4joutput.csv'
+    outputpath = 'pipeline/src/input/neo4jimport.csv'
     readdata.to_csv(outputpath, index=False)
 
 # ------------------------------------------------------------------------------
