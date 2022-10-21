@@ -46,7 +46,31 @@ async def filter_consultants_by_skills(
         if all_groups == hidden_groups:
             all_hidden = True
 
+    effective_bracket_idxs = []
+    for i, rule in enumerate(rules):
+        if rule["parenthesis"] == "[":
+            if i != 0:
+                if rules[i-1]["parenthesis"] == "":
+                    if effective_bracket_idxs:
+                        if effective_bracket_idxs[-1] != (i-1, i-1):
+                            effective_bracket_idxs.append((i-1, i-1))
+                    else:
+                        effective_bracket_idxs.append((i-1, i-1))
+
+            effective_bracket_idxs.append((i, i))
+
+        if rule["parenthesis"] == "]":
+            if effective_bracket_idxs[-1][0] == effective_bracket_idxs[-1][1] and rules[effective_bracket_idxs[-1][0]]["parenthesis"] == "[":
+                effective_bracket_idxs[-1] = (effective_bracket_idxs[-1][0], i)
+            
+            if i != len(rules) - 1:
+                if rules[i+1]["parenthesis"] == "":
+                    effective_bracket_idxs.append((i+1, i+1))
+
+    apoc_idxs = [i[1] for i in effective_bracket_idxs]
+
     path_count = 0
+    idx_path_num = {}
     initial_or = False
     end_or = False
     is_or = False
@@ -54,6 +78,10 @@ async def filter_consultants_by_skills(
 
     for i, rule in enumerate(rules):
 
+        idx_path_num[i] = path_count
+
+        intersect = ""
+        union = ""
         match_start = ""
         where_q = ""
         or_q = ""
@@ -68,17 +96,18 @@ async def filter_consultants_by_skills(
             is_or = False
             initial_or = False
 
-        if rule["operator"] == "OR":
-            is_or = True
-            if i == final_i:
-                initial_or = False
-                end_or = True
-            elif rules[i+1]["operator"] != "OR":
-                initial_or = False
-                end_or = True
+        elif rule["operator"] == "OR":
+            if rule["parenthesis"] != "[":
+                is_or = True
+                if i == final_i:
+                    initial_or = False
+                    end_or = True
+                elif rules[i+1]["operator"] != "OR":
+                    initial_or = False
+                    end_or = True
 
         if i != final_i:
-            if rules[i+1]["operator"] == "OR":
+            if rules[i+1]["operator"] == "OR" and rules[i+1]["parenthesis"] != "[":
                 initial_or = True
                 is_or = True
                 end_or = False
@@ -103,6 +132,24 @@ async def filter_consultants_by_skills(
         if not initial_or:
             unwind_q = f" unwind nodes(p{char(path_count)}) as n{char(path_count)}"
 
+        ## intersection/union
+        if i in apoc_idxs and i != apoc_idxs[0]:
+            bracket_i = apoc_idxs.index(i)
+            path_1 = idx_path_num[effective_bracket_idxs[bracket_i - 1][1]]
+            path_2 = idx_path_num[effective_bracket_idxs[bracket_i][1]]
+            if rules[effective_bracket_idxs[bracket_i][0]]["operator"] == "AND":
+                path_count += 1
+                intersect += f" with apoc.coll.intersection(collect(n{char(path_1)}), collect(n{char(path_2)})) as n{char(path_count)}"
+                intersect += f" unwind n{char(path_count)} as n{char(path_count + 1)}"
+                path_count += 1
+
+            elif rules[effective_bracket_idxs[bracket_i][0]]["operator"] == "OR":
+                path_count += 1
+                intersect += f" with apoc.coll.union(collect(n{char(path_1)}), collect(n{char(path_2)})) as n{char(path_count)}"
+                intersect += f" unwind n{char(path_count)} as n{char(path_count + 1)}"
+                path_count += 1
+        
+
         # Move to next path
         if rule["parenthesis"] == "]":
             path_count += 1
@@ -111,7 +158,7 @@ async def filter_consultants_by_skills(
         elif end_or:
             path_count += 1
 
-        query += match_start + where_q + or_q + unwind_q
+        query += match_start + where_q + or_q + unwind_q + intersect + union
 
     penult_char = char(path_count - 1)
     final_char = char(path_count)
