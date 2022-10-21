@@ -33,7 +33,9 @@ const searchSlice = createSlice({
       state.currentRule.parenthesis = action.payload.parenthesis
     },
     addCurrentRulesToList: (state: any) => {
-      state.ruleList.push(state.currentRule)
+      if (state.currentRule.name !== "") {
+        state.ruleList.push(state.currentRule)
+      }
     },
     clearCurrentNodeSearch: (state: any) => {
       state.currentRule.group = initialState.currentRule.group
