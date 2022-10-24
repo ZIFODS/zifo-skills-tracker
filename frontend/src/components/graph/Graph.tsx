@@ -36,6 +36,25 @@ function consultantInitials(name: string) {
     return initials
 }
 
+function calculateZoom(svg: any, rootGroup: any) {
+    var bounds = rootGroup.node().getBoundingClientRect();
+    var parent = svg.node().getBoundingClientRect();
+    var fullWidth = parent.width,
+        fullHeight = parent.height;
+    var width = bounds.width,
+        height = bounds.height;
+    var midX = bounds.x + width / 2 - 500,
+        midY = bounds.y + height / 2;
+    if (width == 0 || height == 0) return; // nothing to fit
+    var widthScale = 0.85 / (width / fullWidth)
+    var heightScale = 0.85 / (height / fullHeight)
+    var scale = Math.min(widthScale, heightScale)
+    var translate = [fullWidth / 2 - widthScale * midX, fullHeight / 2 - heightScale * midY];
+    return d3.zoomIdentity
+        .translate(translate[0], translate[1])
+        .scale(scale);
+}
+
 const calculateChargeStrength = (node: any, highlighted: boolean = false) => {
     const trimmedName = processSkillName(node.name)
     const nameLength = trimmedName.length
@@ -88,6 +107,13 @@ function GraphVis() {
             .domain(groups)
             .range(d3.schemePaired)
 
+        svg
+            .selectAll("g")
+                .remove()
+
+        const rootGroup = svg.append("g")
+        rootGroup.attr("transform", undefined);
+
         var parent = svg.node().parentElement;
         var svgWidth = parent.clientWidth;
         var svgHeight = parent.clientHeight;
@@ -119,18 +145,13 @@ function GraphVis() {
 
         // Add "forces" to the simulation here
         var simulation = d3.forceSimulation()
-            // .force("center", d3.forceCenter(svgWidth/2, svgHeight/2))
             .force("charge", d3.forceManyBody().strength(function(d: any) {
                 return calculateChargeStrength(d)
             }))
             .force("link", d3.forceLink().id(function(d: any) { return d.id; }).strength(0))
 
         // Add lines for every link in the dataset
-        svg
-            .selectAll("g.links")
-                .remove()
-
-        var linkG = svg
+        var linkG = rootGroup
             .selectAll("g.links")
             .data(linkData, function(d: any) {return d.id})
 
@@ -144,11 +165,7 @@ function GraphVis() {
         // Nodes for consultants
         const consultantNodeRadius = 14;
 
-        svg
-        .selectAll("g.consultNodes")
-            .remove()
-
-        var consultantG = svg
+        var consultantG = rootGroup
             .selectAll("g.consultNodes")
             .data(nodeData.filter(function(d: any) {return d.group==="Consultant"}), function(d: any) {return d.id})
 
@@ -167,11 +184,7 @@ function GraphVis() {
         // Nodes for skills
         const skillNodeRadius = 6;
 
-        svg
-            .selectAll("g.skillNodes, g.skillNodesHighlighted")
-                .remove()
-
-        var skillG = svg
+        var skillG = rootGroup
             .selectAll("g.skillNodes, g.skillNodesHighlighted")
             .data(nodeData.filter(function(d: any) {return d.group!=="Consultant"}), function(d: any) {return d.id})
 
@@ -300,6 +313,8 @@ function GraphVis() {
             .restart();
 
         // Dynamically update the position of the nodes/links as time passes
+        var zoomed = false
+
         function ticked() {
             var k = simulation.alpha();
 
@@ -323,6 +338,14 @@ function GraphVis() {
                 .attr("y1", function(d: any) { return d.source.y; })
                 .attr("x2", function(d: any) { return d.target.x; })
                 .attr("y2", function(d: any) { return d.target.y; });
+
+            if (k < 0.15) {
+                if (zoomed === false) {
+                    var transform = calculateZoom(svg, rootGroup)
+                    rootGroup.transition().duration(500).attr("transform", transform);
+                    zoomed = true;
+                }
+            }
         }
 
     },
