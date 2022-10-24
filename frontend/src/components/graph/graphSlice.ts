@@ -25,6 +25,7 @@ export interface GraphState {
   selectedLinks: GraphLink[];
   currentSearchedList: string[]
   hiddenGroups: string[];
+  searched: boolean;
   loading: boolean;
 }
 
@@ -37,6 +38,7 @@ const initialState: GraphState = {
   selectedLinks: [],
   currentSearchedList: [],
   hiddenGroups: [],
+  searched: false,
   loading: false,
 };
 
@@ -62,6 +64,7 @@ const graphSlice = createSlice({
     },
     filterGraphDataSuccess: (state: any, action: any) => {
       state.loading = false;
+      state.searched = true
       if (state.hiddenGroups.length > 0) {
         state.selectedNodes = action.payload.data.nodes;
         state.selectedLinks = action.payload.data.links;
@@ -86,6 +89,7 @@ const graphSlice = createSlice({
       state.hiddenGroups = state.hiddenGroups.filter(function(group: string) {return group !== action.payload})
     },
     clearCurrentGraph: (state: any) => {
+      state.searched = false
       state.currentNodes = initialState.currentNodes
       state.currentLinks = initialState.currentLinks
       state.selectedNodes = initialState.selectedNodes
@@ -111,7 +115,8 @@ export const {
 // Selectors
 export const selectAllNodes = (state: RootState) => state.graph && state.graph.allNodes;
 export const selectAllLinks = (state: RootState) => state.graph && state.graph.allLinks;
-export const isGraphDisplayable = (state: RootState) => state.graph && state.graph.currentNodes.length > 0;
+export const isGraphFilled = (state: RootState) => state.graph && state.graph.currentNodes.length > 0;
+export const isGraphSearched = (state: RootState) => state.graph && state.graph.searched;
 export const selectCurrentNodes = (state: RootState) => state.graph && state.graph.currentNodes;
 export const selectCurrentLinks = (state: RootState) => state.graph && state.graph.currentLinks;
 export const selectSelectedNodes = (state: RootState) => state.graph && state.graph.selectedNodes;
