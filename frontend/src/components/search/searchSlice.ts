@@ -51,6 +51,34 @@ const searchSlice = createSlice({
     clearCurrentParenthesis: (state: any) => {
       state.currentRule.parenthesis = initialState.currentRule.parenthesis
     },
+    removeSkillFromList: (state: any, action: any) => {
+      const name = action.payload
+      const index = state.ruleList.map((r: any) => r.name).indexOf(name)
+      if (state.ruleList[index].parenthesis === "[") {
+        if (state.ruleList[index + 1].parenthesis === "]") {
+          state.ruleList[index + 1].parenthesis = ""
+          state.ruleList[index + 1].operator = state.ruleList[index].operator
+        }
+        else {
+          state.ruleList[index + 1].parenthesis = "["
+          state.ruleList[index + 1].operator = state.ruleList[index].operator
+        }
+      };
+      if (state.ruleList[index].parenthesis === "]") {
+        if (state.ruleList[index - 1].parenthesis === "[") {
+          state.ruleList[index - 1].parenthesis = ""
+        }
+        else {
+          state.ruleList[index - 1].parenthesis = "]"
+        }
+      };
+      state.ruleList = state.ruleList.filter(function(rule: any) {
+        return rule.name !== name
+      })
+      if (state.ruleList.length === 1) {
+        state.ruleList[0].operator = ""
+      }
+    }
   },
 });
 
@@ -63,6 +91,7 @@ export const {
   clearCurrentBitwiseOperatorSearch,
   clearRuleList,
   clearCurrentParenthesis,
+  removeSkillFromList
 } = searchSlice.actions;
 
 // Selectors
