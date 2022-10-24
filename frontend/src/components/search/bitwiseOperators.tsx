@@ -33,8 +33,6 @@ export default function BitwiseOperators() {
     }
   }, [searchList])
 
-  console.log(searchList)
-
   const handleOperatorChange = (
     _event: React.MouseEvent<HTMLElement>,
     newOperator: string | null,
