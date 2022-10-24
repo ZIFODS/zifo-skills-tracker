@@ -1,8 +1,9 @@
 from neo4j_connect import Neo4jConnection
+from pipeline.src.utils import OUTPUT_PATH
 
 
 def get_cypher_queries():
-    with open("pipeline/src/cypher_load.txt") as file:
+    with open(OUTPUT_PATH) as file:
         cypher = file.readlines()
 
         queries = []

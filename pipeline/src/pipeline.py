@@ -1,44 +1,17 @@
 import pandas as pd
 import numpy as np
 
-class Categories:
-    SERVICE = "Service"
-    METHODOLOGY = "Methodology"
-    SCI_PRODUCT_APP = "Scientific_Products_And_Applications"
-    RESEARCH_DEV = "R_And_D_Processes"
-    PRODUCT_APP = "Products_And_Applications"
-    REGULATION = "Regulation"
-    DATA_MANAGEMENT = "Data_Management"
-    LANGUAGE = "Languages"
-    PROGRAMMING = "Programming_languages"
-    MISCELLANEOUS = "Miscellaneous"
-    INFRASTRUCTURE = "Infrastructure_Technologies"
-
-category_column_map = {
-    Categories.SERVICE: "Please tick all Service elements that you feel you have a reasonable knowledge of",
-    Categories.METHODOLOGY: "Please tick all Methodologies that you feel you have a reasonable knowledge of",
-    Categories.SCI_PRODUCT_APP: "Please tick all Scientific Products & Applications that you feel you have a reasonable knowledge of",
-    Categories.RESEARCH_DEV: "Please tick all R&D Processes that you feel you have a reasonable knowledge of",
-    Categories.PRODUCT_APP: "Please tick all Products & Applications that you feel you have a reasonable knowledge of",
-    Categories.REGULATION: "Please tick all Regulations that you feel you have a reasonable knowledge of",
-    Categories.DATA_MANAGEMENT: "Please tick all Data Management skills that you feel you have a reasonable knowledge of",
-    Categories.LANGUAGE: "Please tick all Languages that you feel you have a reasonable knowledge of",
-    Categories.PROGRAMMING: "Please tick all Programming Languages that you feel you have a reasonable knowledge of",
-    Categories.MISCELLANEOUS: "Please tick all that you feel you have reasonable knowledge of",
-    Categories.INFRASTRUCTURE: "Please tick all Infrastructure Technologies that you feel you have a reasonable knowledge of"
-}
+from pipeline.src.neo4j_load import load_neo4j
+from pipeline.src.utils import INPUT_PATH, OUTPUT_PATH, CategoryColumnMap
 
 def main():
+    load_data()
+    load_neo4j()
 
-    neo4J_input_file = 'Zifo Europe - Skills Survey(1-77).csv'
-    neo4J_input_path = 'pipeline/src/input/' + neo4J_input_file
+def load_data():
 
-    load_data(neo4J_input_path)
-
-def load_data(path):
-
-    all_data = pd.read_csv(path, header=0)
-    all_data = all_data.rename({v: k for k, v in all_data.items()})
+    all_data = pd.read_csv(INPUT_PATH, header=0)
+    all_data = all_data.rename({v: k for k, v in CategoryColumnMap.map.items()})
 
     name_data = all_data[["ID", "Name", "Email"]]
     
@@ -56,7 +29,7 @@ def load_data(path):
 
     # Explode columns individually to keep one skill per row
     skill_data_sep = pd.DataFrame()
-    for col in category_column_map:
+    for col in CategoryColumnMap.map:
         col_sep = skill_data[col].explode().to_frame()
         skill_data_sep = pd.concat([skill_data_sep, col_sep])
 
@@ -65,8 +38,7 @@ def load_data(path):
 
     output_data = name_data.join(skill_data_sep)
 
-    output_path = 'pipeline/src/input/neo4jimport.csv'
-    output_data.to_csv(output_path, index=False)
+    output_data.to_csv(OUTPUT_PATH, index=False)
 
 def split_strings(input):
     return input.str.split(';')
@@ -75,4 +47,5 @@ def extend_list(list_value, max_length):
     list_value.extend([np.nan for _ in range(max_length - len(list_value))])
     return list_value
 
-main()
+if __name__ == "__main__":
+    main()
