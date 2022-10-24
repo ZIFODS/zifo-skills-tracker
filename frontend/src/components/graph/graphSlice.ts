@@ -62,7 +62,6 @@ const graphSlice = createSlice({
     },
     filterGraphDataSuccess: (state: any, action: any) => {
       state.loading = false;
-      console.log(state.hiddenGroups.length)
       if (state.hiddenGroups.length > 0) {
         state.selectedNodes = action.payload.data.nodes;
         state.selectedLinks = action.payload.data.links;

@@ -1,21 +1,18 @@
 import React from "react"
-import { Stack, Typography, Paper } from "@mui/material";
+import { Stack, Paper } from "@mui/material";
 import { useAppSelector } from "../../app/hooks";
 import { selectRuleList } from "./searchSlice";
 import { selectAllNodes } from "../graph/graphSlice";
 import { getUniqueGroups } from "../../hooks/useD3";
-import * as d3 from "d3"
-import { groupDisplayNameLinks } from "../../constants/data";
 import RuleSkill from "./ruleSkill";
 import RuleOperator from "./ruleOperator";
-
+import { useEffect } from "react";
 
 
 export default function SearchList() {
 
   const searchList = useAppSelector(selectRuleList)
   const nodeData = useAppSelector(selectAllNodes)
-  const groups = getUniqueGroups(nodeData)
 
   let open = false
 
@@ -26,8 +23,13 @@ export default function SearchList() {
       .map((item: any) => item.index)
   }
 
-  const startBracketIdxs = getBracketIndexes("[")
-  const endBracketIdxs = getBracketIndexes("]")
+  let startBracketIdxs = getBracketIndexes("[")
+  let endBracketIdxs = getBracketIndexes("]")
+
+  useEffect(() => {
+    startBracketIdxs = getBracketIndexes("[")
+    endBracketIdxs = getBracketIndexes("]")
+  }, [searchList])
 
   return(
     <Stack spacing={1}>
@@ -49,24 +51,19 @@ export default function SearchList() {
               <RuleOperator operator={rule.operator}/>
             }
             <RuleSkill group={rule.group} name={rule.name} />
-            {/* {(startBracketIdx !== -1 && j === startBracketIdx - 1) &&
-              <RuleOperator operator={searchList[startBracketIdx].operator}/>
-            } */}
           </Stack>
           )
       }
 
       // if bracket is open then it should be wrapped in yellow paper - nothing should be returned until bracket closed
       else if (endBracketIdxs.includes(j) || j === searchList.length - 1) {
-        // const endIdx = endBracketIdx === -1 ? searchList.length - 1 : endBracketIdx
         let startBracketIdx = startBracketIdxs[endBracketIdxs.indexOf(j)]
-        if (!endBracketIdxs.includes(j)) {
-          startBracketIdx = searchList.length - 1
+        if (startBracketIdx === undefined) {
+          startBracketIdx = startBracketIdxs.slice(-1)[0]
         }
         const nodesInParentheses = searchList.filter(function(rule: any, k: number) {
           return (k >= startBracketIdx && k <= j)
         })
-        // console.log(nodesInParentheses)
         return(
           <Stack spacing={1}>
             <RuleOperator operator={searchList[startBracketIdx].operator}/>
