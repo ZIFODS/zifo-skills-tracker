@@ -2,7 +2,7 @@ version: "2.4"
 services:
 
   neo4j-db:
-    image: neo4j:latest
+    image: neo4j:4.4.12
     container_name: zifo-skills-neo4j
     environment:
       - NEO4J_AUTH=neo4j/test
@@ -19,11 +19,11 @@ services:
     networks:
       - zifo-skills-network
     healthcheck:
-        test: wget http://localhost:7474 || exit 1
-        interval: 1s
-        timeout: 10s
-        retries: 20
-        start_period: 3s
+      test: wget http://localhost:7474 || exit 1
+      interval: 1s
+      timeout: 10s
+      retries: 20
+      start_period: 3s
 
   python-api:
     image: zifo-skills-api
@@ -39,11 +39,11 @@ services:
     networks:
       - zifo-skills-network
     healthcheck:
-        test: wget http://localhost:8080/docs || exit 1
-        interval: 1s
-        timeout: 10s
-        retries: 20
-        start_period: 3s
+      test: wget http://localhost:8080/docs || exit 1
+      interval: 1s
+      timeout: 10s
+      retries: 20
+      start_period: 3s
 
   react-frontend:
     image: zifo-skills-frontend
