@@ -2,7 +2,6 @@
 
 # data
 *.csv
-*.json
 *.pyc
 *.xlsx
 *.graphml
