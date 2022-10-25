@@ -29,7 +29,7 @@ function skillNameHTML(name: string) {
 
 function consultantInitials(name: string) {
     let initials = ""
-    const splitWords = name.split(" ")
+    const splitWords = name.trim().split(" ")
     splitWords.forEach((word) => {
         initials += word[0].toUpperCase()
     })
@@ -43,13 +43,14 @@ function calculateZoom(svg: any, rootGroup: any) {
         fullHeight = parent.height;
     var width = bounds.width,
         height = bounds.height;
-    var midX = bounds.x + width / 2 - 500,
+    var midX = bounds.x + width / 2 - 700,
         midY = bounds.y + height / 2;
-    if (width == 0 || height == 0) return; // nothing to fit
+    if (width < fullWidth - 100 && height < fullHeight - 100) return; // nothing to fit
     var widthScale = 0.85 / (width / fullWidth)
     var heightScale = 0.85 / (height / fullHeight)
     var scale = Math.min(widthScale, heightScale)
-    var translate = [fullWidth / 2 - widthScale * midX, fullHeight / 2 - heightScale * midY];
+    var translate = [fullWidth / 2 - (widthScale * midX), fullHeight / 2 - (heightScale * midY)];
+
     return d3.zoomIdentity
         .translate(translate[0], translate[1])
         .scale(scale);
