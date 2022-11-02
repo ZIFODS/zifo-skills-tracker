@@ -10,18 +10,18 @@ import {
 } from "./graphSlice";
 import GraphService from "./graphService";
 
-// Generator to get Graph List
+// Generator to get all graph data.
 export function* getGraphData(_action: PayloadAction<any>): any {
   try {
     const response = yield call(GraphService.fetchGraphData);
     yield put(getGraphDataSuccess(response));
   } catch (e: any) {
-    console.log("Graph API failed");
+    console.log("Graph total API failed");
     yield put(getGraphDataFail());
   }
 }
 
-// Generator to filter Graph List
+// Generator to get graph data given filtering skills.
 export function* filterGraphData(action: PayloadAction<any>): any {
   try {
     const response = yield call(
