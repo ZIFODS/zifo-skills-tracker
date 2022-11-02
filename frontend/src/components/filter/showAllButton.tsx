@@ -8,6 +8,9 @@ import {
   selectCurrentSearchedList,
 } from "../graph/graphSlice";
 
+/**
+  * Show all categories button in filter section
+ */
 export default function ShowAllButton() {
 
   const dispatch = useAppDispatch();

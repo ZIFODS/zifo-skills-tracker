@@ -10,6 +10,9 @@ import {
 } from "../graph/graphSlice";
 import { getUniqueGroups } from "../../hooks/useD3";
 
+/**
+  * Hide all categories button in filter section
+ */
 export default function HideAllButton() {
 
   const dispatch = useAppDispatch();

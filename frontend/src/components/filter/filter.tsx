@@ -40,6 +40,9 @@ const groupsIntoChunks = (groups: string[]) => {
   return chunkedGroups;
 };
 
+/**
+  * Filter section
+ */
 export default function Filter() {
   const dispatch = useAppDispatch();
 
