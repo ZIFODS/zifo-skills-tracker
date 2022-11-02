@@ -1,55 +1,77 @@
-import React from "react"
-import { Stack, ToggleButtonGroup, ToggleButton } from "@mui/material"
-import { useAppDispatch, useAppSelector } from "../../app/hooks"
-import { clearCurrentParenthesis, selectCurrentSearchOperator, selectCurrentSearchParenthesis, selectRuleList, setCurrentBitwiseOperatorSearch } from "./searchSlice"
-import { useEffect } from "react"
+import React from "react";
+import { Stack, ToggleButtonGroup, ToggleButton } from "@mui/material";
+import { useAppDispatch, useAppSelector } from "../../app/hooks";
+import {
+  clearCurrentParenthesis,
+  selectCurrentSearchOperator,
+  selectCurrentSearchParenthesis,
+  selectRuleList,
+  setCurrentBitwiseOperatorSearch,
+} from "./searchSlice";
+import { useEffect } from "react";
 
 export default function BitwiseOperators() {
+  const dispatch = useAppDispatch();
 
-  const dispatch = useAppDispatch()
+  const operator = useAppSelector(selectCurrentSearchOperator);
+  let parenthesis = useAppSelector(selectCurrentSearchParenthesis);
+  const searchList = useAppSelector(selectRuleList);
 
-  const operator = useAppSelector(selectCurrentSearchOperator)
-  let parenthesis = useAppSelector(selectCurrentSearchParenthesis)
-  const searchList = useAppSelector(selectRuleList)
-
-  const numOpenParentheses = searchList.filter(function(rule: any) {return rule.parenthesis === "["}).length
-  const numClosedParentheses = searchList.filter(function(rule: any) {return rule.parenthesis === "]"}).length
-  let parenthesesOpen = false
+  const numOpenParentheses = searchList.filter(function (rule: any) {
+    return rule.parenthesis === "[";
+  }).length;
+  const numClosedParentheses = searchList.filter(function (rule: any) {
+    return rule.parenthesis === "]";
+  }).length;
+  let parenthesesOpen = false;
   if (numOpenParentheses === numClosedParentheses) {
-    parenthesesOpen = false
-  }
-  else {
-    parenthesesOpen = true
+    parenthesesOpen = false;
+  } else {
+    parenthesesOpen = true;
   }
 
   useEffect(() => {
-    dispatch(clearCurrentParenthesis())
+    dispatch(clearCurrentParenthesis());
 
     if (searchList.length > 0 && operator === "") {
-      dispatch(setCurrentBitwiseOperatorSearch({operator: "AND", parenthesis: ""}))
+      dispatch(
+        setCurrentBitwiseOperatorSearch({ operator: "AND", parenthesis: "" })
+      );
     }
     if (searchList.length === 0) {
-      dispatch(setCurrentBitwiseOperatorSearch({operator: "", parenthesis: ""}))
+      dispatch(
+        setCurrentBitwiseOperatorSearch({ operator: "", parenthesis: "" })
+      );
     }
-  }, [searchList])
+  }, [searchList]);
 
   const handleOperatorChange = (
     _event: React.MouseEvent<HTMLElement>,
-    newOperator: string | null,
-  )  => {
+    newOperator: string | null
+  ) => {
     if (newOperator !== null) {
-      dispatch(setCurrentBitwiseOperatorSearch({operator: newOperator, parenthesis: parenthesis}));
+      dispatch(
+        setCurrentBitwiseOperatorSearch({
+          operator: newOperator,
+          parenthesis: parenthesis,
+        })
+      );
     }
-  }
+  };
 
   const handleParenthesisChange = (
     _event: React.MouseEvent<HTMLElement>,
-    newParentheses: string | null,
-  )  => {
-    dispatch(setCurrentBitwiseOperatorSearch({operator: operator, parenthesis: newParentheses}));
-  }
+    newParentheses: string | null
+  ) => {
+    dispatch(
+      setCurrentBitwiseOperatorSearch({
+        operator: operator,
+        parenthesis: newParentheses,
+      })
+    );
+  };
 
-  return(
+  return (
     <Stack direction="row" spacing={2}>
       <ToggleButtonGroup
         value={operator}
@@ -76,5 +98,5 @@ export default function BitwiseOperators() {
         </ToggleButton>
       </ToggleButtonGroup>
     </Stack>
-  )
+  );
 }
