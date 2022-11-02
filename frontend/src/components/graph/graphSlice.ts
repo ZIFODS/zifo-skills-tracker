@@ -1,4 +1,4 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { createSlice } from "@reduxjs/toolkit";
 import { SimulationLinkDatum, SimulationNodeDatum } from "d3";
 import { RootState } from "../../app/store";
 
