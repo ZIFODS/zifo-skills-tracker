@@ -3,10 +3,16 @@ import { Stack, Typography, Paper, Box, FormGroup, FormControlLabel, Checkbox, F
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { selectHiddenGroups, selectAllNodes, selectCurrentNodes, setHiddenGroups, filterGraphDataRequest, selectSelectedNodes, removeHiddenGroup, selectCurrentSearchedList } from "../graph/graphSlice";
 import { getUniqueGroups } from "../../hooks/useD3";
-import {groupDisplayNameLinks} from "../../constants/data"
+import { groupDisplayNameLinks } from "../../constants/data"
 import ShowAllButton from "./showAllButton";
 import HideAllButton from "./hideAllButton";
 
+/**
+ * Splits array of group names into chunks of defined size.
+ *
+ * @param {string[]} groups Array of group names
+ * @return {string[][]} n array of m string array where m is chunk size.
+ */
 const groupsIntoChunks = (groups: string[]) => {
   const chunkSize = 6;
   const chunkedGroups = []
@@ -20,35 +26,42 @@ export default function Filter() {
 
   const dispatch = useAppDispatch()
 
+  // Graph data
   const allNodeData = useAppSelector(selectAllNodes)
   const currentNodeData = useAppSelector(selectCurrentNodes)
   const selectedNodeData = useAppSelector(selectSelectedNodes)
 
+  // Searched nodes
+  let skills = useAppSelector(selectCurrentSearchedList)
+  
+  // Groups
   let hiddenGroups = useAppSelector(selectHiddenGroups)
   hiddenGroups = JSON.parse(JSON.stringify(hiddenGroups))
 
-  let skills = useAppSelector(selectCurrentSearchedList)
-  
   const allGroups = getUniqueGroups(allNodeData)
   const currentGroups = getUniqueGroups(currentNodeData)
   let selectedGroups = getUniqueGroups(selectedNodeData)
 
   const allGroupsChunked = groupsIntoChunks(allGroups)
 
+  // On checkbox click, update hidden groups and fetch filtered data from backend
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const group = event.target.name
     if (group !== undefined) {
+      // Clicking checked checkbox updates hidden groups with name
       if (!event.target.checked) {
         if (!hiddenGroups.includes(group)) {
           hiddenGroups.push(group)
           dispatch(setHiddenGroups(group))
         }
       }
+      // Clicking unchecked checkbox removes name from hidden groups list
       else {
         hiddenGroups = hiddenGroups.filter(function(g: string) {return g !== group})
         dispatch(removeHiddenGroup(group))
       }
     }
+    // Make API request
     skills.length && dispatch(filterGraphDataRequest({skills: skills, hiddenGroups: hiddenGroups}))
     }
 
