@@ -61,7 +61,7 @@ export default function Filter() {
 
   const allGroupsChunked = groupsIntoChunks(allGroups);
 
-  // On checkbox click, update hidden groups and fetch filtered data from backend
+  // Clicking filter checkbox
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const group = event.target.name;
     if (group !== undefined) {

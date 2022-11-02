@@ -9,14 +9,17 @@ import {
 } from "../graph/graphSlice";
 
 export default function ShowAllButton() {
-  const graphFilled = useAppSelector(isGraphFilled);
 
   const dispatch = useAppDispatch();
 
   let skills = useAppSelector(selectCurrentSearchedList);
+  const graphFilled = useAppSelector(isGraphFilled);
 
+  // Clicking Show All button
   const handleClick = () => {
+    // Empty hidden groups list
     dispatch(clearHiddenGroups());
+    // Make API request
     skills.length &&
       dispatch(filterGraphDataRequest({ skills: skills, hiddenGroups: [] }));
   };

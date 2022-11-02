@@ -11,22 +11,25 @@ import {
 import { getUniqueGroups } from "../../hooks/useD3";
 
 export default function HideAllButton() {
-  const graphFilled = useAppSelector(isGraphFilled);
 
   const dispatch = useAppDispatch();
 
   const allNodeData = useAppSelector(selectAllNodes);
+  let skills = useAppSelector(selectCurrentSearchedList);
+  const graphFilled = useAppSelector(isGraphFilled);
+
   const allGroups = getUniqueGroups(allNodeData);
 
-  let skills = useAppSelector(selectCurrentSearchedList);
-
+  // Clicking Hide All button
   const handleClick = () => {
+    // Add all group names except Consultant to hidden groups list
     const allSkillGroups = allGroups.filter(function (group: string) {
       return group !== "Consultant";
     });
     allSkillGroups.map(function (group: string) {
       dispatch(setHiddenGroups(group));
     });
+    // Make API request
     skills.length &&
       dispatch(
         filterGraphDataRequest({ skills: skills, hiddenGroups: allSkillGroups })
