@@ -1,5 +1,5 @@
 import React from "react";
-import { Stack, Typography, Paper, Box, Grid } from "@mui/material";
+import { Stack, Typography, Paper, Box } from "@mui/material";
 import BitwiseOperators from "./bitwiseOperators";
 import NodeAutocomplete from "./nodeAutocomplete";
 import AddRuleButton from "./addRuleButton";

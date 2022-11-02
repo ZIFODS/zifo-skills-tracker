@@ -1,5 +1,4 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { stat } from "fs";
+import { createSlice } from "@reduxjs/toolkit";
 import { RootState } from "../../app/store";
 
 export interface IRule {

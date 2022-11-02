@@ -3,7 +3,6 @@ import { Stack, Paper } from "@mui/material";
 import { useAppSelector } from "../../app/hooks";
 import { selectRuleList } from "./searchSlice";
 import { selectAllNodes } from "../graph/graphSlice";
-import { getUniqueGroups } from "../../hooks/useD3";
 import RuleSkill from "./ruleSkill";
 import RuleOperator from "./ruleOperator";
 import { useEffect } from "react";

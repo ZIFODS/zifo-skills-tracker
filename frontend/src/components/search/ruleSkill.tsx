@@ -1,5 +1,5 @@
 import React from "react";
-import { Stack, Typography, Paper, IconButton, Box } from "@mui/material";
+import { Stack, Typography, Paper, IconButton } from "@mui/material";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { selectAllNodes } from "../graph/graphSlice";
 import { getUniqueGroups } from "../../hooks/useD3";
