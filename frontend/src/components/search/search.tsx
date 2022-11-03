@@ -1,6 +1,6 @@
 import React from "react";
 import { Stack, Typography, Paper, Box } from "@mui/material";
-import BitwiseOperators from "./bitwiseOperators";
+import BitwiseOperators from "./operatorParenthesisButtons";
 import NodeAutocomplete from "./nodeAutocomplete";
 import AddSearchButton from "./addSearchButton";
 import SearchList from "./searchList";
