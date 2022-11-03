@@ -9,10 +9,9 @@ import {
 } from "../graph/graphSlice";
 
 /**
-  * Show all categories button in filter section
+ * Show all categories button in filter section
  */
 export default function ShowAllButton() {
-
   const dispatch = useAppDispatch();
 
   let skills = useAppSelector(selectCurrentSearchedList);

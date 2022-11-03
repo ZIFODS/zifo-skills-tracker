@@ -2,10 +2,7 @@ import React from "react";
 import { Autocomplete, TextField } from "@mui/material";
 import { GraphNode, selectAllNodeData } from "../graph/graphSlice";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
-import {
-  selectCurrentSearchNode,
-  setCurrentNodeToSearch,
-} from "./searchSlice";
+import { selectCurrentSearchNode, setCurrentNodeToSearch } from "./searchSlice";
 
 /**
  * Retrieve sorted names from array of nodes for Autocomplete options.
@@ -41,7 +38,6 @@ function getGroupFromNodeName(nodes: GraphNode[], name: string | null) {
  * Autocomplete input for skill node selection.
  */
 export default function NodeAutocomplete() {
-
   const dispatch = useAppDispatch();
 
   // Node data

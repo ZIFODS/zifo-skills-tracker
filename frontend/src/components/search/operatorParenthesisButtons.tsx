@@ -14,7 +14,6 @@ import { useEffect } from "react";
  * Toggle buttons for bitwise operators and parentheses.
  */
 export default function BitwiseOperators() {
-
   const dispatch = useAppDispatch();
 
   const operator = useAppSelector(selectCurrentSearchOperator);
@@ -28,14 +27,14 @@ export default function BitwiseOperators() {
   const numClosedParentheses = searchList.filter(function (rule: any) {
     return rule.parenthesis === "]";
   }).length;
-  
+
   let parenthesesOpen = false;
   if (numOpenParentheses === numClosedParentheses) {
     parenthesesOpen = false;
   } else {
     parenthesesOpen = true;
   }
- 
+
   useEffect(() => {
     dispatch(clearCurrentParenthesis());
     // If search list filled and operator not selected, default is AND

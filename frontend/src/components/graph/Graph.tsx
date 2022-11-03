@@ -16,7 +16,7 @@ import {
  * @return {string} Name of skill with long words trimmed.
  */
 function processSkillName(name: string): string {
-  const maxLength = 12
+  const maxLength = 12;
   let trimmedName = "";
   const splitWords = name.split(" ");
   splitWords.forEach((word, i) => {
@@ -106,12 +106,10 @@ const calculateChargeStrength = (node: any) => {
   const nameLength = trimmedName.length;
   if (node.group == "Consultant") {
     return -200;
-  } 
-  else if (nameLength > 20) {
-      return -40 * nameLength;
-  } 
-  else {
-      return -700;
+  } else if (nameLength > 20) {
+    return -40 * nameLength;
+  } else {
+    return -700;
   }
 };
 
@@ -119,7 +117,6 @@ const calculateChargeStrength = (node: any) => {
  * SVG containing d3 force directed graph.
  */
 function GraphVis() {
-
   // Nodes and links
   var nodeData = useAppSelector(selectFilteredNodeData);
   var linkData = useAppSelector(selectFilteredLinkData);
@@ -150,7 +147,6 @@ function GraphVis() {
 
   const ref = useD3(
     (svg: any) => {
-
       // Assign colours to each node group in data
       const color = d3.scaleOrdinal().domain(groups).range(d3.schemePaired);
 
@@ -184,7 +180,7 @@ function GraphVis() {
        * Get dimensions of cluster central point for a defined node group.
        *
        * @param {string} groupName Name of node group.
-       * @return {number[]} x and y coordinates of node group central point. 
+       * @return {number[]} x and y coordinates of node group central point.
        */
       const getCentralPoint = (groupName: string): number[] => {
         if (groupName === "Consultant") {
@@ -445,7 +441,7 @@ function GraphVis() {
       /**
        * Dynamically update the position of the nodes/links as time passes.
        * Apply zoom change once when simulation has cooled to a certain point.
-      */
+       */
       var zoomed = false;
       function ticked() {
         var k = simulation.alpha();

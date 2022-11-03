@@ -11,10 +11,9 @@ import {
 import { getUniqueGroups } from "../../hooks/useD3";
 
 /**
-  * Hide all categories button in filter section
+ * Hide all categories button in filter section
  */
 export default function HideAllButton() {
-
   const dispatch = useAppDispatch();
 
   const allNodeData = useAppSelector(selectAllNodeData);
@@ -35,7 +34,10 @@ export default function HideAllButton() {
     // Make API request
     skills.length &&
       dispatch(
-        getSearchGraphDataRequest({ skills: skills, hiddenGroups: allSkillGroups })
+        getSearchGraphDataRequest({
+          skills: skills,
+          hiddenGroups: allSkillGroups,
+        })
       );
   };
 

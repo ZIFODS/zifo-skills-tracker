@@ -8,7 +8,6 @@ import { clearCurrentGraph, getAllGraphDataRequest } from "../graph/graphSlice";
  * Button to clear search list and graph
  */
 export default function ClearButton() {
-
   const dispatch = useAppDispatch();
 
   const searchList = useAppSelector(selectSearchList);

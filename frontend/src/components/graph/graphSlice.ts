@@ -32,9 +32,9 @@ export interface GraphState {
 }
 
 const initialState: GraphState = {
-  allData: {nodes: [], links: []},
-  searchedData: {nodes: [], links: []},
-  filteredData: {nodes: [], links: []},
+  allData: { nodes: [], links: [] },
+  searchedData: { nodes: [], links: [] },
+  filteredData: { nodes: [], links: [] },
   currentSearchedList: [],
   hiddenGroups: [],
   searched: false,
@@ -64,10 +64,10 @@ const graphSlice = createSlice({
       state.loading = false;
       state.searched = true;
       if (state.hiddenGroups.length > 0) {
-        state.filteredData = action.payload.data
+        state.filteredData = action.payload.data;
       } else {
-        state.searchedData = action.payload.data
-        state.filteredData = action.payload.data
+        state.searchedData = action.payload.data;
+        state.filteredData = action.payload.data;
       }
     },
     getSearchGraphDataFail: (state: any) => {
@@ -86,8 +86,8 @@ const graphSlice = createSlice({
     },
     clearCurrentGraph: (state: any) => {
       state.searched = false;
-      state.searchedData = initialState.searchedData
-      state.filteredData = initialState.filteredData
+      state.searchedData = initialState.searchedData;
+      state.filteredData = initialState.filteredData;
     },
   },
 });

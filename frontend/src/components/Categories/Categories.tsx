@@ -41,7 +41,7 @@ const groupsIntoChunks = (groups: string[]) => {
 };
 
 /**
-  * Filter section
+ * Filter section
  */
 export default function Filter() {
   const dispatch = useAppDispatch();
@@ -86,7 +86,10 @@ export default function Filter() {
     // Make API request
     skills.length &&
       dispatch(
-        getSearchGraphDataRequest({ skills: skills, hiddenGroups: hiddenGroups })
+        getSearchGraphDataRequest({
+          skills: skills,
+          hiddenGroups: hiddenGroups,
+        })
       );
   };
 

@@ -17,7 +17,6 @@ interface ISearchSkill {
  * Box to display skill group and name in search list
  */
 export default function SearchSkill({ group, name }: ISearchSkill) {
-
   const dispatch = useAppDispatch();
 
   const nodeData = useAppSelector(selectAllNodeData);

@@ -10,7 +10,6 @@ import { useEffect } from "react";
  * Component displaying list of skills to be searched
  */
 export default function SearchList() {
-
   const searchList = useAppSelector(selectSearchList);
 
   /**

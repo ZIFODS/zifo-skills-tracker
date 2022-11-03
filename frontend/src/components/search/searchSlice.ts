@@ -56,10 +56,12 @@ const searchSlice = createSlice({
       if (state.searchList[index].parenthesis === "[") {
         if (state.searchList[index + 1].parenthesis === "]") {
           state.searchList[index + 1].parenthesis = "";
-          state.searchList[index + 1].operator = state.searchList[index].operator;
+          state.searchList[index + 1].operator =
+            state.searchList[index].operator;
         } else {
           state.searchList[index + 1].parenthesis = "[";
-          state.searchList[index + 1].operator = state.searchList[index].operator;
+          state.searchList[index + 1].operator =
+            state.searchList[index].operator;
         }
       }
       if (state.searchList[index].parenthesis === "]") {

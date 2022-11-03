@@ -12,7 +12,6 @@ import { selectSearchList } from "./searchSlice";
  * Button to apply current search list.
  */
 export default function ApplyButton() {
-
   const dispatch = useAppDispatch();
 
   // Groups
