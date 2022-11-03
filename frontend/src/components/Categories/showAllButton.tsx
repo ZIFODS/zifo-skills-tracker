@@ -2,17 +2,16 @@ import React from "react";
 import { Button } from "@mui/material";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import {
-  filterGraphDataRequest,
+  getSearchGraphDataRequest,
   clearHiddenGroups,
   isGraphFilled,
   selectCurrentSearchedList,
 } from "../graph/graphSlice";
 
 /**
-  * Show all categories button in filter section
+ * Show all categories button in filter section
  */
 export default function ShowAllButton() {
-
   const dispatch = useAppDispatch();
 
   let skills = useAppSelector(selectCurrentSearchedList);
@@ -24,7 +23,7 @@ export default function ShowAllButton() {
     dispatch(clearHiddenGroups());
     // Make API request
     skills.length &&
-      dispatch(filterGraphDataRequest({ skills: skills, hiddenGroups: [] }));
+      dispatch(getSearchGraphDataRequest({ skills: skills, hiddenGroups: [] }));
   };
 
   return (

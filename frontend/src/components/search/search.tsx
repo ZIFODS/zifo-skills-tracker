@@ -1,8 +1,8 @@
 import React from "react";
 import { Stack, Typography, Paper, Box } from "@mui/material";
-import BitwiseOperators from "./bitwiseOperators";
+import BitwiseOperators from "./operatorParenthesisButtons";
 import NodeAutocomplete from "./nodeAutocomplete";
-import AddRuleButton from "./addRuleButton";
+import AddSearchButton from "./addSearchButton";
 import SearchList from "./searchList";
 import SearchButton from "./applyButton";
 import ClearButton from "./clearButton";
@@ -36,7 +36,7 @@ export default function Search() {
           </Stack>
           <Stack direction="row" spacing={3} alignItems="flex-end">
             <NodeAutocomplete />
-            <AddRuleButton />
+            <AddSearchButton />
           </Stack>
           <SearchList />
         </Stack>

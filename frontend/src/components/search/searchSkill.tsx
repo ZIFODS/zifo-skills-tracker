@@ -1,14 +1,14 @@
 import React from "react";
 import { Stack, Typography, Paper, IconButton } from "@mui/material";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
-import { selectAllNodes } from "../graph/graphSlice";
-import { getUniqueGroups } from "../../hooks/useD3";
+import { selectAllNodeData } from "../graph/graphSlice";
+import { getUniqueGroups } from "../../utils/utils";
 import * as d3 from "d3";
 import { groupDisplayNameLinks } from "../../constants/data";
 import ClearIcon from "@mui/icons-material/Clear";
 import { removeSkillFromList } from "./searchSlice";
 
-interface IRuleSkill {
+interface ISearchSkill {
   group: string;
   name: string;
 }
@@ -16,11 +16,10 @@ interface IRuleSkill {
 /**
  * Box to display skill group and name in search list
  */
-export default function RuleSkill({ group, name }: IRuleSkill) {
-
+export default function SearchSkill({ group, name }: ISearchSkill) {
   const dispatch = useAppDispatch();
 
-  const nodeData = useAppSelector(selectAllNodes);
+  const nodeData = useAppSelector(selectAllNodeData);
   const groups = getUniqueGroups(nodeData);
 
   // Clicking remove button

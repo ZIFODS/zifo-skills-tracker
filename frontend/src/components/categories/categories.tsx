@@ -12,15 +12,15 @@ import {
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import {
   selectHiddenGroups,
-  selectAllNodes,
-  selectCurrentNodes,
-  setHiddenGroups,
-  filterGraphDataRequest,
-  selectSelectedNodes,
+  selectAllNodeData,
+  selectSearchedNodeData,
+  addHiddenGroup,
+  getSearchGraphDataRequest,
+  selectFilteredNodeData,
   removeHiddenGroup,
   selectCurrentSearchedList,
 } from "../graph/graphSlice";
-import { getUniqueGroups } from "../../hooks/useD3";
+import { getUniqueGroups } from "../../utils/utils";
 import { groupDisplayNameLinks } from "../../constants/data";
 import ShowAllButton from "./showAllButton";
 import HideAllButton from "./hideAllButton";
@@ -41,15 +41,15 @@ const groupsIntoChunks = (groups: string[]) => {
 };
 
 /**
-  * Filter section
+ * Category filtering section
  */
-export default function Filter() {
+export default function Categories() {
   const dispatch = useAppDispatch();
 
   // Graph data
-  const allNodeData = useAppSelector(selectAllNodes);
-  const currentNodeData = useAppSelector(selectCurrentNodes);
-  const selectedNodeData = useAppSelector(selectSelectedNodes);
+  const allNodeData = useAppSelector(selectAllNodeData);
+  const searchedNodeData = useAppSelector(selectSearchedNodeData);
+  const filteredNodeData = useAppSelector(selectFilteredNodeData);
 
   // Searched nodes
   let skills = useAppSelector(selectCurrentSearchedList);
@@ -59,8 +59,8 @@ export default function Filter() {
   hiddenGroups = JSON.parse(JSON.stringify(hiddenGroups));
 
   const allGroups = getUniqueGroups(allNodeData);
-  const currentGroups = getUniqueGroups(currentNodeData);
-  let selectedGroups = getUniqueGroups(selectedNodeData);
+  const searchedGroups = getUniqueGroups(searchedNodeData);
+  let filteredGroups = getUniqueGroups(filteredNodeData);
 
   const allGroupsChunked = groupsIntoChunks(allGroups);
 
@@ -72,7 +72,7 @@ export default function Filter() {
       if (!event.target.checked) {
         if (!hiddenGroups.includes(group)) {
           hiddenGroups.push(group);
-          dispatch(setHiddenGroups(group));
+          dispatch(addHiddenGroup(group));
         }
       }
       // Clicking unchecked checkbox removes name from hidden groups list
@@ -86,7 +86,10 @@ export default function Filter() {
     // Make API request
     skills.length &&
       dispatch(
-        filterGraphDataRequest({ skills: skills, hiddenGroups: hiddenGroups })
+        getSearchGraphDataRequest({
+          skills: skills,
+          hiddenGroups: hiddenGroups,
+        })
       );
   };
 
@@ -134,11 +137,11 @@ export default function Filter() {
                           }
                           name={group}
                         />
-                      ) : currentGroups.includes(group) ? (
+                      ) : searchedGroups.includes(group) ? (
                         <FormControlLabel
                           control={
                             <Checkbox
-                              checked={selectedGroups.includes(group)}
+                              checked={filteredGroups.includes(group)}
                               onChange={handleChange}
                               sx={{ transform: "scale(0.8)", p: 0.5, pl: 1.5 }}
                             />

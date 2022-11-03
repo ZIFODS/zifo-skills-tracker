@@ -2,22 +2,21 @@ import React from "react";
 import { Button } from "@mui/material";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import {
-  filterGraphDataRequest,
+  getSearchGraphDataRequest,
   isGraphFilled,
-  setHiddenGroups,
-  selectAllNodes,
+  addHiddenGroup,
+  selectAllNodeData,
   selectCurrentSearchedList,
 } from "../graph/graphSlice";
-import { getUniqueGroups } from "../../hooks/useD3";
+import { getUniqueGroups } from "../../utils/utils";
 
 /**
-  * Hide all categories button in filter section
+ * Hide all categories button in filter section
  */
 export default function HideAllButton() {
-
   const dispatch = useAppDispatch();
 
-  const allNodeData = useAppSelector(selectAllNodes);
+  const allNodeData = useAppSelector(selectAllNodeData);
   let skills = useAppSelector(selectCurrentSearchedList);
   const graphFilled = useAppSelector(isGraphFilled);
 
@@ -30,12 +29,15 @@ export default function HideAllButton() {
       return group !== "Consultant";
     });
     allSkillGroups.map(function (group: string) {
-      dispatch(setHiddenGroups(group));
+      dispatch(addHiddenGroup(group));
     });
     // Make API request
     skills.length &&
       dispatch(
-        filterGraphDataRequest({ skills: skills, hiddenGroups: allSkillGroups })
+        getSearchGraphDataRequest({
+          skills: skills,
+          hiddenGroups: allSkillGroups,
+        })
       );
   };
 

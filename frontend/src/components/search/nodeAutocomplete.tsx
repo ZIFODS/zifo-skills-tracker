@@ -1,11 +1,8 @@
 import React from "react";
 import { Autocomplete, TextField } from "@mui/material";
-import { GraphNode, selectAllNodes } from "../graph/graphSlice";
+import { GraphNode, selectAllNodeData } from "../graph/graphSlice";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
-import {
-  selectCurrentSearchNode,
-  setCurrentNodeSearch,
-} from "./searchSlice";
+import { selectCurrentSearchNode, setCurrentNodeToSearch } from "./searchSlice";
 
 /**
  * Retrieve sorted names from array of nodes for Autocomplete options.
@@ -41,12 +38,11 @@ function getGroupFromNodeName(nodes: GraphNode[], name: string | null) {
  * Autocomplete input for skill node selection.
  */
 export default function NodeAutocomplete() {
-
   const dispatch = useAppDispatch();
 
   // Node data
-  const nodeData = useAppSelector(selectAllNodes);
-  const currentNode = useAppSelector(selectCurrentSearchNode);
+  const nodeData = useAppSelector(selectAllNodeData);
+  const searchedNode = useAppSelector(selectCurrentSearchNode);
 
   const nodes = getNodeNames(nodeData);
 
@@ -54,7 +50,7 @@ export default function NodeAutocomplete() {
   const handleChange = (_event: any, value: string | null) => {
     // Set skill node and group to current search
     const group = getGroupFromNodeName(nodeData, value);
-    dispatch(setCurrentNodeSearch({ group: group, name: value }));
+    dispatch(setCurrentNodeToSearch({ group: group, name: value }));
   };
 
   return (
@@ -62,7 +58,7 @@ export default function NodeAutocomplete() {
       disablePortal
       id="combo-box-demo"
       options={nodes}
-      value={currentNode}
+      value={searchedNode}
       onChange={handleChange}
       renderInput={(params) => (
         <TextField

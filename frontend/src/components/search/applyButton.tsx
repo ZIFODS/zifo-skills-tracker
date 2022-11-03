@@ -2,24 +2,23 @@ import React from "react";
 import { Button } from "@mui/material";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import {
-  filterGraphDataRequest,
+  getSearchGraphDataRequest,
   selectCurrentSearchedList,
   selectHiddenGroups,
 } from "../graph/graphSlice";
-import { selectRuleList } from "./searchSlice";
+import { selectSearchList } from "./searchSlice";
 
 /**
  * Button to apply current search list.
  */
 export default function ApplyButton() {
-
   const dispatch = useAppDispatch();
 
   // Groups
   const hiddenGroups = useAppSelector(selectHiddenGroups);
 
   // Displayed search list
-  const searchList = useAppSelector(selectRuleList);
+  const searchList = useAppSelector(selectSearchList);
   const searchListSkills = searchList.map(function (skill: any) {
     return skill.name;
   });
@@ -34,7 +33,7 @@ export default function ApplyButton() {
     // Make API request
     searchListSkills.length &&
       dispatch(
-        filterGraphDataRequest({
+        getSearchGraphDataRequest({
           skills: searchList,
           hiddenGroups: hiddenGroups,
         })

@@ -1,12 +1,12 @@
 import { PayloadAction } from "@reduxjs/toolkit";
 import { put, takeLatest, call } from "redux-saga/effects";
 import {
-  getGraphDataRequest,
-  getGraphDataSuccess,
-  getGraphDataFail,
-  filterGraphDataRequest,
-  filterGraphDataSuccess,
-  filterGraphDataFail,
+  getAllGraphDataRequest,
+  getAllGraphDataSuccess,
+  getAllGraphDataFail,
+  getSearchGraphDataRequest,
+  getSearchGraphDataSuccess,
+  getSearchGraphDataFail,
 } from "./graphSlice";
 import GraphService from "./graphService";
 
@@ -14,10 +14,10 @@ import GraphService from "./graphService";
 export function* getGraphData(_action: PayloadAction<any>): any {
   try {
     const response = yield call(GraphService.fetchGraphData);
-    yield put(getGraphDataSuccess(response));
+    yield put(getAllGraphDataSuccess(response));
   } catch (e: any) {
     console.log("Graph total API failed");
-    yield put(getGraphDataFail());
+    yield put(getAllGraphDataFail());
   }
 }
 
@@ -29,14 +29,14 @@ export function* filterGraphData(action: PayloadAction<any>): any {
       action.payload.skills,
       action.payload.hiddenGroups
     );
-    yield put(filterGraphDataSuccess(response));
+    yield put(getSearchGraphDataSuccess(response));
   } catch (e: any) {
     console.log("Graph filter API failed");
-    yield put(filterGraphDataFail());
+    yield put(getSearchGraphDataFail());
   }
 }
 
 export default function* watchGraphSaga() {
-  yield takeLatest(getGraphDataRequest.type, getGraphData);
-  yield takeLatest(filterGraphDataRequest.type, filterGraphData);
+  yield takeLatest(getAllGraphDataRequest.type, getGraphData);
+  yield takeLatest(getSearchGraphDataRequest.type, filterGraphData);
 }
