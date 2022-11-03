@@ -4,14 +4,22 @@ import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { clearRuleList, selectRuleList } from "./searchSlice";
 import { clearCurrentGraph, getGraphDataRequest } from "../graph/graphSlice";
 
+/**
+ * Button to clear search list and graph
+ */
 export default function ClearButton() {
+
   const dispatch = useAppDispatch();
 
   const searchList = useAppSelector(selectRuleList);
 
+  // Clicking clear button
   const handleClearChange = () => {
+    // Clear search list
     dispatch(clearRuleList());
+    // Clear current graph data
     dispatch(clearCurrentGraph());
+    // Retrieve all graph data
     dispatch(getGraphDataRequest());
   };
 

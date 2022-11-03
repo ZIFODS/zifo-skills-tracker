@@ -10,34 +10,41 @@ import {
 } from "./searchSlice";
 import { useEffect } from "react";
 
+/**
+ * Toggle buttons for bitwise operators and parentheses.
+ */
 export default function BitwiseOperators() {
+
   const dispatch = useAppDispatch();
 
   const operator = useAppSelector(selectCurrentSearchOperator);
   let parenthesis = useAppSelector(selectCurrentSearchParenthesis);
   const searchList = useAppSelector(selectRuleList);
 
+  // Determine if parentheses are open or closed in current search list
   const numOpenParentheses = searchList.filter(function (rule: any) {
     return rule.parenthesis === "[";
   }).length;
   const numClosedParentheses = searchList.filter(function (rule: any) {
     return rule.parenthesis === "]";
   }).length;
+  
   let parenthesesOpen = false;
   if (numOpenParentheses === numClosedParentheses) {
     parenthesesOpen = false;
   } else {
     parenthesesOpen = true;
   }
-
+ 
   useEffect(() => {
     dispatch(clearCurrentParenthesis());
-
+    // If search list filled and operator not selected, default is AND
     if (searchList.length > 0 && operator === "") {
       dispatch(
         setCurrentBitwiseOperatorSearch({ operator: "AND", parenthesis: "" })
       );
     }
+    // If search list empty, no operator or parenthesis
     if (searchList.length === 0) {
       dispatch(
         setCurrentBitwiseOperatorSearch({ operator: "", parenthesis: "" })
@@ -45,6 +52,7 @@ export default function BitwiseOperators() {
     }
   }, [searchList]);
 
+  // Clicking bitwise operator toggle button
   const handleOperatorChange = (
     _event: React.MouseEvent<HTMLElement>,
     newOperator: string | null
@@ -59,6 +67,7 @@ export default function BitwiseOperators() {
     }
   };
 
+  // Clicking parenthesis toggle button
   const handleParenthesisChange = (
     _event: React.MouseEvent<HTMLElement>,
     newParentheses: string | null

@@ -8,20 +8,30 @@ import {
 } from "../graph/graphSlice";
 import { selectRuleList } from "./searchSlice";
 
+/**
+ * Button to apply current search list.
+ */
 export default function ApplyButton() {
+
   const dispatch = useAppDispatch();
 
+  // Groups
   const hiddenGroups = useAppSelector(selectHiddenGroups);
-  const searchList = useAppSelector(selectRuleList);
-  const currentSearchedList = useAppSelector(selectCurrentSearchedList);
 
+  // Displayed search list
+  const searchList = useAppSelector(selectRuleList);
   const searchListSkills = searchList.map(function (skill: any) {
     return skill.name;
   });
   searchListSkills.sort();
+
+  // Applied search list
+  const currentSearchedList = useAppSelector(selectCurrentSearchedList);
   currentSearchedList.slice().sort();
 
+  // Clicking apply button
   const handleChange = () => {
+    // Make API request
     searchListSkills.length &&
       dispatch(
         filterGraphDataRequest({
@@ -31,6 +41,7 @@ export default function ApplyButton() {
       );
   };
 
+  // Apply button disabled if search list empty or displayed list matches applied list
   const isDisabled =
     JSON.stringify(searchListSkills) === JSON.stringify(currentSearchedList) ||
     searchListSkills.length === 0;

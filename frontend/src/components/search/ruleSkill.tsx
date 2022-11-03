@@ -13,12 +13,17 @@ interface IRuleSkill {
   name: string;
 }
 
+/**
+ * Box to display skill group and name in search list
+ */
 export default function RuleSkill({ group, name }: IRuleSkill) {
+
   const dispatch = useAppDispatch();
 
   const nodeData = useAppSelector(selectAllNodes);
   const groups = getUniqueGroups(nodeData);
 
+  // Clicking remove button
   const handleClick = () => {
     dispatch(removeSkillFromList(name));
   };

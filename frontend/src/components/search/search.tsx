@@ -7,6 +7,9 @@ import SearchList from "./searchList";
 import SearchButton from "./applyButton";
 import ClearButton from "./clearButton";
 
+/**
+ * Search section
+ */
 export default function Search() {
   return (
     <Paper
