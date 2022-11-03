@@ -1,7 +1,7 @@
 import React from "react";
 import { Button } from "@mui/material";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
-import { clearRuleList, selectRuleList } from "./searchSlice";
+import { clearSearchList, selectSearchList } from "./searchSlice";
 import { clearCurrentGraph, getAllGraphDataRequest } from "../graph/graphSlice";
 
 /**
@@ -11,12 +11,12 @@ export default function ClearButton() {
 
   const dispatch = useAppDispatch();
 
-  const searchList = useAppSelector(selectRuleList);
+  const searchList = useAppSelector(selectSearchList);
 
   // Clicking clear button
   const handleClearChange = () => {
     // Clear search list
-    dispatch(clearRuleList());
+    dispatch(clearSearchList());
     // Clear current graph data
     dispatch(clearCurrentGraph());
     // Retrieve all graph data

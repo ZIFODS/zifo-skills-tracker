@@ -6,7 +6,7 @@ import {
   selectCurrentSearchedList,
   selectHiddenGroups,
 } from "../graph/graphSlice";
-import { selectRuleList } from "./searchSlice";
+import { selectSearchList } from "./searchSlice";
 
 /**
  * Button to apply current search list.
@@ -19,7 +19,7 @@ export default function ApplyButton() {
   const hiddenGroups = useAppSelector(selectHiddenGroups);
 
   // Displayed search list
-  const searchList = useAppSelector(selectRuleList);
+  const searchList = useAppSelector(selectSearchList);
   const searchListSkills = searchList.map(function (skill: any) {
     return skill.name;
   });

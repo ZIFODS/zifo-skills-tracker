@@ -5,8 +5,8 @@ import {
   clearCurrentParenthesis,
   selectCurrentSearchOperator,
   selectCurrentSearchParenthesis,
-  selectRuleList,
-  setCurrentBitwiseOperatorSearch,
+  selectSearchList,
+  setCurrentBitwiseOperatorToSearch,
 } from "./searchSlice";
 import { useEffect } from "react";
 
@@ -19,7 +19,7 @@ export default function BitwiseOperators() {
 
   const operator = useAppSelector(selectCurrentSearchOperator);
   let parenthesis = useAppSelector(selectCurrentSearchParenthesis);
-  const searchList = useAppSelector(selectRuleList);
+  const searchList = useAppSelector(selectSearchList);
 
   // Determine if parentheses are open or closed in current search list
   const numOpenParentheses = searchList.filter(function (rule: any) {
@@ -41,13 +41,13 @@ export default function BitwiseOperators() {
     // If search list filled and operator not selected, default is AND
     if (searchList.length > 0 && operator === "") {
       dispatch(
-        setCurrentBitwiseOperatorSearch({ operator: "AND", parenthesis: "" })
+        setCurrentBitwiseOperatorToSearch({ operator: "AND", parenthesis: "" })
       );
     }
     // If search list empty, no operator or parenthesis
     if (searchList.length === 0) {
       dispatch(
-        setCurrentBitwiseOperatorSearch({ operator: "", parenthesis: "" })
+        setCurrentBitwiseOperatorToSearch({ operator: "", parenthesis: "" })
       );
     }
   }, [searchList]);
@@ -59,7 +59,7 @@ export default function BitwiseOperators() {
   ) => {
     if (newOperator !== null) {
       dispatch(
-        setCurrentBitwiseOperatorSearch({
+        setCurrentBitwiseOperatorToSearch({
           operator: newOperator,
           parenthesis: parenthesis,
         })
@@ -73,7 +73,7 @@ export default function BitwiseOperators() {
     newParentheses: string | null
   ) => {
     dispatch(
-      setCurrentBitwiseOperatorSearch({
+      setCurrentBitwiseOperatorToSearch({
         operator: operator,
         parenthesis: newParentheses,
       })

@@ -1,7 +1,7 @@
 import React from "react";
 import { Stack, Paper } from "@mui/material";
 import { useAppSelector } from "../../app/hooks";
-import { selectRuleList } from "./searchSlice";
+import { selectSearchList } from "./searchSlice";
 import RuleSkill from "./ruleSkill";
 import RuleOperator from "./ruleOperator";
 import { useEffect } from "react";
@@ -11,7 +11,7 @@ import { useEffect } from "react";
  */
 export default function SearchList() {
 
-  const searchList = useAppSelector(selectRuleList);
+  const searchList = useAppSelector(selectSearchList);
 
   /**
    * Get indices in search list where parenthesis matches supplied character.

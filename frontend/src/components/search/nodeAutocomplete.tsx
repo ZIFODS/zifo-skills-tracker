@@ -4,7 +4,7 @@ import { GraphNode, selectAllNodeData } from "../graph/graphSlice";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import {
   selectCurrentSearchNode,
-  setCurrentNodeSearch,
+  setCurrentNodeToSearch,
 } from "./searchSlice";
 
 /**
@@ -54,7 +54,7 @@ export default function NodeAutocomplete() {
   const handleChange = (_event: any, value: string | null) => {
     // Set skill node and group to current search
     const group = getGroupFromNodeName(nodeData, value);
-    dispatch(setCurrentNodeSearch({ group: group, name: value }));
+    dispatch(setCurrentNodeToSearch({ group: group, name: value }));
   };
 
   return (
