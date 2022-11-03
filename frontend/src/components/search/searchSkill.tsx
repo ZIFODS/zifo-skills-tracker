@@ -8,7 +8,7 @@ import { groupDisplayNameLinks } from "../../constants/data";
 import ClearIcon from "@mui/icons-material/Clear";
 import { removeSkillFromList } from "./searchSlice";
 
-interface IRuleSkill {
+interface ISearchSkill {
   group: string;
   name: string;
 }
@@ -16,7 +16,7 @@ interface IRuleSkill {
 /**
  * Box to display skill group and name in search list
  */
-export default function RuleSkill({ group, name }: IRuleSkill) {
+export default function SearchSkill({ group, name }: ISearchSkill) {
 
   const dispatch = useAppDispatch();
 

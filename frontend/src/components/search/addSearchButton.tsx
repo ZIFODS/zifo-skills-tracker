@@ -7,7 +7,7 @@ import { addCurrentSearchToList, clearCurrentNodeToSearch } from "./searchSlice"
 /**
  * Button to add rule to search list.
  */
-export default function AddRuleButton() {
+export default function AddSearchButton() {
 
   const dispatch = useAppDispatch();
 

@@ -2,8 +2,8 @@ import React from "react";
 import { Stack, Paper } from "@mui/material";
 import { useAppSelector } from "../../app/hooks";
 import { selectSearchList } from "./searchSlice";
-import RuleSkill from "./ruleSkill";
-import RuleOperator from "./ruleOperator";
+import SearchSkill from "./searchSkill";
+import SearchOperator from "./searchOperator";
 import { useEffect } from "react";
 
 /**
@@ -55,8 +55,8 @@ export default function SearchList() {
             <Stack spacing={1}>
               {rule.operator !== "" &&
                 (endBracketIdxs.map((idx: number) => idx + 1).includes(j) ||
-                  j !== 0) && <RuleOperator operator={rule.operator} />}
-              <RuleSkill group={rule.group} name={rule.name} />
+                  j !== 0) && <SearchOperator operator={rule.operator} />}
+              <SearchSkill group={rule.group} name={rule.name} />
             </Stack>
           );
         }
@@ -76,16 +76,16 @@ export default function SearchList() {
           });
           return (
             <Stack spacing={1}>
-              <RuleOperator operator={searchList[startBracketIdx].operator} />
+              <SearchOperator operator={searchList[startBracketIdx].operator} />
               <Paper sx={{ p: 1, py: 1.5, backgroundColor: "#e6d4aa" }}>
                 <Stack spacing={1}>
                   {nodesInParentheses.map(function (rule: any, k: number) {
                     return (
                       <Stack spacing={1}>
                         {rule.operator !== "" && k !== 0 && (
-                          <RuleOperator operator={rule.operator} />
+                          <SearchOperator operator={rule.operator} />
                         )}
-                        <RuleSkill group={rule.group} name={rule.name} />
+                        <SearchSkill group={rule.group} name={rule.name} />
                       </Stack>
                     );
                   })}
