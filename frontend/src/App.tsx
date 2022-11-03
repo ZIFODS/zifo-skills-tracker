@@ -2,7 +2,7 @@ import React from 'react'
 import GraphVis from "./components/graph/Graph"
 import Search from "./components/search/search"
 import {Box, Stack, Typography} from "@mui/material"
-import Filter from './components/filter/filter';
+import Filter from './components/Categories/Categories';
 import { useAppDispatch, useAppSelector } from './app/hooks';
 import { getGraphDataRequest, isGraphFilled, isGraphSearched } from './components/graph/graphSlice';
 import { useEffect } from "react";
