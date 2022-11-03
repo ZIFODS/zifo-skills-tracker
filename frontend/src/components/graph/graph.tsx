@@ -1,6 +1,6 @@
 import React from "react";
 import { useD3 } from "../../hooks/useD3";
-import { getUniqueGroups } from "../../utils/Utils";
+import { getUniqueGroups } from "../../utils/utils";
 import * as d3 from "d3";
 import "../../css/style.css";
 import { useAppSelector } from "../../app/hooks";
@@ -9,7 +9,7 @@ import {
   selectFilteredLinkData,
   selectFilteredNodeData,
 } from "./graphSlice";
-import { calculateChargeStrength, calculateZoom, consultantInitials, getCentralPoint, isSkillInSearchList, skillNameHTML } from "./Utils";
+import { calculateChargeStrength, calculateZoom, consultantInitials, getCentralPoint, isSkillInSearchList, skillNameHTML } from "./utils";
 
 /**
  * SVG containing d3 force directed graph.

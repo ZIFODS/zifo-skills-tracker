@@ -20,7 +20,7 @@ import {
   removeHiddenGroup,
   selectCurrentSearchedList,
 } from "../graph/graphSlice";
-import { getUniqueGroups } from "../../utils/Utils";
+import { getUniqueGroups } from "../../utils/utils";
 import { groupDisplayNameLinks } from "../../constants/data";
 import ShowAllButton from "./showAllButton";
 import HideAllButton from "./hideAllButton";
