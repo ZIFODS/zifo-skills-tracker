@@ -8,7 +8,7 @@ import {
   selectAllNodeData,
   selectCurrentSearchedList,
 } from "../graph/graphSlice";
-import { getUniqueGroups } from "../../hooks/useD3";
+import { getUniqueGroups } from "../../utils/Utils";
 
 /**
  * Hide all categories button in filter section

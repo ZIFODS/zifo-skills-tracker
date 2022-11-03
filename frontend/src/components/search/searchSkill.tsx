@@ -2,7 +2,7 @@ import React from "react";
 import { Stack, Typography, Paper, IconButton } from "@mui/material";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { selectAllNodeData } from "../graph/graphSlice";
-import { getUniqueGroups } from "../../hooks/useD3";
+import { getUniqueGroups } from "../../utils/Utils";
 import * as d3 from "d3";
 import { groupDisplayNameLinks } from "../../constants/data";
 import ClearIcon from "@mui/icons-material/Clear";

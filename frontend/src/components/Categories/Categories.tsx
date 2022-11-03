@@ -20,7 +20,7 @@ import {
   removeHiddenGroup,
   selectCurrentSearchedList,
 } from "../graph/graphSlice";
-import { getUniqueGroups } from "../../hooks/useD3";
+import { getUniqueGroups } from "../../utils/Utils";
 import { groupDisplayNameLinks } from "../../constants/data";
 import ShowAllButton from "./showAllButton";
 import HideAllButton from "./hideAllButton";
@@ -48,8 +48,8 @@ export default function Filter() {
 
   // Graph data
   const allNodeData = useAppSelector(selectAllNodeData);
-  const currentNodeData = useAppSelector(selectSearchedNodeData);
-  const selectedNodeData = useAppSelector(selectFilteredNodeData);
+  const searchedNodeData = useAppSelector(selectSearchedNodeData);
+  const filteredNodeData = useAppSelector(selectFilteredNodeData);
 
   // Searched nodes
   let skills = useAppSelector(selectCurrentSearchedList);
@@ -59,8 +59,8 @@ export default function Filter() {
   hiddenGroups = JSON.parse(JSON.stringify(hiddenGroups));
 
   const allGroups = getUniqueGroups(allNodeData);
-  const currentGroups = getUniqueGroups(currentNodeData);
-  let selectedGroups = getUniqueGroups(selectedNodeData);
+  const searchedGroups = getUniqueGroups(searchedNodeData);
+  let filteredGroups = getUniqueGroups(filteredNodeData);
 
   const allGroupsChunked = groupsIntoChunks(allGroups);
 
@@ -137,11 +137,11 @@ export default function Filter() {
                           }
                           name={group}
                         />
-                      ) : currentGroups.includes(group) ? (
+                      ) : searchedGroups.includes(group) ? (
                         <FormControlLabel
                           control={
                             <Checkbox
-                              checked={selectedGroups.includes(group)}
+                              checked={filteredGroups.includes(group)}
                               onChange={handleChange}
                               sx={{ transform: "scale(0.8)", p: 0.5, pl: 1.5 }}
                             />

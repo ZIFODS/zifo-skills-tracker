@@ -42,7 +42,7 @@ export default function NodeAutocomplete() {
 
   // Node data
   const nodeData = useAppSelector(selectAllNodeData);
-  const currentNode = useAppSelector(selectCurrentSearchNode);
+  const searchedNode = useAppSelector(selectCurrentSearchNode);
 
   const nodes = getNodeNames(nodeData);
 
@@ -58,7 +58,7 @@ export default function NodeAutocomplete() {
       disablePortal
       id="combo-box-demo"
       options={nodes}
-      value={currentNode}
+      value={searchedNode}
       onChange={handleChange}
       renderInput={(params) => (
         <TextField
