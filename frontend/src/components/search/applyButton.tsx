@@ -1,35 +1,67 @@
-import React from "react"
-import { Button } from "@mui/material"
-import { useAppDispatch, useAppSelector } from "../../app/hooks"
-import { filterGraphDataRequest, selectCurrentSearchedList, selectHiddenGroups } from "../graph/graphSlice"
-import { selectRuleList } from "./searchSlice"
+import React from "react";
+import { Button } from "@mui/material";
+import { useAppDispatch, useAppSelector } from "../../app/hooks";
+import {
+  filterGraphDataRequest,
+  selectCurrentSearchedList,
+  selectHiddenGroups,
+} from "../graph/graphSlice";
+import { selectRuleList } from "./searchSlice";
 
+/**
+ * Button to apply current search list.
+ */
 export default function ApplyButton() {
 
-  const dispatch = useAppDispatch()
+  const dispatch = useAppDispatch();
 
-  const hiddenGroups = useAppSelector(selectHiddenGroups)
-  const searchList = useAppSelector(selectRuleList)
-  const currentSearchedList = useAppSelector(selectCurrentSearchedList)
-  
-  const searchListSkills = searchList.map(function(skill: any) {return skill.name})
-  searchListSkills.sort()
-  currentSearchedList.slice().sort()
+  // Groups
+  const hiddenGroups = useAppSelector(selectHiddenGroups);
 
+  // Displayed search list
+  const searchList = useAppSelector(selectRuleList);
+  const searchListSkills = searchList.map(function (skill: any) {
+    return skill.name;
+  });
+  searchListSkills.sort();
+
+  // Applied search list
+  const currentSearchedList = useAppSelector(selectCurrentSearchedList);
+  currentSearchedList.slice().sort();
+
+  // Clicking apply button
   const handleChange = () => {
-    searchListSkills.length && dispatch(filterGraphDataRequest({skills: searchList, hiddenGroups: hiddenGroups}))
-  }
+    // Make API request
+    searchListSkills.length &&
+      dispatch(
+        filterGraphDataRequest({
+          skills: searchList,
+          hiddenGroups: hiddenGroups,
+        })
+      );
+  };
 
-  const isDisabled = (JSON.stringify(searchListSkills) === JSON.stringify(currentSearchedList) || searchListSkills.length === 0)
+  // Apply button disabled if search list empty or displayed list matches applied list
+  const isDisabled =
+    JSON.stringify(searchListSkills) === JSON.stringify(currentSearchedList) ||
+    searchListSkills.length === 0;
 
-  return(
-    <Button 
-      variant="outlined" 
+  return (
+    <Button
+      variant="outlined"
       disabled={isDisabled}
-      sx={{ mb: 1, p: 1, fontSize: 15, fontWeight: "bold", color: "white", backgroundColor: !isDisabled ? "#1f226a" : "white", border: "2px solid #1a6714" }}
+      sx={{
+        mb: 1,
+        p: 1,
+        fontSize: 15,
+        fontWeight: "bold",
+        color: "white",
+        backgroundColor: !isDisabled ? "#1f226a" : "white",
+        border: "2px solid #1a6714",
+      }}
       onClick={handleChange}
-      >
+    >
       Apply
     </Button>
-  )
+  );
 }
