@@ -5,8 +5,8 @@ import "../../css/style.css";
 import { useAppSelector } from "../../app/hooks";
 import {
   selectCurrentSearchedList,
-  selectSelectedLinks,
-  selectSelectedNodes,
+  selectFilteredLinkData,
+  selectFilteredNodeData,
 } from "./graphSlice";
 
 /**
@@ -121,8 +121,8 @@ const calculateChargeStrength = (node: any) => {
 function GraphVis() {
 
   // Nodes and links
-  var nodeData = useAppSelector(selectSelectedNodes);
-  var linkData = useAppSelector(selectSelectedLinks);
+  var nodeData = useAppSelector(selectFilteredNodeData);
+  var linkData = useAppSelector(selectFilteredLinkData);
 
   // Copy data due to useAppSelector type issues with d3
   nodeData = JSON.parse(JSON.stringify(nodeData));

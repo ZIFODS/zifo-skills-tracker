@@ -12,11 +12,11 @@ import {
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import {
   selectHiddenGroups,
-  selectAllNodes,
-  selectCurrentNodes,
-  setHiddenGroups,
-  filterGraphDataRequest,
-  selectSelectedNodes,
+  selectAllNodeData,
+  selectSearchedNodeData,
+  addHiddenGroup,
+  getSearchGraphDataRequest,
+  selectFilteredNodeData,
   removeHiddenGroup,
   selectCurrentSearchedList,
 } from "../graph/graphSlice";
@@ -47,9 +47,9 @@ export default function Filter() {
   const dispatch = useAppDispatch();
 
   // Graph data
-  const allNodeData = useAppSelector(selectAllNodes);
-  const currentNodeData = useAppSelector(selectCurrentNodes);
-  const selectedNodeData = useAppSelector(selectSelectedNodes);
+  const allNodeData = useAppSelector(selectAllNodeData);
+  const currentNodeData = useAppSelector(selectSearchedNodeData);
+  const selectedNodeData = useAppSelector(selectFilteredNodeData);
 
   // Searched nodes
   let skills = useAppSelector(selectCurrentSearchedList);
@@ -72,7 +72,7 @@ export default function Filter() {
       if (!event.target.checked) {
         if (!hiddenGroups.includes(group)) {
           hiddenGroups.push(group);
-          dispatch(setHiddenGroups(group));
+          dispatch(addHiddenGroup(group));
         }
       }
       // Clicking unchecked checkbox removes name from hidden groups list
@@ -86,7 +86,7 @@ export default function Filter() {
     // Make API request
     skills.length &&
       dispatch(
-        filterGraphDataRequest({ skills: skills, hiddenGroups: hiddenGroups })
+        getSearchGraphDataRequest({ skills: skills, hiddenGroups: hiddenGroups })
       );
   };
 

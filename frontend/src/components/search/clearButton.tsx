@@ -2,7 +2,7 @@ import React from "react";
 import { Button } from "@mui/material";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { clearRuleList, selectRuleList } from "./searchSlice";
-import { clearCurrentGraph, getGraphDataRequest } from "../graph/graphSlice";
+import { clearCurrentGraph, getAllGraphDataRequest } from "../graph/graphSlice";
 
 /**
  * Button to clear search list and graph
@@ -20,7 +20,7 @@ export default function ClearButton() {
     // Clear current graph data
     dispatch(clearCurrentGraph());
     // Retrieve all graph data
-    dispatch(getGraphDataRequest());
+    dispatch(getAllGraphDataRequest());
   };
 
   return (

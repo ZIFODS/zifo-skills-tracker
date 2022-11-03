@@ -4,7 +4,7 @@ import Search from "./components/search/search"
 import {Box, Stack, Typography} from "@mui/material"
 import Filter from './components/Categories/Categories';
 import { useAppDispatch, useAppSelector } from './app/hooks';
-import { getGraphDataRequest, isGraphFilled, isGraphSearched } from './components/graph/graphSlice';
+import { getAllGraphDataRequest, isGraphFilled, isGraphSearched } from './components/graph/graphSlice';
 import { useEffect } from "react";
 
 
@@ -13,7 +13,7 @@ function App(): JSX.Element {
   const dispatch = useAppDispatch();
 
   useEffect(() => {
-      dispatch(getGraphDataRequest());
+      dispatch(getAllGraphDataRequest());
     }, [dispatch]);
 
   var graphFilled = useAppSelector(isGraphFilled);

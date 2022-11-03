@@ -1,6 +1,6 @@
 import React from "react";
 import { Autocomplete, TextField } from "@mui/material";
-import { GraphNode, selectAllNodes } from "../graph/graphSlice";
+import { GraphNode, selectAllNodeData } from "../graph/graphSlice";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import {
   selectCurrentSearchNode,
@@ -45,7 +45,7 @@ export default function NodeAutocomplete() {
   const dispatch = useAppDispatch();
 
   // Node data
-  const nodeData = useAppSelector(selectAllNodes);
+  const nodeData = useAppSelector(selectAllNodeData);
   const currentNode = useAppSelector(selectCurrentSearchNode);
 
   const nodes = getNodeNames(nodeData);
