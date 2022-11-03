@@ -41,9 +41,9 @@ const groupsIntoChunks = (groups: string[]) => {
 };
 
 /**
- * Filter section
+ * Category filtering section
  */
-export default function Filter() {
+export default function Categories() {
   const dispatch = useAppDispatch();
 
   // Graph data

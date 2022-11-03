@@ -2,7 +2,7 @@ import React from "react";
 import GraphVis from "./components/graph/graph";
 import Search from "./components/search/search";
 import { Box, Stack } from "@mui/material";
-import Filter from "./components/categories/categories";
+import Categories from "./components/categories/categories";
 import { useAppDispatch, useAppSelector } from "./app/hooks";
 import {
   getAllGraphDataRequest,
@@ -35,7 +35,7 @@ function App(): JSX.Element {
     >
       <Stack spacing={1}>
         <Search />
-        <Filter />
+        <Categories />
       </Stack>
       <Box
         sx={{
