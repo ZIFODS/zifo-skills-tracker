@@ -1,11 +1,13 @@
 import React from 'react'
 import GraphVis from "./components/graph/Graph"
 import Search from "./components/search/search"
-import {Box, Stack, Typography} from "@mui/material"
+import {Box, Stack} from "@mui/material"
 import Filter from './components/Categories/Categories';
 import { useAppDispatch, useAppSelector } from './app/hooks';
 import { getAllGraphDataRequest, isGraphFilled, isGraphSearched } from './components/graph/graphSlice';
 import { useEffect } from "react";
+import LandingDisplay from './components/landingDisplay';
+import NoResultsDisplay from './components/noResultsDisplay';
 
 
 function App(): JSX.Element {
@@ -18,9 +20,6 @@ function App(): JSX.Element {
 
   var graphFilled = useAppSelector(isGraphFilled);
   var graphSearched = useAppSelector(isGraphSearched);
-
-  console.log(graphFilled)
-  console.log(graphSearched)
 
   return (
     <Stack 
@@ -36,28 +35,7 @@ function App(): JSX.Element {
         <Filter/>
       </Stack>
       <Box sx={{display:"flex", flexGrow: 1, border:"1px solid #1a6714", alignItems:"center", justifyContent:"center"}}>
-        {!graphSearched ?
-          <Stack spacing={5} alignItems="center">
-            <Typography variant="h4" sx={{color: "#808080"}}>
-              Search with a set of skills to visualise Consultants
-            </Typography>
-            <img src={require("./images/zifo-logo.png")} width="150" height="75"/>
-          </Stack>
-          :
-          graphFilled ?
-          <GraphVis/>
-          :
-          <Stack spacing={5}>
-            <Typography variant="h4" sx={{color: "#808080"}}>
-              Your search did not return any results.
-            </Typography>
-            <Typography variant="h4" sx={{color: "#808080"}}>
-              Try again with a different set of skills.
-            </Typography>
-          </Stack>
-        }
-
-        
+        {!graphSearched ? <LandingDisplay/> : graphFilled ? <GraphVis/> : <NoResultsDisplay/>}
       </Box>
     </Stack>
   );
