@@ -10,6 +10,8 @@ FROM base AS python-deps
 
 # Install pipenv and compilation dependencies
 RUN pip install pipenv
+RUN apt-get update
+RUN apt-get install -y git
 
 # Install python dependencies in /.venv
 COPY Pipfile .
