@@ -13,6 +13,7 @@ requests = "*"
 python-dotenv = "*"
 pandas = "*"
 neo4j = "*"
+neomodel = {git = "git+https://github.com/neo4j-contrib/neomodel"}
 
 [dev-packages]
 black = "*"
