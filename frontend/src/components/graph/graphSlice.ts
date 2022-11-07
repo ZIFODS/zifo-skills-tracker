@@ -1,4 +1,4 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { createSlice } from "@reduxjs/toolkit";
 import { SimulationLinkDatum, SimulationNodeDatum } from "d3";
 import { RootState } from "../../app/store";
 
@@ -8,34 +8,33 @@ export interface FilterGraphDataQuery {
 }
 
 export interface GraphNode extends SimulationNodeDatum {
-    name: string;
-    group: string;
+  name: string;
+  group: string;
 }
 
 export interface GraphLink extends SimulationLinkDatum<GraphNode> {
   id: number;
 }
 
+interface GraphData {
+  nodes: GraphNode[];
+  links: GraphLink[];
+}
+
 export interface GraphState {
-  allNodes: GraphNode[];
-  allLinks: GraphLink[];
-  currentNodes: GraphNode[];
-  currentLinks: GraphLink[];
-  selectedNodes: GraphNode[];
-  selectedLinks: GraphLink[];
-  currentSearchedList: string[]
+  allData: GraphData;
+  searchedData: GraphData;
+  filteredData: GraphData;
+  currentSearchedList: string[];
   hiddenGroups: string[];
   searched: boolean;
   loading: boolean;
 }
 
 const initialState: GraphState = {
-  allNodes: [],
-  allLinks: [],
-  currentNodes: [],
-  currentLinks: [],
-  selectedNodes: [],
-  selectedLinks: [],
+  allData: { nodes: [], links: [] },
+  searchedData: { nodes: [], links: [] },
+  filteredData: { nodes: [], links: [] },
   currentSearchedList: [],
   hiddenGroups: [],
   searched: false,
@@ -47,82 +46,89 @@ const graphSlice = createSlice({
   initialState,
   reducers: {
     // Reducer to update Graph List
-    getGraphDataRequest: (state: any) => {
+    getAllGraphDataRequest: (state: any) => {
       state.loading = true;
     },
-    getGraphDataSuccess: (state: any, action: any) => {
+    getAllGraphDataSuccess: (state: any, action: any) => {
       state.loading = false;
-      state.allNodes = action.payload.data.nodes;
-      state.allLinks = action.payload.data.links;
+      state.allData = action.payload.data;
     },
-    getGraphDataFail: (state: any) => {
+    getAllGraphDataFail: (state: any) => {
       state.loading = false;
     },
-    filterGraphDataRequest: (state: any, action: any) => {
+    getSearchGraphDataRequest: (state: any, action: any) => {
       state.loading = true;
-      state.currentSearchedList = action.payload.skills
+      state.currentSearchedList = action.payload.skills;
     },
-    filterGraphDataSuccess: (state: any, action: any) => {
+    getSearchGraphDataSuccess: (state: any, action: any) => {
       state.loading = false;
-      state.searched = true
+      state.searched = true;
       if (state.hiddenGroups.length > 0) {
-        state.selectedNodes = action.payload.data.nodes;
-        state.selectedLinks = action.payload.data.links;
-      }
-      else {
-        state.currentNodes = action.payload.data.nodes;
-        state.currentLinks = action.payload.data.links;
-        state.selectedNodes = action.payload.data.nodes;
-        state.selectedLinks = action.payload.data.links;
+        state.filteredData = action.payload.data;
+      } else {
+        state.searchedData = action.payload.data;
+        state.filteredData = action.payload.data;
       }
     },
-    filterGraphDataFail: (state: any) => {
+    getSearchGraphDataFail: (state: any) => {
       state.loading = false;
     },
-    setHiddenGroups: (state: any, action: any) => {
-      state.hiddenGroups.push(action.payload)
+    addHiddenGroup: (state: any, action: any) => {
+      state.hiddenGroups.push(action.payload);
     },
     clearHiddenGroups: (state: any) => {
-      state.hiddenGroups = initialState.hiddenGroups
+      state.hiddenGroups = initialState.hiddenGroups;
     },
     removeHiddenGroup: (state: any, action: any) => {
-      state.hiddenGroups = state.hiddenGroups.filter(function(group: string) {return group !== action.payload})
+      state.hiddenGroups = state.hiddenGroups.filter(function (group: string) {
+        return group !== action.payload;
+      });
     },
     clearCurrentGraph: (state: any) => {
-      state.searched = false
-      state.currentNodes = initialState.currentNodes
-      state.currentLinks = initialState.currentLinks
-      state.selectedNodes = initialState.selectedNodes
-      state.selectedLinks = initialState.selectedLinks
-    }
+      state.searched = false;
+      state.searchedData = initialState.searchedData;
+      state.filteredData = initialState.filteredData;
+    },
   },
 });
 
 // Actions
 export const {
-  getGraphDataRequest,
-  getGraphDataSuccess,
-  getGraphDataFail,
-  filterGraphDataRequest,
-  filterGraphDataSuccess,
-  filterGraphDataFail,
-  setHiddenGroups,
+  getAllGraphDataRequest,
+  getAllGraphDataSuccess,
+  getAllGraphDataFail,
+  getSearchGraphDataRequest,
+  getSearchGraphDataSuccess,
+  getSearchGraphDataFail,
+  addHiddenGroup,
   clearHiddenGroups,
   removeHiddenGroup,
-  clearCurrentGraph
+  clearCurrentGraph,
 } = graphSlice.actions;
 
 // Selectors
-export const selectAllNodes = (state: RootState) => state.graph && state.graph.allNodes;
-export const selectAllLinks = (state: RootState) => state.graph && state.graph.allLinks;
-export const isGraphFilled = (state: RootState) => state.graph && state.graph.currentNodes.length > 0;
-export const isGraphSearched = (state: RootState) => state.graph && state.graph.searched;
-export const selectCurrentNodes = (state: RootState) => state.graph && state.graph.currentNodes;
-export const selectCurrentLinks = (state: RootState) => state.graph && state.graph.currentLinks;
-export const selectSelectedNodes = (state: RootState) => state.graph && state.graph.selectedNodes;
-export const selectSelectedLinks = (state: RootState) => state.graph && state.graph.selectedLinks;
-export const selectCurrentSearchedList = (state: RootState) => state.graph && state.graph.currentSearchedList;
-export const selectHiddenGroups = (state: RootState) => state.graph && state.graph.hiddenGroups;
+export const selectAllNodeData = (state: RootState) =>
+  state.graph && state.graph.allData.nodes;
+export const selectAllLinkData = (state: RootState) =>
+  state.graph && state.graph.allData.links;
+export const selectSearchedNodeData = (state: RootState) =>
+  state.graph && state.graph.searchedData.nodes;
+export const selectSearchedLinkData = (state: RootState) =>
+  state.graph && state.graph.searchedData.links;
+export const selectFilteredNodeData = (state: RootState) =>
+  state.graph && state.graph.filteredData.nodes;
+export const selectFilteredLinkData = (state: RootState) =>
+  state.graph && state.graph.filteredData.links;
+
+export const isGraphFilled = (state: RootState) =>
+  state.graph && state.graph.searchedData.nodes.length > 0;
+export const isGraphSearched = (state: RootState) =>
+  state.graph && state.graph.searched;
+
+export const selectCurrentSearchedList = (state: RootState) =>
+  state.graph && state.graph.currentSearchedList;
+export const selectHiddenGroups = (state: RootState) =>
+  state.graph && state.graph.hiddenGroups;
 
 // Reducer
 export default graphSlice.reducer;

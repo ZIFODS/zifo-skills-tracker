@@ -1,42 +1,74 @@
-import React from "react"
+import React from "react";
 import { Autocomplete, TextField } from "@mui/material";
-import { GraphNode, selectAllNodes } from "../graph/graphSlice";
+import { GraphNode, selectAllNodeData } from "../graph/graphSlice";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
-import { selectCurrentSearchGroup, selectCurrentSearchNode, setCurrentNodeSearch } from "./searchSlice";
+import { selectCurrentSearchNode, setCurrentNodeToSearch } from "./searchSlice";
 
-function getNodeNames(nodes: GraphNode[], group: string) {
-    nodes = nodes.filter(function(node: GraphNode) {return(node.group !== "Consultant")})
-    return nodes.map(function(node: GraphNode) {return(node.name)}).sort()
-  }
-
-function getGroupFromNodeName(nodes: GraphNode[], name: string | null) {
-    return nodes.filter(function(node: any) {return node.name === name})[0].group
+/**
+ * Retrieve sorted names from array of nodes for Autocomplete options.
+ *
+ * @param {GraphNode[]} nodes Array of nodes.
+ * @return {string[]} Sorted array of names.
+ */
+function getNodeNames(nodes: GraphNode[]): string[] {
+  nodes = nodes.filter(function (node: GraphNode) {
+    return node.group !== "Consultant";
+  });
+  return nodes
+    .map(function (node: GraphNode) {
+      return node.name;
+    })
+    .sort();
 }
 
+/**
+ * Get group given the name of a node.
+ *
+ * @param {GraphNode[]} nodes Array of nodes.
+ * @param {string | null} name Name of node to be searched.
+ * @return {string} Group name.
+ */
+function getGroupFromNodeName(nodes: GraphNode[], name: string | null) {
+  return nodes.filter(function (node: any) {
+    return node.name === name;
+  })[0].group;
+}
+
+/**
+ * Autocomplete input for skill node selection.
+ */
 export default function NodeAutocomplete() {
+  const dispatch = useAppDispatch();
 
-    const dispatch = useAppDispatch()
+  // Node data
+  const nodeData = useAppSelector(selectAllNodeData);
+  const searchedNode = useAppSelector(selectCurrentSearchNode);
 
-    const nodeData = useAppSelector(selectAllNodes)
-    const currentGroup = useAppSelector(selectCurrentSearchGroup)
-    const currentNode = useAppSelector(selectCurrentSearchNode)
+  const nodes = getNodeNames(nodeData);
 
-    const nodes = getNodeNames(nodeData, currentGroup)
+  // On text change
+  const handleChange = (_event: any, value: string | null) => {
+    // Set skill node and group to current search
+    const group = getGroupFromNodeName(nodeData, value);
+    dispatch(setCurrentNodeToSearch({ group: group, name: value }));
+  };
 
-    const handleChange = (_event: any, value: string | null) => {
-        const group = getGroupFromNodeName(nodeData, value)
-        dispatch(setCurrentNodeSearch({group: group, name: value}))
-    }
-
-    return(
-        <Autocomplete
-            disablePortal
-            id="combo-box-demo"
-            options={nodes}
-            value={currentNode}
-            onChange={handleChange}
-            renderInput={
-                (params) => <TextField {...params} label="Filter" variant="standard" sx={{minWidth:280}} InputLabelProps={{style: {fontSize: 14, margin:0, padding:0}}}/>}
+  return (
+    <Autocomplete
+      disablePortal
+      id="combo-box-demo"
+      options={nodes}
+      value={searchedNode}
+      onChange={handleChange}
+      renderInput={(params) => (
+        <TextField
+          {...params}
+          label="Filter"
+          variant="standard"
+          sx={{ minWidth: 280 }}
+          InputLabelProps={{ style: { fontSize: 14, margin: 0, padding: 0 } }}
         />
-    )
+      )}
+    />
+  );
 }

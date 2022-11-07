@@ -1,42 +1,42 @@
 import { PayloadAction } from "@reduxjs/toolkit";
 import { put, takeLatest, call } from "redux-saga/effects";
 import {
-  getGraphDataRequest,
-  getGraphDataSuccess,
-  getGraphDataFail,
-  filterGraphDataRequest,
-  filterGraphDataSuccess,
-  filterGraphDataFail,
+  getAllGraphDataRequest,
+  getAllGraphDataSuccess,
+  getAllGraphDataFail,
+  getSearchGraphDataRequest,
+  getSearchGraphDataSuccess,
+  getSearchGraphDataFail,
 } from "./graphSlice";
 import GraphService from "./graphService";
 
-// Generator to get Graph List
+// Generator to get all graph data.
 export function* getGraphData(_action: PayloadAction<any>): any {
   try {
     const response = yield call(GraphService.fetchGraphData);
-    yield put(getGraphDataSuccess(response));
+    yield put(getAllGraphDataSuccess(response));
   } catch (e: any) {
-    console.log("Graph API failed");
-    yield put(getGraphDataFail());
+    console.log("Graph total API failed");
+    yield put(getAllGraphDataFail());
   }
 }
 
-// Generator to filter Graph List
+// Generator to get graph data given filtering skills.
 export function* filterGraphData(action: PayloadAction<any>): any {
   try {
     const response = yield call(
-      GraphService.filterGraphData, 
-      action.payload.skills, 
+      GraphService.filterGraphData,
+      action.payload.skills,
       action.payload.hiddenGroups
-      );
-    yield put(filterGraphDataSuccess(response));
+    );
+    yield put(getSearchGraphDataSuccess(response));
   } catch (e: any) {
     console.log("Graph filter API failed");
-    yield put(filterGraphDataFail());
+    yield put(getSearchGraphDataFail());
   }
 }
 
 export default function* watchGraphSaga() {
-  yield takeLatest(getGraphDataRequest.type, getGraphData);
-  yield takeLatest(filterGraphDataRequest.type, filterGraphData);
+  yield takeLatest(getAllGraphDataRequest.type, getGraphData);
+  yield takeLatest(getSearchGraphDataRequest.type, filterGraphData);
 }
