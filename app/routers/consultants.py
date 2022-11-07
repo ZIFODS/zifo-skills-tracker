@@ -24,27 +24,48 @@ RETURN {nodes: nzz, links: rzz}
 def char(num: int):
     return chr(num + 97)
 
+def determine_all_categories_hidden(conn: Neo4jConnection, hidden_categories: list[str]):
+    """
+    Determine if all categories in current data have been selected to be hidden.
+    Retrieve all labels in data, sort and then compare to sorted user category selection.
+
+    Arguments
+    ---------
+    conn : Neo4jConnection
+        custom neo4j database driver
+    hidden_categories: list[str]
+        list of categories hidden by user
+
+    Returns
+    -------
+    all_hidden : bool
+        if all categories in data have been hidden by user 
+    """
+    if hidden_categories:
+        # retrieve all labels and therefore categories in data
+        all_labels_result = conn.query("MATCH (n) RETURN distinct labels(n)")
+        all_categories = [label.values("labels(n)")[0][0] for label in all_labels_result]
+        if "Consultant" in all_categories:
+            all_categories.remove("Consultant")
+
+        all_categories.sort()
+        hidden_categories.sort()
+        if all_categories == hidden_categories:
+            return True
+
+    return False
+
 @consultants_router.get("/", name="Filter by skills")
 async def filter_consultants_by_skills(
     skills: str = Query(default=...),
-    hidden_groups: List[str] = Query(default=[])
+    hidden_categories: List[str] = Query(default=[])
     ):
     conn = Neo4jConnection(uri="neo4j://neo4j-db:7687", user="neo4j", password="test")
 
     rules_str = base64.urlsafe_b64decode(skills)
     rules = json.loads(rules_str)
 
-    all_hidden = False
-    if hidden_groups:
-        all_labels_result = conn.query("MATCH (n) RETURN distinct labels(n)")
-        all_groups = [label.values("labels(n)")[0][0] for label in all_labels_result]
-        if "Consultant" in all_groups:
-            all_groups.remove("Consultant")
-
-        all_groups.sort()
-        hidden_groups.sort()
-        if all_groups == hidden_groups:
-            all_hidden = True
+    all_hidden = determine_all_categories_hidden(conn, hidden_categories)
 
     effective_bracket_idxs = []
     for i, rule in enumerate(rules):
@@ -168,11 +189,11 @@ async def filter_consultants_by_skills(
     else:
         query += f" MATCH p{final_char}=(n{penult_char})"
     
-    if hidden_groups:
+    if hidden_categories:
         query += f" WHERE NONE(n IN nodes(p{final_char}) WHERE"
-        for i, group in enumerate(hidden_groups):
+        for i, group in enumerate(hidden_categories):
             query += f" n:{group}"
-            if i != len(hidden_groups) - 1:
+            if i != len(hidden_categories) - 1:
                 query += " OR"
             else:
                 query += ")"
