@@ -9,7 +9,7 @@ services:
       - NEO4JLABS_PLUGINS=["apoc"]
       - NEO4J_dbms_security_procedures_unrestricted=apoc.*
     volumes:
-      - ./pipeline/src/import:/import
+      - skills-data-volume:/var/lib/neo4j/import
     ports:
       - "7474:7474"
       - "7687:7687"
@@ -31,6 +31,8 @@ services:
       context: .
       dockerfile: ./docker/api/Dockerfile
     container_name: zifo-skills-api
+    volumes:
+      - skills-data-volume:/home/skills_user/pipeline/import/
     ports:
       - "8080:8080"
     depends_on:
@@ -65,3 +67,7 @@ networks:
   zifo-skills-network:
     driver: bridge
     name: zifo-skills-network
+
+volumes:
+  skills-data-volume:
+    driver: local

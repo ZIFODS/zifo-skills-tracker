@@ -200,7 +200,7 @@ async def filter_consultants_by_skills(
 
     if all_hidden:
         query += f" unwind nodes(p{final_char}) as n{final_char}"
-        query += " with collect( distinct {id: ID(n" + final_char + f"), name: n{final_char}.Name, group: labels(n{final_char})[0]" + "}) as nzz"
+        query += " with collect( distinct {id: ID(n" + final_char + f"), name: n{final_char}.Name, group: n{final_char}.Group" + "}) as nzz"
         query += " return {nodes: nzz, links: []}"
 
     else:
