@@ -1,5 +1,5 @@
 import base64
-from typing import List
+from typing import List, TypedDict, NamedTuple
 from fastapi import APIRouter, Query
 from app.utils import neo4j_to_d3_cypher
 import json
@@ -55,6 +55,61 @@ def determine_all_categories_hidden(conn: Neo4jConnection, hidden_categories: li
 
     return False
 
+class Rule(TypedDict):
+    name: str
+    operator: str
+    parenthesis: str
+
+class BracketIndexes(NamedTuple):
+    start: int
+    end: int
+
+def determine_effective_bracket_indexes(rules: list[Rule]) -> list[BracketIndexes]:
+    """
+    Determine index ranges of effective brackets in search list.
+    If bracket not closed, end of search list is classed as closing bracket.
+    Returns empty list if no parenthesis present.
+    
+    Arguments
+    ---------
+    rules : list[Rule]
+        list of rules in search list
+
+    Returns
+    -------
+    bracket_idx_list : list[BracketIndexes]
+    """
+    bracket_idx_list = []
+    for i, rule in enumerate(rules):
+        
+        current_parenthesis = rule["parenthesis"]
+
+        # At start of bracket, if previous skill is not a closing parenthesis then treat preceding skill as single-element bracket.
+        if current_parenthesis == "[":
+            if i != 0:
+                previous_parenthesis = rules[i-1]["parenthesis"]
+                if previous_parenthesis == "":
+                    bracket_idx_list.append(BracketIndexes(i - 1, i - 1))
+
+            # Either way, add initial index pair for bracket that opening parenthesis starts.
+            bracket_idx_list.append(BracketIndexes(i, i))
+
+        if bracket_idx_list:
+            previous_bracket_idx = bracket_idx_list[-1]
+
+            # At end of bracket, if the last set of bracket indexes are an opening parenthesis then extend end index to be current index.
+            # TODO: when writing test, check if initial part of if statement necessary.
+            if current_parenthesis == "]":
+                if previous_bracket_idx.start == previous_bracket_idx.end and rules[previous_bracket_idx.start]["parenthesis"] == "[":
+                    bracket_idx_list[-1] = (previous_bracket_idx.start, i)
+                
+                # If next skill not an opening parenthesis then treat following skill as single-element bracket.
+                if i != len(rules) - 1:
+                    if rules[i+1]["parenthesis"] == "":
+                        bracket_idx_list.append(BracketIndexes(i + 1, i + 1))
+   
+    return bracket_idx_list
+
 @consultants_router.get("/", name="Filter by skills")
 async def filter_consultants_by_skills(
     skills: str = Query(default=...),
@@ -67,26 +122,7 @@ async def filter_consultants_by_skills(
 
     all_hidden = determine_all_categories_hidden(conn, hidden_categories)
 
-    effective_bracket_idxs = []
-    for i, rule in enumerate(rules):
-        if rule["parenthesis"] == "[":
-            if i != 0:
-                if rules[i-1]["parenthesis"] == "":
-                    if effective_bracket_idxs:
-                        if effective_bracket_idxs[-1] != (i-1, i-1):
-                            effective_bracket_idxs.append((i-1, i-1))
-                    else:
-                        effective_bracket_idxs.append((i-1, i-1))
-
-            effective_bracket_idxs.append((i, i))
-
-        if rule["parenthesis"] == "]":
-            if effective_bracket_idxs[-1][0] == effective_bracket_idxs[-1][1] and rules[effective_bracket_idxs[-1][0]]["parenthesis"] == "[":
-                effective_bracket_idxs[-1] = (effective_bracket_idxs[-1][0], i)
-            
-            if i != len(rules) - 1:
-                if rules[i+1]["parenthesis"] == "":
-                    effective_bracket_idxs.append((i+1, i+1))
+    effective_bracket_idxs = determine_effective_bracket_indexes(rules)
 
     apoc_idxs = [i[1] for i in effective_bracket_idxs]
 
