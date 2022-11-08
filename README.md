@@ -8,6 +8,10 @@ To run this application, all you need installed is `docker compose`. Follow the 
 
 For now, the data required by neo4j is a csv with a single skill on each line for each consultant. You can generate this from the original skills csv file using [pipeline.py](./pipeline/src/pipeline.py). The generated csv should be stored in the [import](./pipeline/src/import/) folder prior to launch.
 
+The data required to launch this application is not included in the repo and should be requested from [Joseph Smith](mailto:joe.smith@zifornd.com). Eventually the data will either be stored in an S3 bucket and retrieved automatically or pulled directly from MS Forms.
+
+For now, add the csv data to the [pipeline/input](./pipeline/input/) folder.
+
 Once data is present, run the following command in a terminal from the root directory to launch the application:
 
 ```
