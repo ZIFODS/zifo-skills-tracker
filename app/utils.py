@@ -2,7 +2,7 @@ def neo4j_to_d3_cypher(final_char):
     query = f" unwind nodes(p{final_char}) as n{final_char} unwind relationships(p{final_char}) as r{final_char}"
 
     query += " with collect( distinct {"
-    query += f"id: ID(n{final_char}), name: n{final_char}.Name, group: labels(n{final_char})[0]"
+    query += f"id: ID(n{final_char}), name: n{final_char}.Name, group: n{final_char}.Group"
     query += "}) as nzz,"
 
     query += " collect( distinct {"

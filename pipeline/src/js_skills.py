@@ -12,7 +12,7 @@ def neo4j_to_d3_json(neo4j_json):
                 {
                     "id": int(object["id"]),
                     "name": object["properties"]["Name"],
-                    "group": object["labels"][0]
+                    "group": object["properties"]["Group"]
                 }
             )
 

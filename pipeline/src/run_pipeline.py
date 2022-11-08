@@ -1,8 +1,14 @@
+from pathlib import Path
+import sys
+
+root_dir = (Path(__file__).parent / "../../").resolve()
+sys.path.append(str(root_dir))
+
 import pandas as pd
 import numpy as np
 
 from pipeline.src.neo4j_load import load_neo4j
-from pipeline.src.utils import INPUT_PATH, OUTPUT_PATH, CategoryColumnMap
+from pipeline.src.utils import INPUT_PATH, OUTPUT_PATH, ColumnHeaderMap, Identifiers, Categories
 
 def main():
     load_data()
@@ -10,12 +16,12 @@ def main():
 
 def load_data():
 
-    all_data = pd.read_csv(INPUT_PATH, header=0)
-    all_data = all_data.rename({v: k for k, v in CategoryColumnMap.map.items()})
+    all_data = pd.read_csv(INPUT_PATH)
+    all_data = all_data.rename({v: k for k, v in ColumnHeaderMap.map.items()}, axis=1)
 
-    name_data = all_data[["ID", "Name", "Email"]]
+    name_data = all_data[[Identifiers.ID.value, Identifiers.FULL_NAME.value, Identifiers.EMAIL.value]]
     
-    skill_data = all_data.drop(['ID','Start time','Completion time', "Name", "Email"], axis=1)
+    skill_data = all_data.drop([Identifiers.ID.value,'Start time','Completion time', Identifiers.FULL_NAME.value, Identifiers.EMAIL.value], axis=1)
 
     # Split strings by semi-colon and convert nan to empty list
     skill_data = skill_data.apply(lambda x: split_strings(x))  
@@ -29,11 +35,12 @@ def load_data():
 
     # Explode columns individually to keep one skill per row
     skill_data_sep = pd.DataFrame()
-    for col in CategoryColumnMap.map:
-        col_sep = skill_data[col].explode().to_frame()
+    for col in Categories:
+        col_sep = skill_data[col.value].explode().to_frame()
         skill_data_sep = pd.concat([skill_data_sep, col_sep])
 
     # Remove full nan rows
+    skill_data_sep = skill_data_sep.replace("", np.nan)
     skill_data_sep = skill_data_sep.dropna(how="all")
 
     output_data = name_data.join(skill_data_sep)

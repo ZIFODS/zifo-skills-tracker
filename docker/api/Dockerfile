@@ -30,11 +30,15 @@ ENV PATH="/.venv/bin:$PATH"
 # Create and switch to a new user
 RUN useradd --create-home skills_user
 WORKDIR /home/skills_user
-USER skills_user
 
 # Install application into container
 COPY ./app ./app
 COPY ./pipeline ./pipeline
+
+# Run as root to avoid pipeline/import permissions error
+USER root
+RUN mkdir ./pipeline/import
+RUN chown -R skills_user:skills_user ./pipeline/import
 
 # Run the application with Docker run
 CMD ["hypercorn", "app.main:app", "--reload", "--bind", "0.0.0.0:8080"]
