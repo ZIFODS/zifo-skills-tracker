@@ -43,8 +43,8 @@ def determine_all_categories_hidden(conn: Neo4jConnection, hidden_categories: li
     """
     if hidden_categories:
         # retrieve all labels and therefore categories in data
-        all_labels_result = conn.query("MATCH (n) RETURN distinct labels(n)")
-        all_categories = [label.values("labels(n)")[0][0] for label in all_labels_result]
+        all_labels_result = conn.query("MATCH (n) RETURN COLLECT(DISTINCT n.Group) ")
+        all_categories = all_labels_result[0].values("COLLECT(DISTINCT n.Group)")[0]
         if "Consultant" in all_categories:
             all_categories.remove("Consultant")
 
@@ -303,7 +303,7 @@ async def filter_consultants_by_skills(
     if hidden_categories:
         query += f" WHERE NONE(n IN nodes(p{final_char}) WHERE"
         for i, group in enumerate(hidden_categories):
-            query += f" n:{group}"
+            query += f' n.Group = "{group}"'
             if i != len(hidden_categories) - 1:
                 query += " OR"
             else:
