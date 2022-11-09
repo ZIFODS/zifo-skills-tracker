@@ -116,6 +116,98 @@ def determine_effective_bracket_indexes(rules: list[Rule]) -> list[BracketIndexe
    
     return bracket_idx_list
 
+class OrStatus(NamedTuple):
+    is_or: bool
+    start_or: bool
+    end_or: bool
+
+class OrStatusProcesser:
+    def _not(self):
+        return OrStatus(False, False, False)
+
+    def _start(self):
+        return OrStatus(True, True, False)
+
+    def _middle(self):
+        return OrStatus(True, False, False)
+
+    def _end(self):
+        return OrStatus(True, False, True)
+
+    def process(self, i: int, rules: list[Rule]) -> OrStatus:
+        """
+        Determine if current index is within, first element of, or last element of OR sequence.
+
+        Arguments
+        ---------
+        i : int
+            current index of rule in search list
+        rules: list[Rule]
+            all rules in search list
+        
+        Returns
+        -------
+        or_status : OrStatus
+            OR sequence information for current rule
+        """
+        rule = rules[i]
+
+        final_i = len(rules) - 1
+
+        current_operator = rule["operator"]
+        current_parenthesis = rule["parenthesis"]
+
+        if i != final_i:
+            next_operator = rules[i + 1]["operator"]
+            next_parenthesis = rules[i + 1]["parenthesis"]
+
+            # For first rule, if next operator is OR then it's start of OR sequence, otherwise not.
+            if i == 0:
+                if next_operator == "OR":
+                    return self._start()
+                else:
+                    return self._not()
+
+            else:
+                previous_parenthesis = rules[i - 1]["parenthesis"]
+
+                # If neither the current nor next operators are OR then not part of OR sequence
+                if current_operator != "OR" and next_operator != "OR":
+                    return self._not()
+
+                # If next operator is OR and it's either start of bracket or first OR then it's start of OR sequence
+                # Otherwise if next operator is still OR then it's in middle of OR sequence
+                if next_operator == "OR":
+                    if current_operator != "OR" or previous_parenthesis == "]" or current_parenthesis == "[":
+                        return self._start() 
+
+                    return self._middle()
+
+                # If current operator is OR and isn't start of bracket then it's within OR sequence but can't be start
+                elif current_operator == "OR" and current_parenthesis != "[":
+                    # If next operator is not OR or end of bracket then it's end of OR sequence
+                    # Otherwise it's in middle of OR sequence
+                    if next_operator != "OR" or current_parenthesis == "]" or next_parenthesis == "[":
+                        return self._end()
+
+                    return self._middle()
+
+        else:
+            # If one skill in list then can't be part of OR sequence
+            if i == 0:
+                return self._not()
+
+            # If it's the final skill, current operator is OR and not start of bracket then it's end of OR sequence
+            elif current_operator == "OR":
+                if current_parenthesis != "[":
+                    return self._end()
+
+            # If last operator not OR then not part of OR sequence
+            else:
+                return self._not()
+
+        print("Or sequence not processed correctly")
+
 @consultants_router.get("/", name="Filter by skills")
 async def filter_consultants_by_skills(
     skills: str = Query(default=...),
@@ -134,9 +226,7 @@ async def filter_consultants_by_skills(
 
     path_count = 0
     idx_path_num = {}
-    initial_or = False
-    end_or = False
-    is_or = False
+    or_status = OrStatusProcesser()
     query = "MATCH pa=(c:Consultant)-[:KNOWS]->(sa)"
 
     for i, rule in enumerate(rules):
@@ -152,47 +242,26 @@ async def filter_consultants_by_skills(
 
         name = rule["name"]
 
-        final_i = len(rules) - 1
-
-        # Determine or sequence status
-        if rule["operator"] == "AND":
-            is_or = False
-            initial_or = False
-
-        elif rule["operator"] == "OR":
-            if rule["parenthesis"] != "[":
-                is_or = True
-                if i == final_i:
-                    initial_or = False
-                    end_or = True
-                elif rules[i+1]["operator"] != "OR":
-                    initial_or = False
-                    end_or = True
-
-        if i != final_i:
-            if rules[i+1]["operator"] == "OR" and rules[i+1]["parenthesis"] != "[":
-                initial_or = True
-                is_or = True
-                end_or = False
+        is_or, start_or, end_or = or_status.process(i, rules)
 
         ## match
         if i != 0:
-            if rule["parenthesis"] == "[" or initial_or:
+            if rule["parenthesis"] == "[" or start_or:
                 match_start = f" MATCH p{char(path_count)}=()-[:KNOWS]->(s{char(path_count)})"
 
             elif not is_or:
                 match_start = f" MATCH p{char(path_count)}=(n{char(path_count-1)})-[:KNOWS]->(s{char(path_count)})"
 
         ## where
-        if not is_or or initial_or:
+        if not is_or or start_or:
             where_q = f" where s{char(path_count)}.Name = '{name}'"
 
         ## or_q
-        if is_or and not initial_or:
+        if is_or and not start_or:
             or_q = f" OR s{char(path_count)}.Name = '{name}'"
 
         ## unwind_q
-        if not initial_or:
+        if not start_or:
             unwind_q = f" unwind nodes(p{char(path_count)}) as n{char(path_count)}"
 
         ## intersection/union
