@@ -240,8 +240,6 @@ def generate_intersect_or_union_query(
     if i in end_bracket_idxs and i != end_bracket_idxs[0]:
         bracket_i = end_bracket_idxs.index(i)
 
-        print(bracket_idx_list[bracket_i - 1])
-
         previous_path = idx_path_num[bracket_idx_list[bracket_i - 1].end]
         current_path = idx_path_num[bracket_idx_list[bracket_i].end]
 
