@@ -281,6 +281,37 @@ def collect_final_nodes(path_count: int, all_hidden: bool) -> str:
     else:
         return f" MATCH p{final_char}=(n{penult_char})"
 
+def remove_nodes_with_hidden_categories(path_count: int, hidden_categories: list[str]) -> str:
+    """
+    Use Cypher WHERE clause to remove nodes where group property is a category to be hidden.
+
+    Arguments
+    ---------
+    path_count : int
+        current number of Cypher paths that have generated
+    hidden_categories : list[str]
+        list of categories hidden by user
+
+    Returns
+    -------
+    query : str
+        WHERE query to remove nodes in certain categories
+    """
+    query = ""
+
+    final_char = char(path_count)
+
+    if hidden_categories:
+        query += f" WHERE NONE(n IN nodes(p{final_char}) WHERE"
+        for i, group in enumerate(hidden_categories):
+            query += f' n.Group = "{group}"'
+            if i != len(hidden_categories) - 1:
+                query += " OR"
+            else:
+                query += ")"
+
+    return query
+
 @consultants_router.get("/", name="Filter by skills")
 async def filter_consultants_by_skills(
     skills: str = Query(default=...),
@@ -350,16 +381,9 @@ async def filter_consultants_by_skills(
 
     query += collect_final_nodes(path_count, all_hidden)
 
+    query += remove_nodes_with_hidden_categories(path_count, hidden_categories)
+
     final_char = char(path_count)
-    
-    if hidden_categories:
-        query += f" WHERE NONE(n IN nodes(p{final_char}) WHERE"
-        for i, group in enumerate(hidden_categories):
-            query += f' n.Group = "{group}"'
-            if i != len(hidden_categories) - 1:
-                query += " OR"
-            else:
-                query += ")"
 
     if all_hidden:
         query += f" unwind nodes(p{final_char}) as n{final_char}"
