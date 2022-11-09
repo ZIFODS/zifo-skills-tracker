@@ -253,6 +253,38 @@ def generate_intersect_or_union_query(
 
     return query
 
+def increment_path_count(path_count: int, or_status: OrStatus, parenthesis: str, intersect_or_union: str) -> int:
+    """
+    Increment Cypher path count based on processing of current rule.
+
+    Arguments
+    ---------
+    path_count : int
+        current number of Cypher paths that have generated
+    or_status : OrStatus
+        or sequence status for current rule
+    parenthesis : str
+        parenthesis character for current rule
+    intersect_or_union_generated : bool
+        if apoc intersect or union query generated
+
+    Results
+    -------
+    path_count : int
+        incremented number of Cypher paths
+    """
+    if parenthesis == "]":
+        path_count += 1
+    elif not or_status.is_or:
+        path_count += 1
+    elif or_status.end_or:
+        path_count += 1
+
+    if intersect_or_union:
+        path_count += 2
+
+    return path_count
+
 def collect_final_nodes(path_count: int, all_hidden: bool) -> str:
     """
     Generate match statement to collect final nodes.
@@ -309,23 +341,9 @@ def remove_nodes_with_hidden_categories(path_count: int, hidden_categories: list
 
     return query
 
-def compile_results_with_nodes_and_links(final_char):
-    query = f" unwind nodes(p{final_char}) as n{final_char} unwind relationships(p{final_char}) as r{final_char}"
-
-    query += " with collect( distinct {"
-    query += f"id: ID(n{final_char}), name: n{final_char}.Name, group: n{final_char}.Group"
-    query += "}) as nzz,"
-
-    query += " collect( distinct {"
-    query += f"id: ID(r{final_char}), source: ID(startnode(r{final_char})), target: ID(endnode(r{final_char}))"
-    query += "}) as rzz"
-    
-    query += " RETURN {nodes: nzz, links: rzz}"
-    return query
-
 def compile_results_with_nodes(path_count: int) -> str:
     """
-    Compile results if all categories have been hidden.
+    Compile results with Cypher returning only nodes.
 
     Arguments
     ---------
@@ -345,6 +363,54 @@ def compile_results_with_nodes(path_count: int) -> str:
 
     return query
 
+def compile_results_with_nodes_and_links(path_count: int) -> str:
+    """
+    Compile results with Cypher returning nodes and links.
+
+    Arguments
+    ---------
+    path_count : int
+        current number of Cypher paths that have generated
+
+    Returns
+    -------
+    query : str
+        final Cypher query to compile all results  
+    """
+    final_char = char(path_count)
+
+    query = f" unwind nodes(p{final_char}) as n{final_char} unwind relationships(p{final_char}) as r{final_char}"
+
+    query += " with collect( distinct {"
+    query += f"id: ID(n{final_char}), name: n{final_char}.Name, group: n{final_char}.Group"
+    query += "}) as nzz,"
+
+    query += " collect( distinct {"
+    query += f"id: ID(r{final_char}), source: ID(startnode(r{final_char})), target: ID(endnode(r{final_char}))"
+    query += "}) as rzz"
+    
+    query += " RETURN {nodes: nzz, links: rzz}"
+
+    return query
+
+def match_all_consultants_with_knows_relationship(path_count: int) -> str:
+    return f"MATCH p{char(path_count)}=(c:Consultant)-[:KNOWS]->(s{char(path_count)})"
+
+def match_all_nodes_with_knows_relationship(path_count: int) -> str:
+    return f" MATCH p{char(path_count)}=()-[:KNOWS]->(s{char(path_count)})"
+
+def match_nodes_from_previous_nodes_with_knows_relationship(path_count: int) -> str:
+    return f" MATCH p{char(path_count)}=(n{char(path_count - 1)})-[:KNOWS]->(s{char(path_count)})"
+
+def where_skill_has_name(path_count: int, name: str) -> str:
+    return f" where s{char(path_count)}.Name = '{name}'"
+
+def or_skill_with_name(path_count: int, name: str) -> str:
+    return f" OR s{char(path_count)}.Name = '{name}'"
+
+def unwind_nodes(path_count: int) -> str:
+    return f" unwind nodes(p{char(path_count)}) as n{char(path_count)}"
+
 @consultants_router.get("/", name="Filter by skills")
 async def filter_consultants_by_skills(
     skills: str = Query(default=...),
@@ -361,67 +427,56 @@ async def filter_consultants_by_skills(
 
     path_count = 0
     idx_path_num = {}
-    or_status = OrStatusProcesser()
-    query = "MATCH pa=(c:Consultant)-[:KNOWS]->(sa)"
+    or_status_processor = OrStatusProcesser()
+
+    query = match_all_consultants_with_knows_relationship(path_count)
 
     for i, rule in enumerate(rules):
 
+        name = rule["name"]
+        parenthesis = rule["parenthesis"]
+
         idx_path_num[i] = path_count
 
-        match_start = ""
-        where_q = ""
-        or_q = ""
-        unwind_q = ""
-
-        name = rule["name"]
-
-        is_or, start_or, end_or = or_status.process(i, rules)
+        or_status = or_status_processor.process(i, rules)
+        is_or, start_or, end_or = or_status
 
         ## match
         if i != 0:
-            if rule["parenthesis"] == "[" or start_or:
-                match_start = f" MATCH p{char(path_count)}=()-[:KNOWS]->(s{char(path_count)})"
+            if parenthesis == "[" or start_or:
+                query += match_all_nodes_with_knows_relationship(path_count)
 
             elif not is_or:
-                match_start = f" MATCH p{char(path_count)}=(n{char(path_count-1)})-[:KNOWS]->(s{char(path_count)})"
+                query += match_nodes_from_previous_nodes_with_knows_relationship(path_count)
 
         ## where
         if not is_or or start_or:
-            where_q = f" where s{char(path_count)}.Name = '{name}'"
+            query += where_skill_has_name(path_count, name)
 
         ## or_q
         if is_or and not start_or:
-            or_q = f" OR s{char(path_count)}.Name = '{name}'"
+            query += or_skill_with_name(path_count, name)
 
         ## unwind_q
         if not start_or:
-            unwind_q = f" unwind nodes(p{char(path_count)}) as n{char(path_count)}"
+            unwind_nodes(path_count)
 
         ## intersection/union                
         intersect_or_union = generate_intersect_or_union_query(i, rules, bracket_idx_list, idx_path_num)
+        query += intersect_or_union
 
-        # Move to next path
-        if intersect_or_union:
-            path_count += 2
-        if rule["parenthesis"] == "]":
-            path_count += 1
-        elif not is_or:
-            path_count += 1
-        elif end_or:
-            path_count += 1
-
-        query += match_start + where_q + or_q + unwind_q + intersect_or_union
+        # increment path count
+        path_count = increment_path_count(path_count, or_status, parenthesis, len(intersect_or_union) > 0)
 
     query += collect_final_nodes(path_count, all_hidden)
 
     query += remove_nodes_with_hidden_categories(path_count, hidden_categories)
 
+    # compile final results
     if all_hidden:
         query += compile_results_with_nodes(path_count)
-
     else:
-        final_char = char(path_count)
-        query += compile_results_with_nodes_and_links(final_char)
+        query += compile_results_with_nodes_and_links(path_count)
 
     print(query)
 
