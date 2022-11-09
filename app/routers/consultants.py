@@ -1,7 +1,7 @@
 import base64
 from typing import List, TypedDict, NamedTuple
 from fastapi import APIRouter, Query
-from app.utils import neo4j_to_d3_cypher
+from app.utils import compile_results_with_nodes_and_links
 import json
 
 from pipeline.src.neo4j_connect import Neo4jConnection
@@ -312,7 +312,7 @@ def remove_nodes_with_hidden_categories(path_count: int, hidden_categories: list
 
     return query
 
-def compile_results_if_all_hidden(path_count: int) -> str:
+def compile_results_with_nodes(path_count: int) -> str:
     """
     Compile results if all categories have been hidden.
 
@@ -405,13 +405,12 @@ async def filter_consultants_by_skills(
 
     query += remove_nodes_with_hidden_categories(path_count, hidden_categories)
 
-    final_char = char(path_count)
-
     if all_hidden:
-        query += compile_results_if_all_hidden(path_count)
+        query += compile_results_with_nodes(path_count)
 
     else:
-        query += neo4j_to_d3_cypher(final_char)
+        final_char = char(path_count)
+        query += compile_results_with_nodes_and_links(final_char)
 
     print(query)
 

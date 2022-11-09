@@ -1,4 +1,4 @@
-def neo4j_to_d3_cypher(final_char):
+def compile_results_with_nodes_and_links(final_char):
     query = f" unwind nodes(p{final_char}) as n{final_char} unwind relationships(p{final_char}) as r{final_char}"
 
     query += " with collect( distinct {"
