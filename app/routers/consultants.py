@@ -80,33 +80,39 @@ def determine_effective_bracket_indexes(rules: list[Rule]) -> list[BracketIndexe
     bracket_idx_list : list[BracketIndexes]
     """
     bracket_idx_list = []
+    final_i = len(rules) - 1
+
     for i, rule in enumerate(rules):
         
         current_parenthesis = rule["parenthesis"]
 
-        # At start of bracket, if previous skill is not a closing parenthesis then treat preceding skill as single-element bracket.
-        if current_parenthesis == "[":
-            if i != 0:
-                previous_parenthesis = rules[i-1]["parenthesis"]
-                if previous_parenthesis == "":
-                    bracket_idx_list.append(BracketIndexes(i - 1, i - 1))
-
-            # Either way, add initial index pair for bracket that opening parenthesis starts.
+        # If index at start of bracket, add index pair with start and end equal to index
+        if i == 0:
             bracket_idx_list.append(BracketIndexes(i, i))
 
-        if bracket_idx_list:
-            previous_bracket_idx = bracket_idx_list[-1]
+        elif current_parenthesis == "[":
+            bracket_idx_list.append(BracketIndexes(i, i))
 
-            # At end of bracket, if the last set of bracket indexes are an opening parenthesis then extend end index to be current index.
-            # TODO: when writing test, check if initial part of if statement necessary.
-            if current_parenthesis == "]":
-                if previous_bracket_idx.start == previous_bracket_idx.end and rules[previous_bracket_idx.start]["parenthesis"] == "[":
-                    bracket_idx_list[-1] = (previous_bracket_idx.start, i)
-                
-                # If next skill not an opening parenthesis then treat following skill as single-element bracket.
-                if i != len(rules) - 1:
-                    if rules[i+1]["parenthesis"] == "":
-                        bracket_idx_list.append(BracketIndexes(i + 1, i + 1))
+        else:
+            previous_parenthesis = rules[i-1]["parenthesis"]
+
+            if previous_parenthesis == "]":
+                bracket_idx_list.append(BracketIndexes(i, i))
+
+        # If index at end of bracket, extend most recent index pair to current index
+        if bracket_idx_list:
+            last_bracket_idx = bracket_idx_list[-1]
+            if i == final_i:
+                bracket_idx_list[-1] = (last_bracket_idx.start, i)
+
+            elif current_parenthesis == "]":
+                bracket_idx_list[-1] = (last_bracket_idx.start, i)
+
+            else:
+                next_parenthesis = rules[i + 1]["parenthesis"]
+
+                if next_parenthesis == "[":
+                    bracket_idx_list[-1] = (last_bracket_idx.start, i)
    
     return bracket_idx_list
 
