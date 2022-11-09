@@ -208,6 +208,56 @@ class OrStatusProcesser:
 
         print("Or sequence not processed correctly")
 
+def generate_intersect_or_union_query(
+    i: int, 
+    rules: list[Rule], 
+    bracket_idx_list: list[BracketIndexes], 
+    idx_path_num: dict[int, int], 
+    ) -> str:
+    """
+    Generate apoc intersection or union query to combine results from current and preceding effective brackets.
+
+    Arguments
+    ---------
+    i : int
+        current index of rule in search list
+    rules : list[Rule]
+        all rules in search list
+    bracket_idx_list : list[BracketIndexes]
+        list of start and end indexes for effective brackets
+    idx_path_num : dict[int, int]
+        link between i and path count
+
+    Returns
+    -------
+    query : str
+        apoc intersection or union query
+    """
+    query = ""
+
+    end_bracket_idxs = [i[1] for i in bracket_idx_list]
+
+    if i in end_bracket_idxs and i != end_bracket_idxs[0]:
+        bracket_i = end_bracket_idxs.index(i)
+
+        print(bracket_idx_list[bracket_i - 1])
+
+        previous_path = idx_path_num[bracket_idx_list[bracket_i - 1].end]
+        current_path = idx_path_num[bracket_idx_list[bracket_i].end]
+
+        current_operator = rules[bracket_idx_list[bracket_i].start]["operator"]
+
+        if current_operator == "AND":
+            func_str = "intersection"
+
+        elif current_operator == "OR":
+            func_str = "union"
+
+        query += f" with apoc.coll.{func_str}(collect(n{char(previous_path)}), collect(n{char(current_path)})) as n{char(current_path + 1)}"
+        query += f" unwind n{char(current_path + 1)} as n{char(current_path + 2)}"
+
+    return query
+
 @consultants_router.get("/", name="Filter by skills")
 async def filter_consultants_by_skills(
     skills: str = Query(default=...),
@@ -220,9 +270,7 @@ async def filter_consultants_by_skills(
 
     all_hidden = determine_all_categories_hidden(conn, hidden_categories)
 
-    effective_bracket_idxs = determine_effective_bracket_indexes(rules)
-
-    apoc_idxs = [i[1] for i in effective_bracket_idxs]
+    bracket_idx_list = determine_effective_bracket_indexes(rules)
 
     path_count = 0
     idx_path_num = {}
@@ -233,8 +281,6 @@ async def filter_consultants_by_skills(
 
         idx_path_num[i] = path_count
 
-        intersect = ""
-        union = ""
         match_start = ""
         where_q = ""
         or_q = ""
@@ -264,25 +310,12 @@ async def filter_consultants_by_skills(
         if not start_or:
             unwind_q = f" unwind nodes(p{char(path_count)}) as n{char(path_count)}"
 
-        ## intersection/union
-        if i in apoc_idxs and i != apoc_idxs[0]:
-            bracket_i = apoc_idxs.index(i)
-            path_1 = idx_path_num[effective_bracket_idxs[bracket_i - 1][1]]
-            path_2 = idx_path_num[effective_bracket_idxs[bracket_i][1]]
-            if rules[effective_bracket_idxs[bracket_i][0]]["operator"] == "AND":
-                path_count += 1
-                intersect += f" with apoc.coll.intersection(collect(n{char(path_1)}), collect(n{char(path_2)})) as n{char(path_count)}"
-                intersect += f" unwind n{char(path_count)} as n{char(path_count + 1)}"
-                path_count += 1
-
-            elif rules[effective_bracket_idxs[bracket_i][0]]["operator"] == "OR":
-                path_count += 1
-                intersect += f" with apoc.coll.union(collect(n{char(path_1)}), collect(n{char(path_2)})) as n{char(path_count)}"
-                intersect += f" unwind n{char(path_count)} as n{char(path_count + 1)}"
-                path_count += 1
-        
+        ## intersection/union                
+        intersect_or_union = generate_intersect_or_union_query(i, rules, bracket_idx_list, idx_path_num)
 
         # Move to next path
+        if intersect_or_union:
+            path_count += 2
         if rule["parenthesis"] == "]":
             path_count += 1
         elif not is_or:
@@ -290,7 +323,7 @@ async def filter_consultants_by_skills(
         elif end_or:
             path_count += 1
 
-        query += match_start + where_q + or_q + unwind_q + intersect + union
+        query += match_start + where_q + or_q + unwind_q + intersect_or_union
 
     penult_char = char(path_count - 1)
     final_char = char(path_count)
