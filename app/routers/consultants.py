@@ -256,6 +256,31 @@ def generate_intersect_or_union_query(
 
     return query
 
+def collect_final_nodes(path_count: int, all_hidden: bool) -> str:
+    """
+    Generate match statement to collect final nodes.
+    If all categories to be hidden, don't include any relationships.
+
+    Arguments
+    ---------
+    path_count : int
+        current number of Cypher paths that have generated
+    all_hidden : bool
+        if all categories are to be hidden
+
+    Returns
+    -------
+    query : str
+        final match query to collect nodes
+    """
+    penult_char = char(path_count - 1)
+    final_char = char(path_count)
+
+    if not all_hidden:
+        return f" MATCH p{final_char}=(n{penult_char})-[:KNOWS]->()"
+    else:
+        return f" MATCH p{final_char}=(n{penult_char})"
+
 @consultants_router.get("/", name="Filter by skills")
 async def filter_consultants_by_skills(
     skills: str = Query(default=...),
@@ -323,13 +348,9 @@ async def filter_consultants_by_skills(
 
         query += match_start + where_q + or_q + unwind_q + intersect_or_union
 
-    penult_char = char(path_count - 1)
-    final_char = char(path_count)
+    query += collect_final_nodes(path_count, all_hidden)
 
-    if not all_hidden:
-        query += f" MATCH p{final_char}=(n{penult_char})-[:KNOWS]->()"
-    else:
-        query += f" MATCH p{final_char}=(n{penult_char})"
+    final_char = char(path_count)
     
     if hidden_categories:
         query += f" WHERE NONE(n IN nodes(p{final_char}) WHERE"
