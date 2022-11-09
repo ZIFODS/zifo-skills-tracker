@@ -1,7 +1,7 @@
 import base64
 from typing import List, TypedDict, NamedTuple
 from fastapi import APIRouter, Query
-from app.utils import compile_results_with_nodes_and_links
+from app.utils import char
 import json
 
 from pipeline.src.neo4j_connect import Neo4jConnection
@@ -20,9 +20,6 @@ with collect( distinct {id: ID(nb), name: nb.Name, group: labels(nb)[0]}) as nzz
 collect( distinct {id: ID(rb), source: ID(startnode(rb)), target: ID(endnode(rb))}) as rzz 
 RETURN {nodes: nzz, links: rzz}
 """
-
-def char(num: int):
-    return chr(num + 97)
 
 def determine_all_categories_hidden(conn: Neo4jConnection, hidden_categories: list[str]):
     """
@@ -310,6 +307,20 @@ def remove_nodes_with_hidden_categories(path_count: int, hidden_categories: list
             else:
                 query += ")"
 
+    return query
+
+def compile_results_with_nodes_and_links(final_char):
+    query = f" unwind nodes(p{final_char}) as n{final_char} unwind relationships(p{final_char}) as r{final_char}"
+
+    query += " with collect( distinct {"
+    query += f"id: ID(n{final_char}), name: n{final_char}.Name, group: n{final_char}.Group"
+    query += "}) as nzz,"
+
+    query += " collect( distinct {"
+    query += f"id: ID(r{final_char}), source: ID(startnode(r{final_char})), target: ID(endnode(r{final_char}))"
+    query += "}) as rzz"
+    
+    query += " RETURN {nodes: nzz, links: rzz}"
     return query
 
 def compile_results_with_nodes(path_count: int) -> str:
