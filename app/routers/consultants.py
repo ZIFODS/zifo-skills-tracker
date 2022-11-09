@@ -312,6 +312,28 @@ def remove_nodes_with_hidden_categories(path_count: int, hidden_categories: list
 
     return query
 
+def compile_results_if_all_hidden(path_count: int) -> str:
+    """
+    Compile results if all categories have been hidden.
+
+    Arguments
+    ---------
+    path_count : int
+        current number of Cypher paths that have generated
+
+    Returns
+    -------
+    query : str
+        final Cypher query to compile all results
+    """
+    final_char = char(path_count)
+
+    query = f" unwind nodes(p{final_char}) as n{final_char}"
+    query += " with collect( distinct {id: ID(n" + final_char + f"), name: n{final_char}.Name, group: n{final_char}.Group" + "}) as nzz"
+    query += " return {nodes: nzz, links: []}"
+
+    return query
+
 @consultants_router.get("/", name="Filter by skills")
 async def filter_consultants_by_skills(
     skills: str = Query(default=...),
@@ -386,9 +408,7 @@ async def filter_consultants_by_skills(
     final_char = char(path_count)
 
     if all_hidden:
-        query += f" unwind nodes(p{final_char}) as n{final_char}"
-        query += " with collect( distinct {id: ID(n" + final_char + f"), name: n{final_char}.Name, group: n{final_char}.Group" + "}) as nzz"
-        query += " return {nodes: nzz, links: []}"
+        query += compile_results_if_all_hidden(path_count)
 
     else:
         query += neo4j_to_d3_cypher(final_char)
