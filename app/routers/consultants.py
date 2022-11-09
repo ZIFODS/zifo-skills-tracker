@@ -103,16 +103,16 @@ def determine_effective_bracket_indexes(rules: list[Rule]) -> list[BracketIndexe
         if bracket_idx_list:
             last_bracket_idx = bracket_idx_list[-1]
             if i == final_i:
-                bracket_idx_list[-1] = (last_bracket_idx.start, i)
+                bracket_idx_list[-1] = BracketIndexes(last_bracket_idx.start, i)
 
             elif current_parenthesis == "]":
-                bracket_idx_list[-1] = (last_bracket_idx.start, i)
+                bracket_idx_list[-1] = BracketIndexes(last_bracket_idx.start, i)
 
             else:
                 next_parenthesis = rules[i + 1]["parenthesis"]
 
                 if next_parenthesis == "[":
-                    bracket_idx_list[-1] = (last_bracket_idx.start, i)
+                    bracket_idx_list[-1] = BracketIndexes(last_bracket_idx.start, i)
    
     return bracket_idx_list
 
