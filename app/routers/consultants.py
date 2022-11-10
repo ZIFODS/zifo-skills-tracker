@@ -438,7 +438,7 @@ def match_all_consultants_with_knows_relationship(path_count: int) -> str:
     -------
     query : str
     """
-    return f"MATCH p{char(path_count)}=(c:Consultant)-[:KNOWS]->(s{char(path_count)})"
+    return f" MATCH p{char(path_count)}=(c:Consultant)-[:KNOWS]->(s{char(path_count)})"
 
 def match_nodes_from_previous_nodes_with_knows_relationship(path_count: int) -> str:
     """
