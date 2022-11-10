@@ -320,31 +320,6 @@ def increment_path_count(path_count: int, or_status: OrStatus, parenthesis: str,
 
     return path_count
 
-def collect_final_nodes(path_count: int, all_hidden: bool) -> str:
-    """
-    Generate match statement to collect final nodes.
-    If all categories to be hidden, don't include any relationships.
-
-    Arguments
-    ---------
-    path_count : int
-        current number of Cypher paths that have generated
-    all_hidden : bool
-        if all categories are to be hidden
-
-    Returns
-    -------
-    query : str
-        final match query to collect nodes
-    """
-    penult_char = char(path_count - 1)
-    final_char = char(path_count)
-
-    if not all_hidden:
-        return f" MATCH p{final_char}=(n{penult_char})-[:KNOWS]->()"
-    else:
-        return f" MATCH p{final_char}=(n{penult_char})"
-
 def remove_nodes_with_hidden_categories(path_count: int, hidden_categories: list[str]) -> str:
     """
     Use Cypher WHERE clause to remove nodes where group property is a category to be hidden.
