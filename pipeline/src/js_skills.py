@@ -3,6 +3,15 @@ Convert existing skills.json to d3.js graph compatible form
 """
 
 def neo4j_to_d3_json(neo4j_json):
+    '''
+    Converts neo4j json items to d3 json items
+    Arguments
+    ----------
+    neo4j_json : dict
+    Returns
+    ----------
+    d3_json : dict
+    '''
 
     d3_json = {"nodes": [], "links": []}
 
@@ -26,5 +35,4 @@ def neo4j_to_d3_json(neo4j_json):
             )
 
     return d3_json
-
-        
+    
