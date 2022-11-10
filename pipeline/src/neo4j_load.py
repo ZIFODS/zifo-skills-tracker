@@ -1,8 +1,16 @@
+'''
+Neo4j_Load
+'''
+from pipeline.src.utils import Categories
 from neo4j_connect import Neo4jConnection
 
-from pipeline.src.utils import OUTPUT_PATH, Categories
-
 def generate_cypher_queries():
+    '''
+    Generating queries to sent to the service
+    Returns
+    -------
+    queries : list[str]
+    '''
     queries = [
     "CREATE CONSTRAINT ON (c:Consultant) ASSERT c.Name IS UNIQUE",
     "CREATE CONSTRAINT ON (s:Skill) ASSERT s.Name IS UNIQUE",
@@ -26,12 +34,13 @@ def generate_cypher_queries():
         query += """})
         MERGE (c)-[:KNOWS]->(s))
         """
-        
     queries.append(query)
-    
     return queries
 
 def load_neo4j():
+    '''
+    Establishes a connection to the database.
+    '''
     queries = generate_cypher_queries()
 
     conn = Neo4jConnection(uri="neo4j://neo4j-db:7687", user="neo4j", password="test")
