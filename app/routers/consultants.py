@@ -440,21 +440,6 @@ def match_all_consultants_with_knows_relationship(path_count: int) -> str:
     """
     return f"MATCH p{char(path_count)}=(c:Consultant)-[:KNOWS]->(s{char(path_count)})"
 
-def match_all_nodes_with_knows_relationship(path_count: int) -> str:
-    """
-    Cypher: MATCH all nodes to a new path, where nodes have KNOWS relationship.
-
-    Arguments
-    ---------
-    path_count : int
-        current number of Cypher paths that have generated
-    
-    Returns
-    -------
-    query : str
-    """
-    return f" MATCH p{char(path_count)}=()-[:KNOWS]->(s{char(path_count)})"
-
 def match_nodes_from_previous_nodes_with_knows_relationship(path_count: int) -> str:
     """
     Cypher: MATCH existing set of nodes to a new path, where nodes have KNOWS relationship.
