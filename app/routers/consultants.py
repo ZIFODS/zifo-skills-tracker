@@ -75,6 +75,7 @@ def determine_effective_bracket_indexes(rules: list[Rule]) -> list[BracketIndexe
     Returns
     -------
     bracket_idx_list : list[BracketIndexes]
+        list of start and end indexes for effective brackets
     """
     bracket_idx_list = []
     final_i = len(rules) - 1
@@ -205,6 +206,43 @@ class OrStatusProcesser:
 
         print("Or sequence not processed correctly")
 
+def get_all_end_brackets(bracket_idx_list: list[BracketIndexes]) -> list[int]:
+    """
+    Get all indexes of end of brackets in bracket index list.
+
+    Arguments
+    ---------
+    bracket_idx_list: list[BracketIndexes]
+        list of start and end indexes for effective brackets
+
+    Returns
+    -------
+    list[int]
+        end bracket indexes
+    """
+    return [i[1] for i in bracket_idx_list]
+
+def is_index_at_end_of_bracket(i: int, bracket_idx_list: list[BracketIndexes]) -> bool:
+    """
+    Check if current index of rule is at the end of a bracket.
+
+    Arguments
+    ---------
+    i : int
+        current index of rule
+    bracket_idx_list : list[BracketIndexes]
+        list of start and end indexes for effective brackets
+    
+    Returns
+    -------
+    bool
+        if current index at end of bracket
+    """
+    end_bracket_idxs = get_all_end_brackets(bracket_idx_list)
+
+    # TODO: is check to not be first element actually needed? If so, update docstring
+    return (i in end_bracket_idxs and i != end_bracket_idxs[0])
+
 def generate_intersect_or_union_query(
     i: int, 
     rules: list[Rule], 
@@ -230,30 +268,27 @@ def generate_intersect_or_union_query(
     query : str
         apoc intersection or union query
     """
-    query = ""
+    end_bracket_idxs = get_all_end_brackets(bracket_idx_list)
 
-    end_bracket_idxs = [i[1] for i in bracket_idx_list]
+    bracket_i = end_bracket_idxs.index(i)
 
-    if i in end_bracket_idxs and i != end_bracket_idxs[0]:
-        bracket_i = end_bracket_idxs.index(i)
+    previous_path = idx_path_num[bracket_idx_list[bracket_i - 1].end]
+    current_path = idx_path_num[bracket_idx_list[bracket_i].end]
 
-        previous_path = idx_path_num[bracket_idx_list[bracket_i - 1].end]
-        current_path = idx_path_num[bracket_idx_list[bracket_i].end]
+    current_operator = rules[bracket_idx_list[bracket_i].start]["operator"]
 
-        current_operator = rules[bracket_idx_list[bracket_i].start]["operator"]
+    if current_operator == "AND":
+        func_str = "intersection"
 
-        if current_operator == "AND":
-            func_str = "intersection"
+    elif current_operator == "OR":
+        func_str = "union"
 
-        elif current_operator == "OR":
-            func_str = "union"
-
-        query += f" with apoc.coll.{func_str}(collect(n{char(previous_path)}), collect(n{char(current_path)})) as n{char(current_path + 1)}"
-        query += f" unwind n{char(current_path + 1)} as n{char(current_path + 2)}"
+    query = f" with apoc.coll.{func_str}(collect(n{char(previous_path)}), collect(n{char(current_path)})) as n{char(current_path + 1)}"
+    query += f" unwind n{char(current_path + 1)} as n{char(current_path + 2)}"
 
     return query
 
-def increment_path_count(path_count: int, or_status: OrStatus, parenthesis: str, intersect_or_union: str) -> int:
+def increment_path_count(path_count: int, or_status: OrStatus, parenthesis: str, is_index_at_end_of_bracket: bool) -> int:
     """
     Increment Cypher path count based on processing of current rule.
 
@@ -265,8 +300,8 @@ def increment_path_count(path_count: int, or_status: OrStatus, parenthesis: str,
         or sequence status for current rule
     parenthesis : str
         parenthesis character for current rule
-    intersect_or_union_generated : bool
-        if apoc intersect or union query generated
+    is_index_at_end_of_bracket : bool
+        if apoc intersect or union query has been generated
 
     Results
     -------
@@ -280,7 +315,7 @@ def increment_path_count(path_count: int, or_status: OrStatus, parenthesis: str,
     elif or_status.end_or:
         path_count += 1
 
-    if intersect_or_union:
+    if is_index_at_end_of_bracket:
         path_count += 2
 
     return path_count
@@ -326,18 +361,15 @@ def remove_nodes_with_hidden_categories(path_count: int, hidden_categories: list
     query : str
         WHERE query to remove nodes in certain categories
     """
-    query = ""
-
     final_char = char(path_count)
 
-    if hidden_categories:
-        query += f" WHERE NONE(n IN nodes(p{final_char}) WHERE"
-        for i, group in enumerate(hidden_categories):
-            query += f' n.Group = "{group}"'
-            if i != len(hidden_categories) - 1:
-                query += " OR"
-            else:
-                query += ")"
+    query = f" WHERE NONE(n IN nodes(p{final_char}) WHERE"
+    for i, group in enumerate(hidden_categories):
+        query += f' n.Group = "{group}"'
+        if i != len(hidden_categories) - 1:
+            query += " OR"
+        else:
+            query += ")"
 
     return query
 
@@ -438,8 +470,10 @@ async def filter_consultants_by_skills(
 
         idx_path_num[i] = path_count
 
+        index_at_end_of_bracket = is_index_at_end_of_bracket(i, bracket_idx_list)
+
         or_status = or_status_processor.process(i, rules)
-        is_or, start_or, end_or = or_status
+        is_or, start_or = or_status.is_or, or_status.start_or
 
         ## match
         if i != 0:
@@ -459,18 +493,22 @@ async def filter_consultants_by_skills(
 
         ## unwind_q
         if not start_or:
-            unwind_nodes(path_count)
+            query += unwind_nodes(path_count)
 
-        ## intersection/union                
-        intersect_or_union = generate_intersect_or_union_query(i, rules, bracket_idx_list, idx_path_num)
-        query += intersect_or_union
+        ## intersection/union
+        if index_at_end_of_bracket:               
+            query += generate_intersect_or_union_query(i, rules, bracket_idx_list, idx_path_num)
 
         # increment path count
-        path_count = increment_path_count(path_count, or_status, parenthesis, len(intersect_or_union) > 0)
+        path_count = increment_path_count(path_count, or_status, parenthesis, index_at_end_of_bracket)
 
+    # TODO: externalise if statements and separate matches
+    # TODO: check if match with (sa) is same as with ()
     query += collect_final_nodes(path_count, all_hidden)
 
-    query += remove_nodes_with_hidden_categories(path_count, hidden_categories)
+    # remove any hidden categories
+    if hidden_categories:
+        query += remove_nodes_with_hidden_categories(path_count, hidden_categories)
 
     # compile final results
     if all_hidden:
