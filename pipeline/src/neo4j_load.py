@@ -1,41 +1,8 @@
 from neo4j_connect import Neo4jConnection
 
+from pipeline.src.utils import OUTPUT_PATH, Categories
 
-def get_cypher_queries():
-    with open("pipeline/src/cypher_load.txt") as file:
-        cypher = file.readlines()
-
-        queries = []
-        query = ""
-        for line in cypher:
-
-            if line.startswith("CREATE") or line.startswith("MATCH") or line.startswith("CALL"):
-                queries.append(line)
-
-            elif not line.startswith("-") or not line.strip():
-                query += line
-
-        queries.append(query)
-        
-        queries.pop(0)
-
-        return queries
-
-columns = [
-    "science_apps",
-    "services",
-    "methodologies",
-    "process",
-    "other_products",
-    "regulatory",
-    "data_management",
-    "languages",
-    "programming",
-    "misc",
-    "infrastructure"
-]
-
-def new_get_cypher_queries():
+def generate_cypher_queries():
     queries = [
     "CREATE CONSTRAINT ON (c:Consultant) ASSERT c.Name IS UNIQUE",
     "CREATE CONSTRAINT ON (s:Skill) ASSERT s.Name IS UNIQUE",
@@ -46,17 +13,18 @@ def new_get_cypher_queries():
 
     query = """
     LOAD CSV WITH HEADERS FROM 'file:///neo4jimport.csv' AS row
-    MERGE (c:Consultant{Name: row.fullname, email: row.email, id:row.id})
+    MERGE (c:Consultant {Name: row.Full_name, Group: 'Consultant', email: row.Email, id:row.Id})
     """
 
-    for col in columns:
+    for col in Categories:
+        col_name = col.value
         query += f"""
-        FOREACH(x IN CASE WHEN row.{col} IS NOT NULL THEN [1] END |
+        FOREACH(x IN CASE WHEN row.{col_name} IS NOT NULL THEN [1] END |
         MERGE (s: Skill """
         query += "{Name: row."
-        query += f'{col}, Group: "{col}"'
+        query += f'{col_name}, Group: "{col_name}"'
         query += """})
-        MERGE (c)-[:KNOWS]->(mi))
+        MERGE (c)-[:KNOWS]->(s))
         """
         
     queries.append(query)
@@ -64,7 +32,7 @@ def new_get_cypher_queries():
     return queries
 
 def load_neo4j():
-    queries = get_cypher_queries()
+    queries = generate_cypher_queries()
 
     conn = Neo4jConnection(uri="neo4j://neo4j-db:7687", user="neo4j", password="test")
 
