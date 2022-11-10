@@ -1,20 +1,27 @@
+'''
+Global variables representing values in the input and output CSVs
+'''
 from pathlib import Path
 import sys
-
+from enum import Enum
 root_dir = (Path(__file__).parent / "../../").resolve()
 sys.path.append(str(root_dir))
-
-from enum import Enum
 
 INPUT_PATH = f'{root_dir}/pipeline/input/Zifo Europe - Skills Survey(1-77).csv'
 OUTPUT_PATH = f'{root_dir}/pipeline/import/neo4jimport.csv'
 
 class Identifiers(Enum):
+    '''
+    ID realted values.
+    '''
     ID = "Id"
     FULL_NAME = "Full_name"
     EMAIL = "Email"
 
 class Categories(Enum):
+    '''
+    New column values for output csv file.
+    '''
     SERVICE = "Service"
     METHODOLOGY = "Methodology"
     SCI_PRODUCT_APP = "Scientific_Products_And_Applications"
@@ -28,6 +35,9 @@ class Categories(Enum):
     INFRASTRUCTURE = "Infrastructure_Technologies"
 
 class ColumnHeaderMap:
+    '''
+    Original column values from survey export.
+    '''
     map = {
         Identifiers.ID.value: "ID",
         Identifiers.FULL_NAME.value: "Name",
