@@ -470,6 +470,21 @@ def match_nodes_from_previous_nodes_with_knows_relationship(path_count: int) -> 
     """
     return f" MATCH p{char(path_count)}=(n{char(path_count - 1)})-[:KNOWS]->(s{char(path_count)})"
 
+def match_nodes_from_previous_nodes(path_count: int) -> str:
+    """
+    Cypher: MATCH existing set of nodes to a new path.
+
+    Arguments
+    ---------
+    path_count : int
+        current number of Cypher paths that have generated
+    
+    Returns
+    -------
+    query : str
+    """
+    return f" MATCH p{char(path_count)}=(n{char(path_count - 1)})"
+
 def where_skill_has_name(path_count: int, name: str) -> str:
     """
     Cypher: WHERE a matched skill has property Name equal to supplied value.
@@ -554,7 +569,7 @@ async def filter_consultants_by_skills(
         ## match
         if i != 0:
             if parenthesis == "[" or start_or:
-                query += match_all_nodes_with_knows_relationship(path_count)
+                query += match_all_consultants_with_knows_relationship(path_count)
 
             elif not is_or:
                 query += match_nodes_from_previous_nodes_with_knows_relationship(path_count)
@@ -578,9 +593,11 @@ async def filter_consultants_by_skills(
         # increment path count
         path_count = increment_path_count(path_count, or_status, parenthesis, index_at_end_of_bracket)
 
-    # TODO: externalise if statements and separate matches
-    # TODO: check if match with (sa) is same as with ()
-    query += collect_final_nodes(path_count, all_hidden)
+    # collect final nodes
+    if not all_hidden:
+        query += match_nodes_from_previous_nodes_with_knows_relationship(path_count)
+    else:
+        query += match_nodes_from_previous_nodes(path_count)
 
     # remove any hidden categories
     if hidden_categories:
