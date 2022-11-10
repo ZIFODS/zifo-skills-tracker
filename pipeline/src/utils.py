@@ -1,5 +1,5 @@
 '''
-Global variables representing values in the input and output CSVs
+Global variables representing values in the input and output CSVs.
 '''
 from pathlib import Path
 import sys
