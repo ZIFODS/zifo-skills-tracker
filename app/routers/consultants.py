@@ -426,21 +426,97 @@ def compile_results_with_nodes_and_links(path_count: int) -> str:
     return query
 
 def match_all_consultants_with_knows_relationship(path_count: int) -> str:
+    """
+    Cypher: MATCH all nodes to a new path, where nodes have Consultant label and KNOWS relationship.
+
+    Arguments
+    ---------
+    path_count : int
+        current number of Cypher paths that have generated
+    
+    Returns
+    -------
+    query : str
+    """
     return f"MATCH p{char(path_count)}=(c:Consultant)-[:KNOWS]->(s{char(path_count)})"
 
 def match_all_nodes_with_knows_relationship(path_count: int) -> str:
+    """
+    Cypher: MATCH all nodes to a new path, where nodes have KNOWS relationship.
+
+    Arguments
+    ---------
+    path_count : int
+        current number of Cypher paths that have generated
+    
+    Returns
+    -------
+    query : str
+    """
     return f" MATCH p{char(path_count)}=()-[:KNOWS]->(s{char(path_count)})"
 
 def match_nodes_from_previous_nodes_with_knows_relationship(path_count: int) -> str:
+    """
+    Cypher: MATCH existing set of nodes to a new path, where nodes have KNOWS relationship.
+
+    Arguments
+    ---------
+    path_count : int
+        current number of Cypher paths that have generated
+    
+    Returns
+    -------
+    query : str
+    """
     return f" MATCH p{char(path_count)}=(n{char(path_count - 1)})-[:KNOWS]->(s{char(path_count)})"
 
 def where_skill_has_name(path_count: int, name: str) -> str:
+    """
+    Cypher: WHERE a matched skill has property Name equal to supplied value.
+
+    Arguments
+    ---------
+    path_count : int
+        current number of Cypher paths that have generated
+    name : str
+        name of skill
+    
+    Returns
+    -------
+    query : str
+    """
     return f" where s{char(path_count)}.Name = '{name}'"
 
 def or_skill_with_name(path_count: int, name: str) -> str:
+    """
+    Cypher: OR a matched skill has another property Name equal to supplied value
+
+    Arguments
+    ---------
+    path_count : int
+        current number of Cypher paths that have generated
+    name : str
+        name of skill
+    
+    Returns
+    -------
+    query : str
+    """
     return f" OR s{char(path_count)}.Name = '{name}'"
 
 def unwind_nodes(path_count: int) -> str:
+    """
+    Cypher: UNWIND nodes from existing path into node set.
+
+    Arguments
+    ---------
+    path_count : int
+        current number of Cypher paths that have generated
+    
+    Returns
+    -------
+    query : str
+    """
     return f" unwind nodes(p{char(path_count)}) as n{char(path_count)}"
 
 @consultants_router.get("/", name="Filter by skills")
