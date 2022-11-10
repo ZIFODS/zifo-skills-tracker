@@ -1,3 +1,6 @@
+"""
+Pipeline Script
+"""
 from pathlib import Path
 import sys
 
@@ -11,11 +14,19 @@ from pipeline.src.neo4j_load import load_neo4j
 from pipeline.src.utils import INPUT_PATH, OUTPUT_PATH, ColumnHeaderMap, Identifiers, Categories
 
 def main():
+    """
+    Main method
+    """
     load_data()
     load_neo4j()
 
 def load_data():
-
+    """
+    Loads data from survey csv export
+    Arguments
+    ------
+    path : str - path of csv export
+    """
     all_data = pd.read_csv(INPUT_PATH)
     all_data = all_data.rename({v: k for k, v in ColumnHeaderMap.map.items()}, axis=1)
 
@@ -48,9 +59,28 @@ def load_data():
     output_data.to_csv(OUTPUT_PATH, index=False)
 
 def split_strings(input):
+    """
+    Splits the strings by semicolon
+
+    Arguments
+    ------------
+    input : str - item in the list
+    """
     return input.str.split(';')
 
 def extend_list(list_value, max_length):
+    """
+    Extends the list to be length of the list in the series with the highest length
+
+    Arguments
+    ----------
+    list_value : list - items from the list
+    max_length : int - length of the longest list
+
+    Returns
+    ---------
+    list_value : list
+    """
     list_value.extend([np.nan for _ in range(max_length - len(list_value))])
     return list_value
 
