@@ -7,6 +7,9 @@ import {
   getSearchGraphDataRequest,
   getSearchGraphDataSuccess,
   getSearchGraphDataFail,
+  getFilterGraphDataRequest,
+  getFilterGraphDataSuccess,
+  getFilterGraphDataFail,
 } from "./graphSlice";
 import GraphService from "./graphService";
 
@@ -21,7 +24,21 @@ export function* getGraphData(_action: PayloadAction<any>): any {
   }
 }
 
-// Generator to get graph data given filtering skills.
+// Generator to get graph data given skills to search.
+export function* searchGraphData(action: PayloadAction<any>): any {
+  try {
+    const response = yield call(
+      GraphService.filterGraphData,
+      action.payload.skills,
+    );
+    yield put(getSearchGraphDataSuccess(response));
+  } catch (e: any) {
+    console.log("Graph search API failed");
+    yield put(getSearchGraphDataFail());
+  }
+}
+
+// Generator to get graph data given skills to search and categories to filter
 export function* filterGraphData(action: PayloadAction<any>): any {
   try {
     const response = yield call(
@@ -29,14 +46,15 @@ export function* filterGraphData(action: PayloadAction<any>): any {
       action.payload.skills,
       action.payload.hiddenGroups
     );
-    yield put(getSearchGraphDataSuccess(response));
+    yield put(getFilterGraphDataSuccess(response));
   } catch (e: any) {
     console.log("Graph filter API failed");
-    yield put(getSearchGraphDataFail());
+    yield put(getFilterGraphDataFail());
   }
 }
 
 export default function* watchGraphSaga() {
   yield takeLatest(getAllGraphDataRequest.type, getGraphData);
-  yield takeLatest(getSearchGraphDataRequest.type, filterGraphData);
+  yield takeLatest(getSearchGraphDataRequest.type, searchGraphData);
+  yield takeLatest(getFilterGraphDataRequest.type, filterGraphData);
 }
