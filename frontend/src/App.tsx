@@ -12,6 +12,7 @@ import {
 import { useEffect } from "react";
 import LandingDisplay from "./components/landingDisplay";
 import NoResultsDisplay from "./components/noResultsDisplay";
+import Consultants from "./components/consultants/consultants";
 
 function App(): JSX.Element {
   const dispatch = useAppDispatch();
@@ -54,6 +55,7 @@ function App(): JSX.Element {
           <NoResultsDisplay />
         )}
       </Box>
+      <Consultants/>
     </Stack>
   );
 }
