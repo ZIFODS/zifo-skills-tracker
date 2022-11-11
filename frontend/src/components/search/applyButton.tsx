@@ -7,8 +7,6 @@ import {
   getSearchGraphDataRequest,
   selectAllNodeData,
   selectCurrentSearchedList,
-  selectHiddenGroups,
-  selectSearchedNodeData,
 } from "../graph/graphSlice";
 import { selectSearchList } from "./searchSlice";
 import { getUniqueGroups } from "../../utils/utils";
@@ -20,8 +18,11 @@ export default function ApplyButton() {
 
   const dispatch = useAppDispatch();
 
+  // Data
+  const allNodeData = useAppSelector(selectAllNodeData);
+
   // Groups
-  const hiddenGroups = useAppSelector(selectHiddenGroups)
+  const allGroups = getUniqueGroups(allNodeData);
 
   // Displayed search list
   const searchList = useAppSelector(selectSearchList);
@@ -33,6 +34,14 @@ export default function ApplyButton() {
   // Applied search list
   const currentSearchedList = useAppSelector(selectCurrentSearchedList);
   currentSearchedList.slice().sort();
+
+  // Add all categories to hidden groups unless they are associated with skill in displayed search list
+  const searchListGroups = searchList.map(function (skill: any) {
+    return skill.group;
+  });
+  const groupsToHide = allGroups.filter(function(group: string) {
+    return !(searchListGroups.includes(group) || group == "Consultant")
+  })
 
   // Clicking apply button
   const handleChange = () => {
@@ -47,9 +56,12 @@ export default function ApplyButton() {
       dispatch(
         getFilterGraphDataRequest({
           skills: searchList,
-          hiddenGroups: hiddenGroups
+          hiddenGroups: groupsToHide
         })
       );
+      groupsToHide.map(function(group: string) {
+        dispatch(addHiddenGroup(group))
+      })
   };
 
   // Apply button disabled if search list empty or displayed list matches applied list
