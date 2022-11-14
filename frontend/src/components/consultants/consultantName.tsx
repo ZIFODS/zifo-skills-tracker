@@ -17,6 +17,22 @@ export default function ConsultantName({name}: IConsultantName) {
 
   const initials = consultantInitials(name)
 
+  let linkedConsultantsOnHover = useAppSelector(selectLinkedConsultantsOnHover)
+  const isHovered = useAppSelector(selectIsHovered)
+
+  let isCurrentConsultantHovered = false;
+  const [opacity, setOpacity] = useState(1)
+
+  useEffect(() => {
+    isCurrentConsultantHovered = linkedConsultantsOnHover.includes(name);
+    if (isHovered && !isCurrentConsultantHovered) {
+      setOpacity(0.1)
+    }
+    else {
+      setOpacity(1)
+    }
+  }, [isHovered])
+
   return (
     <Paper sx={{px: 1, py: 0.5, backgroundColor: d3.schemePaired[0] + "70", opacity: opacity}}>
       <Stack direction="row" spacing={3} justifyContent="flex-start" alignItems="center">
