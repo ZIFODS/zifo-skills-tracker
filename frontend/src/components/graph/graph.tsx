@@ -3,18 +3,22 @@ import { useD3 } from "../../hooks/useD3";
 import { getUniqueGroups } from "../../utils/utils";
 import * as d3 from "d3";
 import "../../css/style.css";
-import { useAppSelector } from "../../app/hooks";
+import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import {
   selectCurrentSearchedList,
   selectFilteredLinkData,
   selectFilteredNodeData,
 } from "./graphSlice";
 import { calculateChargeStrength, calculateZoom, consultantInitials, getCentralPoint, isSkillInSearchList, skillNameHTML } from "./utils";
+import { clearLinkedConsultantsOnHover, setLinkedConsultantsOnHover } from "./hoveredNodeSlice";
 
 /**
  * SVG containing d3 force directed graph.
  */
 function GraphVis() {
+
+  const dispatch = useAppDispatch()
+
   // Nodes and links
   var nodeData = useAppSelector(selectFilteredNodeData);
   var linkData = useAppSelector(selectFilteredLinkData);
@@ -221,8 +225,15 @@ function GraphVis() {
             .html(d.name.split(" ").join("<br/>"))
             .style("left", event.pageX + "px")
             .style("top", event.pageY + "px");
+
+          const linkedConsultantNames = [... new Set(linkedSkills.map(function (g: any) {
+            return g.__data__.source.name;
+          }))];
+          dispatch(setLinkedConsultantsOnHover(linkedConsultantNames));
         })
         .on("mouseout", function (d: any) {
+          dispatch(clearLinkedConsultantsOnHover());
+
           link.attr("class", "links");
           consultantNode.attr("class", "consultNodes");
           skillNode
@@ -274,8 +285,15 @@ function GraphVis() {
             })
             .select("foreignObject")
             .style("font-weight", "bold");
+
+          const linkedConsultantNames = [... new Set(linkedConsultants.map(function (g: any) {
+            return g.__data__.source.name;
+          }))];
+          dispatch(setLinkedConsultantsOnHover(linkedConsultantNames));
         })
         .on("mouseout", function (d: any) {
+          dispatch(clearLinkedConsultantsOnHover());
+
           link.attr("class", "links");
           consultantNode.attr("class", "consultNodes");
           skillNode
