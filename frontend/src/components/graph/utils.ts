@@ -67,7 +67,7 @@ export function calculateZoom(svg: any, rootGroup: any): d3.ZoomTransform | unde
   var bounds = rootGroup.node().getBoundingClientRect();
   var width = bounds.width,
     height = bounds.height;
-  var midX = bounds.x + width / 2 - 700,
+  var midX = bounds.x + width / 2 - 500,
     midY = bounds.y + height / 2;
 
   // If viewport within svg then nothing to fit
