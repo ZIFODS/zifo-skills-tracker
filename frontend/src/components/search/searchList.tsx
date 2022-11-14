@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef } from "react";
 import { Stack, Paper, Box } from "@mui/material";
 import { useAppSelector } from "../../app/hooks";
 import { selectSearchList } from "./searchSlice";
@@ -35,10 +35,19 @@ export default function SearchList() {
     endBracketIdxs = getBracketIndexes("]");
   }, [searchList]);
 
+  // Automatically scroll to bottom when search list updated
+  const searchListScrollRef = useRef<null | HTMLDivElement>(null)
+  const scrollToBottom = () => {
+    searchListScrollRef.current?.scrollIntoView({ behavior: "smooth" })
+  }
+  useEffect(() => {
+    scrollToBottom()
+  }, [searchList]);
+
   let open = false;
 
   return (
-    <Box 
+    <Box
       sx={{
         height: 0,
         display: "flex", 
@@ -59,7 +68,7 @@ export default function SearchList() {
           // If bracket is closed return node normally
           if (!open && !endBracketIdxs.includes(j)) {
             return (
-              <Stack spacing={1}>
+              <Stack spacing={1} ref={searchListScrollRef}>
                 {rule.operator !== "" &&
                   (endBracketIdxs.map((idx: number) => idx + 1).includes(j) ||
                     j !== 0) && <SearchOperator operator={rule.operator} />}
@@ -88,7 +97,7 @@ export default function SearchList() {
                   <Stack spacing={1}>
                     {nodesInParentheses.map(function (rule: any, k: number) {
                       return (
-                        <Stack spacing={1}>
+                        <Stack spacing={1} ref={searchListScrollRef}>
                           {rule.operator !== "" && k !== 0 && (
                             <SearchOperator operator={rule.operator} />
                           )}
