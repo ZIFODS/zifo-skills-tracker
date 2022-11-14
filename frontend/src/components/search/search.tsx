@@ -38,16 +38,7 @@ export default function Search() {
             <NodeAutocomplete />
             <AddSearchButton />
           </Stack>
-          <Box 
-            sx={{
-              height: 0,
-              display: "flex", 
-              flexGrow: 1, 
-              overflowY: "scroll", 
-            }}
-          >
-            <SearchList />
-          </Box>
+          <SearchList />
         </Stack>
         <Stack>
           <ClearButton />
