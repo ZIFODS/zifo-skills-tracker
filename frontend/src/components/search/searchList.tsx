@@ -1,5 +1,5 @@
 import React from "react";
-import { Stack, Paper } from "@mui/material";
+import { Stack, Paper, Box } from "@mui/material";
 import { useAppSelector } from "../../app/hooks";
 import { selectSearchList } from "./searchSlice";
 import SearchSkill from "./searchSkill";
@@ -38,7 +38,7 @@ export default function SearchList() {
   let open = false;
 
   return (
-    <Stack spacing={1}>
+    <Stack sx={{flex: 1}} spacing={1}>
       {searchList.map(function (rule: any, j: number) {
         // Determine if bracket is open
         if (rule.parenthesis === "[") {

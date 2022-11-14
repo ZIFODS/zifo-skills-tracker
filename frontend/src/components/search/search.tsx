@@ -21,8 +21,8 @@ export default function Search() {
         flexGrow: 1,
       }}
     >
-      <Stack justifyContent="space-between">
-        <Stack spacing={2}>
+      <Stack justifyContent="space-between" spacing={2}>
+        <Stack sx={{ height: "100%"}} spacing={2}>
           <Stack spacing={2}>
             <Box sx={{ borderBottom: "1px solid black", pb: 1 }}>
               <Typography
@@ -38,7 +38,16 @@ export default function Search() {
             <NodeAutocomplete />
             <AddSearchButton />
           </Stack>
-          <SearchList />
+          <Box 
+            sx={{
+              height: 0,
+              display: "flex", 
+              flexGrow: 1, 
+              overflowY: "scroll", 
+            }}
+          >
+            <SearchList />
+          </Box>
         </Stack>
         <Stack>
           <ClearButton />
