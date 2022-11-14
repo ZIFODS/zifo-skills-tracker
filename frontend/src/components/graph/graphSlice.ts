@@ -63,14 +63,21 @@ const graphSlice = createSlice({
     getSearchGraphDataSuccess: (state: any, action: any) => {
       state.loading = false;
       state.searched = true;
-      if (state.hiddenGroups.length > 0) {
-        state.filteredData = action.payload.data;
-      } else {
-        state.searchedData = action.payload.data;
-        state.filteredData = action.payload.data;
-      }
+      state.searchedData = action.payload.data;
     },
     getSearchGraphDataFail: (state: any) => {
+      state.loading = false;
+    },
+    getFilterGraphDataRequest: (state: any, action: any) => {
+      state.loading = true;
+      state.currentSearchList = action.payload.skills;
+    },
+    getFilterGraphDataSuccess: (state: any, action: any) => {
+      state.loading = false;
+      state.searched = true;
+      state.filteredData = action.payload.data;
+    },
+    getFilterGraphDataFail: (state: any) => {
       state.loading = false;
     },
     addHiddenGroup: (state: any, action: any) => {
@@ -100,6 +107,9 @@ export const {
   getSearchGraphDataRequest,
   getSearchGraphDataSuccess,
   getSearchGraphDataFail,
+  getFilterGraphDataRequest,
+  getFilterGraphDataSuccess,
+  getFilterGraphDataFail,
   addHiddenGroup,
   clearHiddenGroups,
   removeHiddenGroup,

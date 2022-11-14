@@ -2,48 +2,72 @@ import React from "react";
 import { Button } from "@mui/material";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import {
+  addHiddenGroup,
+  getFilterGraphDataRequest,
   getSearchGraphDataRequest,
+  selectAllNodeData,
   selectCurrentSearchedList,
-  selectHiddenGroups,
 } from "../graph/graphSlice";
 import { selectSearchList } from "./searchSlice";
+import { getUniqueGroups } from "../../utils/utils";
 
 /**
  * Button to apply current search list.
  */
 export default function ApplyButton() {
+
   const dispatch = useAppDispatch();
 
+  // Data
+  const allNodeData = useAppSelector(selectAllNodeData);
+
   // Groups
-  const hiddenGroups = useAppSelector(selectHiddenGroups);
+  const allGroups = getUniqueGroups(allNodeData);
 
   // Displayed search list
   const searchList = useAppSelector(selectSearchList);
-  const searchListSkills = searchList.map(function (skill: any) {
+  const searchListNames = searchList.map(function (skill: any) {
     return skill.name;
   });
-  searchListSkills.sort();
+  searchListNames.sort();
 
   // Applied search list
   const currentSearchedList = useAppSelector(selectCurrentSearchedList);
   currentSearchedList.slice().sort();
 
+  // Add all categories to hidden groups unless they are associated with skill in displayed search list
+  const searchListGroups = searchList.map(function (skill: any) {
+    return skill.group;
+  });
+  const groupsToHide = allGroups.filter(function(group: string) {
+    return !(searchListGroups.includes(group) || group == "Consultant")
+  })
+
   // Clicking apply button
   const handleChange = () => {
     // Make API request
-    searchListSkills.length &&
+    searchListNames.length &&
       dispatch(
         getSearchGraphDataRequest({
           skills: searchList,
-          hiddenGroups: hiddenGroups,
         })
       );
+      searchListNames.length &&
+      dispatch(
+        getFilterGraphDataRequest({
+          skills: searchList,
+          hiddenGroups: groupsToHide
+        })
+      );
+      groupsToHide.map(function(group: string) {
+        dispatch(addHiddenGroup(group))
+      })
   };
 
   // Apply button disabled if search list empty or displayed list matches applied list
   const isDisabled =
-    JSON.stringify(searchListSkills) === JSON.stringify(currentSearchedList) ||
-    searchListSkills.length === 0;
+    JSON.stringify(searchListNames) === JSON.stringify(currentSearchedList) ||
+    searchListNames.length === 0;
 
   return (
     <Button

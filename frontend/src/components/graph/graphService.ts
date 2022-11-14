@@ -13,7 +13,7 @@ export default class GraphDataService {
     });
 
   // GET request of graph data filtered by skill and with groups hidden.
-  public static filterGraphData(skills: string[], hiddenGroups: string[]) {
+  public static filterGraphData(skills: string[], hiddenGroups: string[] = []) {
     const skillsQuery = Buffer.from(JSON.stringify(skills)).toString("base64");
     let url = `http://${baseURL}:8080/consultants/?skills=${skillsQuery}`;
 

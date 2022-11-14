@@ -2,11 +2,11 @@ import React from "react";
 import { Button } from "@mui/material";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import {
-  getSearchGraphDataRequest,
   isGraphFilled,
   addHiddenGroup,
   selectAllNodeData,
   selectCurrentSearchedList,
+  getFilterGraphDataRequest,
 } from "../graph/graphSlice";
 import { getUniqueGroups } from "../../utils/utils";
 
@@ -34,7 +34,7 @@ export default function HideAllButton() {
     // Make API request
     skills.length &&
       dispatch(
-        getSearchGraphDataRequest({
+        getFilterGraphDataRequest({
           skills: skills,
           hiddenGroups: allSkillGroups,
         })
