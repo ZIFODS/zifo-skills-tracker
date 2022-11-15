@@ -22,7 +22,7 @@ export default function Search() {
         flexGrow: 1,
       }}
     >
-      <Stack justifyContent="space-between">
+      <Stack spacing={2}>
         <Stack spacing={2}>
           <Stack spacing={2}>
             <Stack direction="row" justifyContent="space-between" alignItems="center">
@@ -43,10 +43,10 @@ export default function Search() {
             <AddSearchButton />
           </Stack>
           <SearchList />
-        </Stack>
-        <Stack>
-          <ClearButton />
-          <SearchButton />
+          <Stack>
+            <ClearButton />
+            <SearchButton />
+          </Stack>
         </Stack>
       </Stack>
     </Paper>
