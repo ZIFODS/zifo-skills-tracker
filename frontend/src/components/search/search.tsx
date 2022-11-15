@@ -21,28 +21,28 @@ export default function Search() {
         flexGrow: 1,
       }}
     >
-      <Stack justifyContent="space-between">
+      <Stack spacing={2}>
         <Stack spacing={2}>
-          <Stack spacing={2}>
-            <Box sx={{ borderBottom: "1px solid black", pb: 1 }}>
-              <Typography
-                variant="h5"
-                sx={{ color: "#1f226a", fontWeight: "bold" }}
-              >
-                Search
-              </Typography>
-            </Box>
-            <BitwiseOperators />
-          </Stack>
+          <Box sx={{ borderBottom: "1px solid black", pb: 1 }}>
+            <Typography
+              variant="h5"
+              sx={{ color: "#1f226a", fontWeight: "bold" }}
+            >
+              Search
+            </Typography>
+          </Box>
+          <BitwiseOperators />
+        </Stack>
+        <Stack sx={{ height: "100%"}} spacing={3}>
           <Stack direction="row" spacing={3} alignItems="flex-end">
             <NodeAutocomplete />
             <AddSearchButton />
           </Stack>
           <SearchList />
-        </Stack>
-        <Stack>
-          <ClearButton />
-          <SearchButton />
+          <Stack>
+            <ClearButton />
+            <SearchButton />
+          </Stack>
         </Stack>
       </Stack>
     </Paper>
