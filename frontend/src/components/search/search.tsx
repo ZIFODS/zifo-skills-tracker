@@ -24,20 +24,20 @@ export default function Search() {
     >
       <Stack spacing={2}>
         <Stack spacing={2}>
-          <Stack spacing={2}>
-            <Stack direction="row" justifyContent="space-between" alignItems="center">
-              <Box sx={{ borderBottom: "1px solid black", pb: 1 }}>
-                <Typography
-                  variant="h5"
-                  sx={{ color: "#1f226a", fontWeight: "bold" }}
-                >
-                  Search
-                </Typography>
-              </Box>
-              <UserGuideButton/>
-            </Stack>
-            <BitwiseOperators />
+          <Stack direction="row" justifyContent="space-between" alignItems="center">
+            <Box sx={{ borderBottom: "1px solid black", pb: 1 }}>
+              <Typography
+                variant="h5"
+                sx={{ color: "#1f226a", fontWeight: "bold" }}
+              >
+                Search
+              </Typography>
+            </Box>
+            <UserGuideButton/>
           </Stack>
+          <BitwiseOperators />
+        </Stack>
+        <Stack sx={{ height: "100%"}} spacing={3}>
           <Stack direction="row" spacing={3} alignItems="flex-end">
             <NodeAutocomplete />
             <AddSearchButton />
