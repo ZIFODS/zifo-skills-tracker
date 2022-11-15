@@ -6,6 +6,7 @@ import AddSearchButton from "./addSearchButton";
 import SearchList from "./searchList";
 import SearchButton from "./applyButton";
 import ClearButton from "./clearButton";
+import UserGuideButton from "../userGuide/userGuideButton";
 
 /**
  * Search section
@@ -23,14 +24,17 @@ export default function Search() {
     >
       <Stack spacing={2}>
         <Stack spacing={2}>
-          <Box sx={{ borderBottom: "1px solid black", pb: 1 }}>
-            <Typography
-              variant="h5"
-              sx={{ color: "#1f226a", fontWeight: "bold" }}
-            >
-              Search
-            </Typography>
-          </Box>
+          <Stack direction="row" justifyContent="space-between" alignItems="center">
+            <Box sx={{ borderBottom: "1px solid black", pb: 1 }}>
+              <Typography
+                variant="h5"
+                sx={{ color: "#1f226a", fontWeight: "bold" }}
+              >
+                Search
+              </Typography>
+            </Box>
+            <UserGuideButton/>
+          </Stack>
           <BitwiseOperators />
         </Stack>
         <Stack sx={{ height: "100%"}} spacing={3}>
