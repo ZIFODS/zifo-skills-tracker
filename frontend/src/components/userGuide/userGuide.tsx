@@ -1,7 +1,8 @@
 import React from "react";
-import { Paper, Typography, Box, Stack } from "@mui/material";
+import { Paper, Typography, Box, Stack, IconButton } from "@mui/material";
 import { useAppDispatch } from "../../app/hooks";
 import { closeUserGuide } from "./userGuideSlice";
+import ClearIcon from "@mui/icons-material/Clear";
 
 /**
  * User guide section
@@ -11,7 +12,7 @@ export default function UserGuide() {
   const dispatch = useAppDispatch()
 
   const handleClick = () => {
-    dispatch(closeUserGuide)
+    dispatch(closeUserGuide())
   }
 
   return (
@@ -33,6 +34,9 @@ export default function UserGuide() {
           </Typography>
         </Box>
         <Box sx={{display: "flex", flexGrow: 1}}/>
+        <IconButton onClick={handleClick}>
+          <ClearIcon sx={{ fontSize: 30, color: "black" }} />
+        </IconButton>
       </Stack>
     </Paper>
   );
