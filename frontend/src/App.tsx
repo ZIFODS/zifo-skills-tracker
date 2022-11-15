@@ -13,6 +13,8 @@ import { useEffect } from "react";
 import LandingDisplay from "./components/landingDisplay";
 import NoResultsDisplay from "./components/noResultsDisplay";
 import Consultants from "./components/consultants/consultants";
+import { selectUserGuideOpen } from "./components/userGuide/userGuideSlice";
+import UserGuide from "./components/userGuide/userGuide";
 
 function App(): JSX.Element {
   const dispatch = useAppDispatch();
@@ -23,6 +25,8 @@ function App(): JSX.Element {
 
   var graphFilled = useAppSelector(isGraphFilled);
   var graphSearched = useAppSelector(isGraphSearched);
+
+  var userGuideOpen = useAppSelector(selectUserGuideOpen)
 
   return (
     <Stack
@@ -47,7 +51,9 @@ function App(): JSX.Element {
           justifyContent: "center",
         }}
       >
-        {!graphSearched ? (
+        {userGuideOpen ?
+        <UserGuide/> :
+        !graphSearched ? (
           <LandingDisplay />
         ) : graphFilled ? (
           <GraphVis />
