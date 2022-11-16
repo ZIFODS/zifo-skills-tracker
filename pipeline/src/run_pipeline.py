@@ -3,15 +3,15 @@ Pipeline Script
 """
 from pathlib import Path
 import sys
+
 root_dir = (Path(__file__).parent / "../../").resolve()
 sys.path.append(str(root_dir))
 
-from pipeline.src.utils import INPUT_PATH, OUTPUT_PATH, ColumnHeaderMap, Identifiers, Categories
-from pipeline.src.neo4j_load import load_neo4j
 import pandas as pd
 import numpy as np
 
-
+from pipeline.src.utils import INPUT_PATH, OUTPUT_PATH, ColumnHeaderMap, Identifiers, Categories
+from pipeline.src.neo4j_load import load_neo4j
 
 def main():
     """
