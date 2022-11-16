@@ -1,26 +1,112 @@
 '''
 Global variables representing values in the input and output CSVs.
 '''
+from typing import TextIO
+
+import boto3
+import botocore
 from pathlib import Path
 import sys
-import re
 import os
+import pandas as pd
 from enum import Enum
-root_dir = (Path(__file__).parent / "../../").resolve()
-sys.path.append(str(root_dir))
+ROOT_DIR = (Path(__file__).parent / "../../").resolve()
+sys.path.append(str(ROOT_DIR))
 
-# Acquire the local path to Zifo Skills Survey csv
-try:
-    skills_csv_pattern = "Zifo Europe - Skills Survey.*\.csv"
-    skills_csv = [
-            file for file in os.listdir(f'{root_dir}/pipeline/input/') 
-            if re.search(pattern=skills_csv_pattern, string=file)
-        ][0]
-    INPUT_PATH = f'{root_dir}/pipeline/input/{skills_csv}'
-except IndexError:
-    raise IndexError("Could not locate the Skills Survey CSV in pipeline/input directory")
-    
-OUTPUT_PATH = f'{root_dir}/pipeline/import/neo4jimport.csv'
+
+class MissingEnvVarError(Exception):
+    pass
+
+
+class AuthError(Exception):
+    pass
+
+
+class EnviroVars(Enum):
+    """
+
+    """
+    try:
+        AWS_ACCESS_KEY_ID = os.environ["AWS_ACCESS_KEY_ID"]
+        AWS_SECRET_ACCESS_KEY = os.environ["AWS_SECRET_ACCESS_KEY"]
+    except KeyError:
+        raise MissingEnvVarError("Missing AWS access key and secret in environment variables")
+    AWS_BUCKET_NAME = os.getenv("AWS_BUCKET_NAME", "zifo-ds-eu").strip("/")
+    AWS_BUCKET_DIR = os.getenv("AWS_BUCKET_DIR", "skill-graph/skills_survey_input").strip("/")
+    LOCAL_INPUT_DIR = os.getenv("LOCAL_INPUT_DIR", "pipeline/input").strip("/")
+    SURVEY_NAME_FIELD = os.getenv("SURVEY_NAME_FIELD", "Name")
+    SURVEY_DATETIME_FIELD = os.getenv("SURVEY_DATETIME_FIELD", "Completion time")
+    SURVEY_EMAIL_FIELD = os.getenv("SURVEY_EMAIL_FIELD", "Email")
+
+
+def pull_survey_data_from_d3() -> pd.DataFrame:
+    """
+    Load any CSV files from the skills survey folder into memory as a Pandas DataFrame. Where multiple CSV files
+    are found, data are merged into a single DataFrame. Data could contain multiple entries and therefore should
+    be filtered accordingly.
+
+    NOTE: Boto3 will search for the following environment variables:
+    - AWS_ACCESS_KEY_ID
+    - AWS_SECRET_ACCESS_KEY
+    - AWS_BUCKET_NAME
+    - AWS_BUCKET_DIR
+
+    Returns
+    -------
+    Pandas.DataFrame
+
+    Raises
+    ------
+    AuthError
+        Invalid credentials for AWS, check env variables are correct.
+    ValueError
+        Could not resolve S3 bucket. Check that the target directory on AWS or the AWS bucket name are correct.
+    ClientError
+        Some other error with AWS client
+    """
+    try:
+        s3 = boto3.client('s3')  # again assumes boto.cfg setup, assume AWS S3
+        csvs_in_bucket = [
+            key['Key'] for key in s3.list_objects(Bucket=EnviroVars.AWS_BUCKET_NAME)[EnviroVars.AWS_BUCKET_DIR]
+            if Path(key).suffix == ".csv"
+        ]
+        data = pd.concat(
+            [
+                pd.read_csv(f"s3://{EnviroVars.AWS_BUCKET_NAME}/{EnviroVars.AWS_BUCKET_DIR}/{csv}")
+                for csv in csvs_in_bucket
+            ]
+        ).reset_index(drop=True)
+        data[EnviroVars.SURVEY_DATETIME_FIELD] = pd.to_datetime(data[EnviroVars.SURVEY_DATETIME_FIELD])
+        return data
+    except botocore.exceptions.ClientError as e:
+        if e.response['Error']['Code'] == "404":
+            raise ValueError(
+                "Could not resolve S3 bucket. Check that the target directory on AWS or the AWS bucket name are correct."
+            )
+        if e.response['Error']['Code'] == "401":
+            raise AuthError("Invalid credentials for AWS, check env variables are correct.")
+        else:
+            raise
+
+
+def filter_survey_data(data: pd.DataFrame) -> pd.DataFrame:
+    """
+    Given Skills Survey data as a Pandas DataFrame, groups the data by unique identifiers and
+    then keeps the most recent record from each individual.
+
+    Parameters
+    ----------
+    data: Pandas.DataFrame
+
+    Returns
+    -------
+    Pandas.DataFrame
+    """
+    most_recent_data = [
+        df.sort_values(EnviroVars.SURVEY_DATETIME_FIELD, ascending=True).iloc[-1] for _, df in
+        data.groupby([EnviroVars.SURVEY_NAME_FIELD, EnviroVars.SURVEY_EMAIL_FIELD])
+    ]
+    return pd.DataFrame(most_recent_data)
 
 
 class Identifiers(Enum):
@@ -30,6 +116,7 @@ class Identifiers(Enum):
     ID = "Id"
     FULL_NAME = "Full_name"
     EMAIL = "Email"
+
 
 class Categories(Enum):
     '''
@@ -46,6 +133,7 @@ class Categories(Enum):
     PROGRAMMING = "Programming_languages"
     MISCELLANEOUS = "Miscellaneous"
     INFRASTRUCTURE = "Infrastructure_Technologies"
+
 
 class ColumnHeaderMap:
     '''
@@ -67,3 +155,8 @@ class ColumnHeaderMap:
         Categories.MISCELLANEOUS.value: "Please tick all that you feel you have reasonable knowledge of",
         Categories.INFRASTRUCTURE.value: "Please tick all Infrastructure Technologies that you feel you have a reasonable knowledge of"
     }
+
+
+OUTPUT_PATH = os.path.join(ROOT_DIR, str(EnviroVars.LOCAL_INPUT_DIR), "neo4jimport.csv")
+INPUT_PATH = os.path.join(ROOT_DIR, str(EnviroVars.LOCAL_INPUT_DIR), "skills.csv")
+filter_survey_data(pull_survey_data_from_d3()).to_csv(INPUT_PATH, index=False)

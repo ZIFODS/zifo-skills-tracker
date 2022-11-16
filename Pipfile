@@ -13,6 +13,9 @@ requests = "*"
 python-dotenv = "*"
 pandas = "*"
 neo4j = "*"
+boto3 = "*"
+pytest = "*"
+s3fs = "*"
 
 [dev-packages]
 black = "*"
