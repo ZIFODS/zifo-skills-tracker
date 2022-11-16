@@ -3,12 +3,25 @@ Global variables representing values in the input and output CSVs.
 '''
 from pathlib import Path
 import sys
+import re
+import os
 from enum import Enum
 root_dir = (Path(__file__).parent / "../../").resolve()
 sys.path.append(str(root_dir))
 
-INPUT_PATH = f'{root_dir}/pipeline/input/Zifo Europe - Skills Survey(1-77).csv'
+# Acquire the local path to Zifo Skills Survey csv
+try:
+    skills_csv_pattern = "Zifo Europe - Skills Survey.*\.csv"
+    skills_csv = [
+            file for file in os.listdir(f'{root_dir}/pipeline/input/') 
+            if re.search(pattern=skills_csv_pattern, string=file)
+        ][0]
+    INPUT_PATH = f'{root_dir}/pipeline/input/{skills_csv}'
+except IndexError:
+    raise IndexError("Could not locate the Skills Survey CSV in pipeline/input directory")
+    
 OUTPUT_PATH = f'{root_dir}/pipeline/import/neo4jimport.csv'
+
 
 class Identifiers(Enum):
     '''
