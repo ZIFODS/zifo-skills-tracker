@@ -1,23 +1,22 @@
 import os
 
 import pandas as pd
-import pytest
-from dotenv import load_dotenv
-from ..src.utils import pull_survey_data_from_d3, filter_survey_data
-from .. import tests
+from ..src.utils import pull_survey_data_from_s3, filter_survey_data
 
 
-@pytest.fixture(scope='session', autouse=True)
-def load_env():
-    load_dotenv(dotenv_path=os.path.join(str(tests.__path__), ".env.test.local"))
-
-
-def test_pull_survey_data_from_d3():
-    data = pull_survey_data_from_d3()
+def test_pull_survey_data_from_s3():
+    """
+    Function should pull a Pandas DataFrame from S3 using Env variables
+    """
+    data = pull_survey_data_from_s3()
     assert isinstance(data, pd.DataFrame)
 
 
 def test_filter_survey_data():
+    """
+    Function should take a Pandas DataFrame with duplicate entries and filter to retain
+    row for each individual (identified by Name and Email) from the most recent entry.
+    """
     data = pd.DataFrame(
         {
             "ID": [0, 1, 2, 3, 4, 5, 6],

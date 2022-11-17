@@ -16,12 +16,12 @@ neo4j = "*"
 boto3 = "*"
 pytest = "*"
 s3fs = "*"
+pytest-cov = "*"
 
 [dev-packages]
 black = "*"
 pylint = "*"
 pytest = "*"
-pytest-cov = "*"
 pytest-mock = "*"
 
 [pipenv]

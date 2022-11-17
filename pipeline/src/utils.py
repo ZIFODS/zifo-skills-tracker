@@ -1,7 +1,6 @@
 '''
 Global variables representing values in the input and output CSVs.
 '''
-from typing import TextIO
 
 import boto3
 import botocore
@@ -10,6 +9,7 @@ import sys
 import os
 import pandas as pd
 from enum import Enum
+
 ROOT_DIR = (Path(__file__).parent / "../../").resolve()
 sys.path.append(str(ROOT_DIR))
 
@@ -39,7 +39,7 @@ class EnviroVars(Enum):
     SURVEY_EMAIL_FIELD = os.getenv("SURVEY_EMAIL_FIELD", "Email")
 
 
-def pull_survey_data_from_d3() -> pd.DataFrame:
+def pull_survey_data_from_s3() -> pd.DataFrame:
     """
     Load any CSV files from the skills survey folder into memory as a Pandas DataFrame. Where multiple CSV files
     are found, data are merged into a single DataFrame. Data could contain multiple entries and therefore should
@@ -66,17 +66,18 @@ def pull_survey_data_from_d3() -> pd.DataFrame:
     """
     try:
         s3 = boto3.client('s3')  # again assumes boto.cfg setup, assume AWS S3
-        csvs_in_bucket = [
-            key['Key'] for key in s3.list_objects(Bucket=EnviroVars.AWS_BUCKET_NAME)[EnviroVars.AWS_BUCKET_DIR]
-            if Path(key).suffix == ".csv"
-        ]
+        bucket_contents = s3.list_objects_v2(
+            Bucket=EnviroVars.AWS_BUCKET_NAME.value,
+            Prefix=EnviroVars.AWS_BUCKET_DIR.value
+        )["Contents"]
+        csvs_in_bucket = [key["Key"] for key in bucket_contents if Path(key["Key"]).suffix == ".csv"]
         data = pd.concat(
             [
-                pd.read_csv(f"s3://{EnviroVars.AWS_BUCKET_NAME}/{EnviroVars.AWS_BUCKET_DIR}/{csv}")
+                pd.read_csv(f"s3://{EnviroVars.AWS_BUCKET_NAME.value}/{csv}")
                 for csv in csvs_in_bucket
             ]
         ).reset_index(drop=True)
-        data[EnviroVars.SURVEY_DATETIME_FIELD] = pd.to_datetime(data[EnviroVars.SURVEY_DATETIME_FIELD])
+        data[EnviroVars.SURVEY_DATETIME_FIELD.value] = pd.to_datetime(data[EnviroVars.SURVEY_DATETIME_FIELD.value])
         return data
     except botocore.exceptions.ClientError as e:
         if e.response['Error']['Code'] == "404":
@@ -103,8 +104,8 @@ def filter_survey_data(data: pd.DataFrame) -> pd.DataFrame:
     Pandas.DataFrame
     """
     most_recent_data = [
-        df.sort_values(EnviroVars.SURVEY_DATETIME_FIELD, ascending=True).iloc[-1] for _, df in
-        data.groupby([EnviroVars.SURVEY_NAME_FIELD, EnviroVars.SURVEY_EMAIL_FIELD])
+        df.sort_values(EnviroVars.SURVEY_DATETIME_FIELD.value, ascending=True).iloc[-1] for _, df in
+        data.groupby([EnviroVars.SURVEY_NAME_FIELD.value, EnviroVars.SURVEY_EMAIL_FIELD.value])
     ]
     return pd.DataFrame(most_recent_data)
 
@@ -156,7 +157,3 @@ class ColumnHeaderMap:
         Categories.INFRASTRUCTURE.value: "Please tick all Infrastructure Technologies that you feel you have a reasonable knowledge of"
     }
 
-
-OUTPUT_PATH = os.path.join(ROOT_DIR, str(EnviroVars.LOCAL_INPUT_DIR), "neo4jimport.csv")
-INPUT_PATH = os.path.join(ROOT_DIR, str(EnviroVars.LOCAL_INPUT_DIR), "skills.csv")
-filter_survey_data(pull_survey_data_from_d3()).to_csv(INPUT_PATH, index=False)
