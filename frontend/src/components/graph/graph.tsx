@@ -40,6 +40,7 @@ function GraphVis() {
 
       // Remove all existing svg-groups on svg
       svg.selectAll("g").remove();
+      svg.selectAll("image").remove();
 
       // Create single root svg-group
       const rootGroup = svg.append("g");
