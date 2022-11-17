@@ -70,11 +70,11 @@ def pull_survey_data_from_s3() -> pd.DataFrame:
             Bucket=EnviroVars.AWS_BUCKET_NAME.value,
             Prefix=EnviroVars.AWS_BUCKET_DIR.value
         )["Contents"]
-        csvs_in_bucket = [key["Key"] for key in bucket_contents if Path(key["Key"]).suffix == ".csv"]
+        xls_in_bucket = [key["Key"] for key in bucket_contents if Path(key["Key"]).suffix in [".xls", ".xlsx"]]
         data = pd.concat(
             [
-                pd.read_csv(f"s3://{EnviroVars.AWS_BUCKET_NAME.value}/{csv}")
-                for csv in csvs_in_bucket
+                pd.read_excel(f"s3://{EnviroVars.AWS_BUCKET_NAME.value}/{xls}")
+                for xls in xls_in_bucket
             ]
         ).reset_index(drop=True)
         data[EnviroVars.SURVEY_DATETIME_FIELD.value] = pd.to_datetime(data[EnviroVars.SURVEY_DATETIME_FIELD.value])

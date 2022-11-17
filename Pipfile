@@ -10,18 +10,17 @@ python_version = "3.10"
 fastapi = "*"
 hypercorn = "*"
 requests = "*"
-python-dotenv = "*"
 pandas = "*"
 neo4j = "*"
 boto3 = "*"
-pytest = "*"
 s3fs = "*"
-pytest-cov = "*"
+openpyxl = "*"
 
 [dev-packages]
 black = "*"
 pylint = "*"
 pytest = "*"
+pytest-cov = "*"
 pytest-mock = "*"
 
 [pipenv]

@@ -85,5 +85,6 @@ def extend_list(list_value, max_length):
     list_value.extend([np.nan for _ in range(max_length - len(list_value))])
     return list_value
 
+
 if __name__ == "__main__":
     main()
