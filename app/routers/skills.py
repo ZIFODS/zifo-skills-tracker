@@ -2,6 +2,7 @@ import base64
 from fastapi import APIRouter, Query
 import json
 
+from app.models.graph import GraphData
 from pipeline.src.neo4j_connect import Neo4jConnection
 from app.logic.brackets import (
     determine_effective_bracket_indexes,
@@ -38,11 +39,27 @@ collect( distinct {id: ID(rb), source: ID(startnode(rb)), target: ID(endnode(rb)
 RETURN {nodes: nzz, links: rzz}
 """
 
-
 @skills_router.get("/", name="Filter by skills")
 async def filter_consultants_with_skills(
     skills: str = Query(default=...), hidden_categories: list[str] = Query(default=[])
-):
+) -> GraphData:
+    """
+    Filter for consultants that know skills according to a set of defined AND/OR rules.
+    Skills within defined categories can be omitted from the results.
+
+    Arguments
+    ---------
+    skills : str
+        base64 encoded string representing a list of Rule objects.
+        See Rule model for more details.
+    hidden_categories : list[str]
+        names of categories to be omitted from results
+
+    Returns
+    -------
+    result : GraphData
+        nodes and links of filtered graph data
+    """
     conn = Neo4jConnection(uri="neo4j://neo4j-db:7687", user="neo4j", password="test")
 
     rules_str = base64.urlsafe_b64decode(skills)
