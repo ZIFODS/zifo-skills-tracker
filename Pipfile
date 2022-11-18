@@ -10,9 +10,11 @@ python_version = "3.10"
 fastapi = "*"
 hypercorn = "*"
 requests = "*"
-python-dotenv = "*"
 pandas = "*"
 neo4j = "*"
+boto3 = "*"
+s3fs = "*"
+openpyxl = "*"
 
 [dev-packages]
 black = "*"

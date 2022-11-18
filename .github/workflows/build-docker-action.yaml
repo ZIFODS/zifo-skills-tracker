@@ -1,7 +1,7 @@
 name: Build & Run Docker Image
 on:
   push:
-    branches: [main, master, SG-48-GithubActions-docker-build]
+    branches: [main, master]
   pull_request:
     branches: [main, master]
 
@@ -9,6 +9,9 @@ jobs:
   docker:
     timeout-minutes: 20
     runs-on: ubuntu-latest
+    env:
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
     steps:
       - name: Checkout
@@ -17,5 +20,5 @@ jobs:
       - name: Start containers
         run: docker compose up -d --build;
 
-      #- name: Run pipeline
-      #  run: docker compose exec -T python-api python pipeline/src/run_pipeline.py
+      - name: Run pipeline
+        run: docker compose exec -T python-api python pipeline/src/run_pipeline.py

@@ -10,7 +10,8 @@ sys.path.append(str(root_dir))
 import pandas as pd
 import numpy as np
 
-from pipeline.src.utils import INPUT_PATH, OUTPUT_PATH, ColumnHeaderMap, Identifiers, Categories
+from pipeline.src.utils import ColumnHeaderMap, Identifiers, Categories
+from pipeline.src.globals import OUTPUT_PATH, INPUT_PATH
 from pipeline.src.neo4j_load import load_neo4j
 
 def main():
@@ -83,6 +84,7 @@ def extend_list(list_value, max_length):
     """
     list_value.extend([np.nan for _ in range(max_length - len(list_value))])
     return list_value
+
 
 if __name__ == "__main__":
     main()
