@@ -1,4 +1,4 @@
-name: Build & Run Docker Image
+name: Run, test & build docker
 on:
   push:
     branches: [main, master]
