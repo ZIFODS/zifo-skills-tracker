@@ -2,7 +2,7 @@
 Neo4j_Load
 '''
 from pipeline.src.utils import Categories
-from neo4j_connect import Neo4jConnection
+from pipeline.src.neo4j_connect import Neo4jConnection
 
 def generate_cypher_queries():
     '''
