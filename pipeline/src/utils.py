@@ -34,6 +34,7 @@ class EnviroVars(Enum):
     AWS_BUCKET_NAME = os.getenv("AWS_BUCKET_NAME", "zifo-ds-eu").strip("/")
     AWS_BUCKET_DIR = os.getenv("AWS_BUCKET_DIR", "skill-graph/skills_survey_input").strip("/")
     LOCAL_INPUT_DIR = os.getenv("LOCAL_INPUT_DIR", "pipeline/input").strip("/")
+    LOCAL_IMPORT_DIR = os.getenv("LOCAL_IMPORT_DIR", "pipeline/import").strip("/")
     SURVEY_NAME_FIELD = os.getenv("SURVEY_NAME_FIELD", "Name")
     SURVEY_DATETIME_FIELD = os.getenv("SURVEY_DATETIME_FIELD", "Completion time")
     SURVEY_EMAIL_FIELD = os.getenv("SURVEY_EMAIL_FIELD", "Email")
