@@ -9,13 +9,13 @@ export default class GraphDataService {
   public static fetchGraphData = () =>
     axios({
       method: "get",
-      url: `http://${baseURL}:8080/skills`,
+      url: `http://${baseURL}:8080/all`,
     });
 
   // GET request of graph data filtered by skill and with groups hidden.
   public static filterGraphData(skills: string[], hiddenGroups: string[] = []) {
     const skillsQuery = Buffer.from(JSON.stringify(skills)).toString("base64");
-    let url = `http://${baseURL}:8080/consultants/?skills=${skillsQuery}`;
+    let url = `http://${baseURL}:8080/skills/?skills=${skillsQuery}`;
 
     if (hiddenGroups.length > 0) {
       const hiddenGroupsQuery = hiddenGroups.join("&hidden_categories=");
