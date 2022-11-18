@@ -16,7 +16,7 @@ RUN apt-get install -y git
 # Install python dependencies in /.venv
 COPY Pipfile .
 COPY Pipfile.lock .
-RUN PIPENV_VENV_IN_PROJECT=1 pipenv install
+RUN PIPENV_VENV_IN_PROJECT=1 pipenv install --dev
 
 FROM base AS runtime
 
