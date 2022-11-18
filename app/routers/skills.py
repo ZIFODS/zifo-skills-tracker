@@ -1,25 +1,24 @@
 from fastapi import APIRouter
 import json
-from pipeline.src.js_skills import neo4j_to_d3_json
 
+from app.logic.cypher import match_all_consultants_with_knows_relationship, compile_results_with_nodes_and_links
 from pipeline.src.neo4j_connect import Neo4jConnection
 
 skills_router = APIRouter()
 
 @skills_router.get("/", name="Get all nodes and edges")
 async def get_all_nodes_edges():
+
     conn = Neo4jConnection(uri="neo4j://neo4j-db:7687", user="neo4j", password="test")
 
-    result = conn.query('''CALL apoc.export.json.all(null, {stream: true})
-        YIELD file, nodes, relationships, properties, data
-        RETURN file, nodes, relationships, properties, data'''
-    )
+    path_count = 0
 
+    # Get all Consultants and their skills
+    query = match_all_consultants_with_knows_relationship(path_count)
+    query += compile_results_with_nodes_and_links(path_count)
+
+    result = conn.query(query)
+    
     conn.close()
 
-    skills_str = "[" + result[0][4].replace("\n", ",") + "]"
-    skills_json = json.loads(skills_str)
-
-    d3_json = neo4j_to_d3_json(skills_json)
-
-    return d3_json
+    return result[0][0]
