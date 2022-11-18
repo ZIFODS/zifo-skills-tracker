@@ -1,19 +1,29 @@
 # Zifo Skills Graph
 
-Zifo Skills Graph is currently in development but is expected to be a full-stack web application that allows the user to visualise and query the skills of Zifo employees. Understanding the skills that employees possess will aid the company with resource allocation and training organisation.
+Zifo Skills Graph is a full-stack web application that allows the user to visualise and query the skills of Zifo employees. Understanding the skills that employees possess helps with resource allocation and organisation of training.
 
 ## Getting started
 
-To run this application, all you need installed is `docker compose`. Follow the instructions here to get started: https://docs.docker.com/compose/install/
+If you're using Windows, you will need to install a Linux environment using `WSL 2`: https://learn.microsoft.com/en-us/windows/wsl/install
 
-For now, the data required by neo4j is a csv with a single skill on each line for each consultant. You can generate this from the original skills csv file using [pipeline.py](./pipeline/src/pipeline.py). The generated csv should be stored in the [import](./pipeline/src/import/) folder prior to launch.
+Once you've configured a Linux environment, install `docker compose`: https://docs.docker.com/compose/install/
 
-The data required to launch this application is not included in the repo and should be requested from [Joseph Smith](mailto:joe.smith@zifornd.com). Eventually the data will either be stored in an S3 bucket and retrieved automatically or pulled directly from MS Forms.
-
-For now, add the csv data to the [pipeline/input](./pipeline/input/) folder.
-
-Once data is present, run the following command in a terminal from the root directory to launch the application:
-
+Running the following command will launch the application using production data:
 ```
-bash run-docker.sh
+source run-docker.sh
 ```
+
+Alternatively, you can test the application using mock data:
+```
+source test-docker.sh
+```
+
+## Data
+
+The data required to launch this application is stored in an S3 bucket, which you will need an AWS access key and AWS access secret key for. If you wish to launch it yourself or get access to the data then please see any of the following developers:
+
+[Joseph Smith](mailto:joe.smith@zifornd.com)
+
+[Ross Burton](mailto:ross.burton@zifornd.com)
+
+[Adam Kent](mailto:adam.kent@zifornd.com)
