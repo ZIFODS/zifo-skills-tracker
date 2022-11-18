@@ -1,6 +1,6 @@
-'''
+"""
 Global variables representing values in the input and output CSVs.
-'''
+"""
 
 import boto3
 import botocore
@@ -23,16 +23,22 @@ class AuthError(Exception):
 
 
 class EnviroVars(Enum):
-    """
+    """ """
 
-    """
     try:
         AWS_ACCESS_KEY_ID = os.environ["AWS_ACCESS_KEY_ID"]
         AWS_SECRET_ACCESS_KEY = os.environ["AWS_SECRET_ACCESS_KEY"]
     except KeyError:
-        raise MissingEnvVarError("Missing AWS access key and secret in environment variables")
+        raise MissingEnvVarError(
+            "Missing AWS access key and secret in environment variables"
+        )
+    TEST_ENV = os.getenv("TEST_ENV", "false")
     AWS_BUCKET_NAME = os.getenv("AWS_BUCKET_NAME", "zifo-ds-eu").strip("/")
-    AWS_BUCKET_DIR = os.getenv("AWS_BUCKET_DIR", "skill-graph/skills_survey_input").strip("/")
+    AWS_BUCKET_DIR = os.getenv(
+        "AWS_BUCKET_DIR", "skill-graph/skills_survey_input"
+    ).strip("/")
+    AWS_PROD_DIR = os.getenv("AWS_PROD_DIR", "production_data")
+    AWS_TEST_DIR = os.getenv("AWS_TEST_DIR", "test_data")
     LOCAL_INPUT_DIR = os.getenv("LOCAL_INPUT_DIR", "pipeline/input").strip("/")
     LOCAL_IMPORT_DIR = os.getenv("LOCAL_IMPORT_DIR", "pipeline/import").strip("/")
     SURVEY_NAME_FIELD = os.getenv("SURVEY_NAME_FIELD", "Name")
@@ -65,28 +71,40 @@ def pull_survey_data_from_s3() -> pd.DataFrame:
     ClientError
         Some other error with AWS client
     """
+    data_folder = EnviroVars.AWS_PROD_DIR.value
+    if EnviroVars.TEST_ENV.value == "true":
+        data_folder = EnviroVars.AWS_TEST_DIR.value
+
     try:
-        s3 = boto3.client('s3')  # again assumes boto.cfg setup, assume AWS S3
+        s3 = boto3.client("s3")  # again assumes boto.cfg setup, assume AWS S3
+
+        data_folder_prefix = f"{EnviroVars.AWS_BUCKET_DIR.value}/{data_folder}"
         bucket_contents = s3.list_objects_v2(
-            Bucket=EnviroVars.AWS_BUCKET_NAME.value,
-            Prefix=EnviroVars.AWS_BUCKET_DIR.value
+            Bucket=EnviroVars.AWS_BUCKET_NAME.value, Prefix=data_folder_prefix
         )["Contents"]
-        xls_in_bucket = [key["Key"] for key in bucket_contents if Path(key["Key"]).suffix in [".xls", ".xlsx"]]
+        xls_in_bucket = [
+            key["Key"]
+            for key in bucket_contents
+            if Path(key["Key"]).suffix in [".xls", ".xlsx"]
+        ]
+
         data = pd.concat(
-            [
-                pd.read_excel(f"s3://{EnviroVars.AWS_BUCKET_NAME.value}/{xls}")
-                for xls in xls_in_bucket
-            ]
+            [pd.read_excel(f"s3://{EnviroVars.AWS_BUCKET_NAME.value}/{xls}") for xls in xls_in_bucket]
         ).reset_index(drop=True)
-        data[EnviroVars.SURVEY_DATETIME_FIELD.value] = pd.to_datetime(data[EnviroVars.SURVEY_DATETIME_FIELD.value])
+        data[EnviroVars.SURVEY_DATETIME_FIELD.value] = pd.to_datetime(
+            data[EnviroVars.SURVEY_DATETIME_FIELD.value]
+        )
         return data
+        
     except botocore.exceptions.ClientError as e:
-        if e.response['Error']['Code'] == "404":
+        if e.response["Error"]["Code"] == "404":
             raise ValueError(
                 "Could not resolve S3 bucket. Check that the target directory on AWS or the AWS bucket name are correct."
             )
-        if e.response['Error']['Code'] == "401":
-            raise AuthError("Invalid credentials for AWS, check env variables are correct.")
+        if e.response["Error"]["Code"] == "401":
+            raise AuthError(
+                "Invalid credentials for AWS, check env variables are correct."
+            )
         else:
             raise
 
@@ -105,25 +123,29 @@ def filter_survey_data(data: pd.DataFrame) -> pd.DataFrame:
     Pandas.DataFrame
     """
     most_recent_data = [
-        df.sort_values(EnviroVars.SURVEY_DATETIME_FIELD.value, ascending=True).iloc[-1] for _, df in
-        data.groupby([EnviroVars.SURVEY_NAME_FIELD.value, EnviroVars.SURVEY_EMAIL_FIELD.value])
+        df.sort_values(EnviroVars.SURVEY_DATETIME_FIELD.value, ascending=True).iloc[-1]
+        for _, df in data.groupby(
+            [EnviroVars.SURVEY_NAME_FIELD.value, EnviroVars.SURVEY_EMAIL_FIELD.value]
+        )
     ]
     return pd.DataFrame(most_recent_data)
 
 
 class Identifiers(Enum):
-    '''
+    """
     ID realted values.
-    '''
+    """
+
     ID = "Id"
     FULL_NAME = "Full_name"
     EMAIL = "Email"
 
 
 class Categories(Enum):
-    '''
+    """
     New column values for output csv file.
-    '''
+    """
+
     SERVICE = "Service"
     METHODOLOGY = "Methodology"
     SCI_PRODUCT_APP = "Scientific_Products_And_Applications"
@@ -138,9 +160,10 @@ class Categories(Enum):
 
 
 class ColumnHeaderMap:
-    '''
+    """
     Original column values from survey export.
-    '''
+    """
+
     map = {
         Identifiers.ID.value: "ID",
         Identifiers.FULL_NAME.value: "Name",
@@ -155,6 +178,5 @@ class ColumnHeaderMap:
         Categories.LANGUAGE.value: "Please tick all Languages that you feel you have a reasonable knowledge of",
         Categories.PROGRAMMING.value: "Please tick all Programming Languages that you feel you have a reasonable knowledge of",
         Categories.MISCELLANEOUS.value: "Please tick all that you feel you have reasonable knowledge of",
-        Categories.INFRASTRUCTURE.value: "Please tick all Infrastructure Technologies that you feel you have a reasonable knowledge of"
+        Categories.INFRASTRUCTURE.value: "Please tick all Infrastructure Technologies that you feel you have a reasonable knowledge of",
     }
-

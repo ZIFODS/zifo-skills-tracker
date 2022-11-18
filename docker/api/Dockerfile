@@ -34,6 +34,7 @@ WORKDIR /home/skills_user
 # Install application into container
 COPY ./app ./app
 COPY ./pipeline ./pipeline
+COPY ./integration_test ./integration_test
 
 # Run as root to avoid pipeline/import permissions error
 USER root
