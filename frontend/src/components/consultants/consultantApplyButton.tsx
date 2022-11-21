@@ -3,7 +3,7 @@ import { IconButton } from "@mui/material";
 import PersonSearchIcon from '@mui/icons-material/PersonSearch';
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { clearCurrentConsultantToSearch, selectCurrentConsultantToSearch, setCurrentConsultantSearched } from "./consultantSlice";
-import { getFilterGraphDataByConsultantRequest } from "../graph/graphSlice";
+import { clearHiddenGroups, getFilterGraphDataByConsultantRequest } from "../graph/graphSlice";
 
 /**
  * Button to apply current consultant search
@@ -22,6 +22,7 @@ export default function ConsultantApplyButton() {
       },
       isSearch: true
     }));
+    dispatch(clearHiddenGroups())
     dispatch(setCurrentConsultantSearched(consultantToSearch))
     dispatch(clearCurrentConsultantToSearch())
   };
