@@ -64,12 +64,10 @@ const graphSlice = createSlice({
     },
     getFilterGraphDataWithSkillsSuccess: (state: any, action: any) => {
       state.loading = false;
-      state.searched = true;
       state.isConsultantSearched = false;
       state.isSkillSearched = true;
       if (action.payload.isSearch) {
         state.searchedData = action.payload.response.data;
-        state.filteredData = action.payload.response.data;
       }
       else {
         state.filteredData = action.payload.response.data;
@@ -151,9 +149,9 @@ export const isGraphFilled = (state: RootState) =>
 export const isGraphSearched = (state: RootState) =>
   state.graph && (state.graph.isSkillSearched || state.graph.isConsultantSearched);
 export const isSkillSearched = (state: RootState) =>
-state.graph && state.graph.isSkillSearched;
+  state.graph && state.graph.isSkillSearched;
 export const isConsultantSearched = (state: RootState) =>
-state.graph && state.graph.isConsultantSearched;
+  state.graph && state.graph.isConsultantSearched;
 
 export const selectCurrentSearchedList = (state: RootState) =>
   state.graph && state.graph.currentSearchedList;

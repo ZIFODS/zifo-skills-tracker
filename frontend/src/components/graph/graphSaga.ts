@@ -1,5 +1,5 @@
 import { PayloadAction } from "@reduxjs/toolkit";
-import { put, takeLatest, call } from "redux-saga/effects";
+import { put, takeLatest, takeEvery, call } from "redux-saga/effects";
 import {
   getAllGraphDataRequest,
   getAllGraphDataSuccess,
@@ -63,6 +63,6 @@ export function* filterGraphDataByConsultant(action: PayloadAction<any>): any {
 
 export default function* watchGraphSaga() {
   yield takeLatest(getAllGraphDataRequest.type, getGraphData);
-  yield takeLatest(getFilterGraphDataWithSkillsRequest.type, filterGraphDataWithSkills);
+  yield takeEvery(getFilterGraphDataWithSkillsRequest.type, filterGraphDataWithSkills);
   yield takeLatest(getFilterGraphDataByConsultantRequest.type, filterGraphDataByConsultant);
 }

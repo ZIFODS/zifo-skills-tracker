@@ -50,9 +50,19 @@ export default function ApplyButton() {
         getFilterGraphDataWithSkillsRequest({
           query: {
             skills: searchList,
-            hiddenGroups: groupsToHide
+            hiddenGroups: []
           },
           isSearch: true
+        })
+      );
+    searchListNames.length &&
+      dispatch(
+        getFilterGraphDataWithSkillsRequest({
+          query: {
+            skills: searchList,
+            hiddenGroups: groupsToHide
+          },
+          isSearch: false
         })
       );
     groupsToHide.map(function (group: string) {
