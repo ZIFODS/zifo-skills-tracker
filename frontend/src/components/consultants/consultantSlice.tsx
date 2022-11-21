@@ -15,13 +15,17 @@ const consultantSearchSlice = createSlice({
   reducers: {
     setCurrentConsultantSearch: (state: any, action: any) => {
       state.name = action.payload
-    }
+    },
+    clearCurrentConsultantToSearch: (state: any) => {
+      state.name = initialState.name;
+    },
   }
 });
 
 // Action
 export const {
   setCurrentConsultantSearch,
+  clearCurrentConsultantToSearch
 } = consultantSearchSlice.actions;
 
 // Selector

@@ -2,7 +2,7 @@ import React from "react";
 import { IconButton } from "@mui/material";
 import PersonSearchIcon from '@mui/icons-material/PersonSearch';
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
-import { selectCurrentSearchedConsultant } from "./consultantSlice";
+import { clearCurrentConsultantToSearch, selectCurrentSearchedConsultant } from "./consultantSlice";
 import { getFilterGraphDataByConsultantRequest } from "../graph/graphSlice";
 
 /**
@@ -22,6 +22,7 @@ export default function ConsultantApplyButton() {
       },
       isSearch: true
     }));
+    dispatch(clearCurrentConsultantToSearch())
   };
 
   return (
