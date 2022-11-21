@@ -17,9 +17,11 @@ export default class GraphDataService {
     const skillsQuery = Buffer.from(JSON.stringify(skills)).toString("base64");
     let url = `http://${baseURL}:8080/skills/?skills=${skillsQuery}`;
 
-    if (hiddenGroups.length > 0) {
-      const hiddenGroupsQuery = hiddenGroups.join("&hidden_categories=");
-      url = url + `&hidden_categories=${hiddenGroupsQuery}`;
+    if (hiddenGroups !== undefined) {
+      if (hiddenGroups.length > 0) {
+        const hiddenGroupsQuery = hiddenGroups.join("&hidden_categories=");
+        url = url + `&hidden_categories=${hiddenGroupsQuery}`;
+      }
     }
 
     return axios({

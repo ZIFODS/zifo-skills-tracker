@@ -56,26 +56,20 @@ const graphSlice = createSlice({
     getAllGraphDataFail: (state: any) => {
       state.loading = false;
     },
-    getSearchGraphDataWithSkillsRequest: (state: any, action: any) => {
-      state.loading = true;
-      state.currentSearchedList = action.payload.skills;
-    },
-    getSearchGraphDataWithSkillsSuccess: (state: any, action: any) => {
-      state.loading = false;
-      state.searched = true;
-      state.searchedData = action.payload.data;
-    },
-    getSearchGraphDataWithSkillsFail: (state: any) => {
-      state.loading = false;
-    },
     getFilterGraphDataWithSkillsRequest: (state: any, action: any) => {
       state.loading = true;
-      state.currentSearchList = action.payload.skills;
+      state.currentSearchedList = action.payload.query.skills
     },
     getFilterGraphDataWithSkillsSuccess: (state: any, action: any) => {
       state.loading = false;
       state.searched = true;
-      state.filteredData = action.payload.data;
+      if (action.payload.isSearch) {
+        state.searchedData = action.payload.response.data;
+        state.filteredData = action.payload.response.data;
+      }
+      else {
+        state.filteredData = action.payload.response.data;
+      }
     },
     getFilterGraphDataWithSkillsFail: (state: any) => {
       state.loading = false;
@@ -104,9 +98,6 @@ export const {
   getAllGraphDataRequest,
   getAllGraphDataSuccess,
   getAllGraphDataFail,
-  getSearchGraphDataWithSkillsRequest,
-  getSearchGraphDataWithSkillsSuccess,
-  getSearchGraphDataWithSkillsFail,
   getFilterGraphDataWithSkillsRequest,
   getFilterGraphDataWithSkillsSuccess,
   getFilterGraphDataWithSkillsFail,

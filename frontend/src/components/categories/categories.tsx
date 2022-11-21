@@ -87,8 +87,11 @@ export default function Categories() {
     skills.length &&
       dispatch(
         getFilterGraphDataWithSkillsRequest({
-          skills: skills,
-          hiddenGroups: hiddenGroups,
+          query: {
+            skills: skills,
+            hiddenGroups: hiddenGroups,
+          },
+          isSearch: false
         })
       );
   };

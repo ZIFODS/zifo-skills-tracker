@@ -23,7 +23,13 @@ export default function ShowAllButton() {
     dispatch(clearHiddenGroups());
     // Make API request
     skills.length &&
-      dispatch(getFilterGraphDataWithSkillsRequest({ skills: skills, hiddenGroups: [] }));
+      dispatch(getFilterGraphDataWithSkillsRequest({
+        query: {
+          skills: skills,
+          hiddenGroups: []
+        },
+        isSearch: false
+      }));
   };
 
   return (

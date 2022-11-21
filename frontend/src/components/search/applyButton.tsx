@@ -4,7 +4,6 @@ import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import {
   addHiddenGroup,
   getFilterGraphDataWithSkillsRequest,
-  getSearchGraphDataWithSkillsRequest,
   selectAllNodeData,
   selectCurrentSearchedList,
 } from "../graph/graphSlice";
@@ -48,15 +47,12 @@ export default function ApplyButton() {
     // Make API request
     searchListNames.length &&
       dispatch(
-        getSearchGraphDataWithSkillsRequest({
-          skills: searchList,
-        })
-      );
-    searchListNames.length &&
-      dispatch(
         getFilterGraphDataWithSkillsRequest({
-          skills: searchList,
-          hiddenGroups: groupsToHide
+          query: {
+            skills: searchList,
+            hiddenGroups: []
+          },
+          isSearch: true
         })
       );
     groupsToHide.map(function (group: string) {
