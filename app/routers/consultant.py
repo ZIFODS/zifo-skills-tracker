@@ -1,4 +1,4 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, HTTPException
 
 from app.models.graph import GraphData
 from pipeline.src.neo4j_connect import Neo4jConnection
@@ -8,8 +8,10 @@ from app.logic.cypher import (
     compile_results_with_nodes_and_links,
 )
 
-consultant_router = APIRouter()
+class ConsultantNotFoundError(Exception):
+    ...
 
+consultant_router = APIRouter()
 
 @consultant_router.get("/", name="Filter by consultant")
 async def filter_with_consultant(consultant_name: str) -> GraphData:
@@ -41,4 +43,8 @@ async def filter_with_consultant(consultant_name: str) -> GraphData:
 
     conn.close()
 
-    return result[0][0]
+    output = result[0][0]
+    if not output["nodes"]:
+        raise HTTPException(status_code=404, detail="A Consultant could not be found with the name provided.")
+
+    return output
