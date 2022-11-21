@@ -16,10 +16,6 @@ export default function ClearButton() {
   const handleClearChange = () => {
     // Clear search list
     dispatch(clearSearchList());
-    // Clear current graph data
-    dispatch(clearCurrentGraph());
-    // Retrieve all graph data
-    dispatch(getAllGraphDataRequest());
   };
 
   return (
