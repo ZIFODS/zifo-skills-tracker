@@ -5,8 +5,12 @@ import {
   clearHiddenGroups,
   isGraphFilled,
   selectCurrentSearchedList,
-  getFilterGraphDataRequest,
+  getFilterGraphDataWithSkillsRequest,
+  isSkillSearched,
+  isConsultantSearched,
+  getFilterGraphDataByConsultantRequest,
 } from "../graph/graphSlice";
+import { selectCurrentSearchedConsultant } from "../consultants/consultantSlice";
 
 /**
  * Show all categories button in filter section
@@ -14,7 +18,14 @@ import {
 export default function ShowAllButton() {
   const dispatch = useAppDispatch();
 
+  // Searched skills
   let skills = useAppSelector(selectCurrentSearchedList);
+  const skillSearched = useAppSelector(isSkillSearched);
+
+  // Searched consultant
+  const consultant = useAppSelector(selectCurrentSearchedConsultant)
+  const consultantSearched = useAppSelector(isConsultantSearched);
+
   const graphFilled = useAppSelector(isGraphFilled);
 
   // Clicking Show All button
@@ -22,8 +33,26 @@ export default function ShowAllButton() {
     // Empty hidden groups list
     dispatch(clearHiddenGroups());
     // Make API request
-    skills.length &&
-      dispatch(getFilterGraphDataRequest({ skills: skills, hiddenGroups: [] }));
+    skills.length && skillSearched &&
+      dispatch(
+        getFilterGraphDataWithSkillsRequest({
+          query: {
+            skills: skills,
+            hiddenGroups: [],
+          },
+          isSearch: false
+        })
+      );
+    consultant.length && consultantSearched &&
+      dispatch(
+        getFilterGraphDataByConsultantRequest({
+          query: {
+            name: consultant,
+            hiddenGroups: [],
+          },
+          isSearch: false
+        })
+      );
   };
 
   return (

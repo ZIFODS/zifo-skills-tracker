@@ -4,12 +4,12 @@ import {
   getAllGraphDataRequest,
   getAllGraphDataSuccess,
   getAllGraphDataFail,
-  getSearchGraphDataRequest,
-  getSearchGraphDataSuccess,
-  getSearchGraphDataFail,
-  getFilterGraphDataRequest,
-  getFilterGraphDataSuccess,
-  getFilterGraphDataFail,
+  getFilterGraphDataWithSkillsRequest,
+  getFilterGraphDataWithSkillsSuccess,
+  getFilterGraphDataWithSkillsFail,
+  getFilterGraphDataByConsultantRequest,
+  getFilterGraphDataByConsultantSuccess,
+  getFilterGraphDataByConsultantFail,
 } from "./graphSlice";
 import GraphService from "./graphService";
 
@@ -24,37 +24,45 @@ export function* getGraphData(_action: PayloadAction<any>): any {
   }
 }
 
-// Generator to get graph data given skills to search.
-export function* searchGraphData(action: PayloadAction<any>): any {
+// Generator to get graph data given skills to search and categories to filter
+export function* filterGraphDataWithSkills(action: PayloadAction<any>): any {
   try {
     const response = yield call(
-      GraphService.filterGraphData,
-      action.payload.skills,
+      GraphService.filterGraphDataWithSkills,
+      action.payload.query.skills,
+      action.payload.query.hiddenGroups
     );
-    yield put(getSearchGraphDataSuccess(response));
+    yield put(getFilterGraphDataWithSkillsSuccess({
+      response: response,
+      isSearch: action.payload.isSearch
+    }));
   } catch (e: any) {
-    console.log("Graph search API failed");
-    yield put(getSearchGraphDataFail());
+    console.log("Graph skill filter API failed");
+    yield put(getFilterGraphDataWithSkillsFail());
   }
 }
 
 // Generator to get graph data given skills to search and categories to filter
-export function* filterGraphData(action: PayloadAction<any>): any {
+export function* filterGraphDataByConsultant(action: PayloadAction<any>): any {
   try {
     const response = yield call(
-      GraphService.filterGraphData,
-      action.payload.skills,
-      action.payload.hiddenGroups
+      GraphService.filterGraphDataByConsultant,
+      action.payload.query.name,
+      action.payload.query.hiddenGroups
     );
-    yield put(getFilterGraphDataSuccess(response));
+    yield put(getFilterGraphDataByConsultantSuccess({
+      response: response,
+      isSearch: action.payload.isSearch
+    }));
   } catch (e: any) {
-    console.log("Graph filter API failed");
-    yield put(getFilterGraphDataFail());
+    console.log("Graph consultant filter API failed");
+    yield put(getFilterGraphDataByConsultantFail());
   }
 }
 
+
 export default function* watchGraphSaga() {
   yield takeLatest(getAllGraphDataRequest.type, getGraphData);
-  yield takeLatest(getSearchGraphDataRequest.type, searchGraphData);
-  yield takeLatest(getFilterGraphDataRequest.type, filterGraphData);
+  yield takeLatest(getFilterGraphDataWithSkillsRequest.type, filterGraphDataWithSkills);
+  yield takeLatest(getFilterGraphDataByConsultantRequest.type, filterGraphDataByConsultant);
 }

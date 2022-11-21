@@ -6,18 +6,31 @@ import {
   addHiddenGroup,
   selectAllNodeData,
   selectCurrentSearchedList,
-  getFilterGraphDataRequest,
+  getFilterGraphDataWithSkillsRequest,
+  isConsultantSearched,
+  isSkillSearched,
+  getFilterGraphDataByConsultantRequest,
 } from "../graph/graphSlice";
 import { getUniqueGroups } from "../../utils/utils";
+import { selectCurrentSearchedConsultant } from "../consultants/consultantSlice";
 
 /**
  * Hide all categories button in filter section
  */
 export default function HideAllButton() {
+
   const dispatch = useAppDispatch();
 
   const allNodeData = useAppSelector(selectAllNodeData);
+
+  // Searched skills
   let skills = useAppSelector(selectCurrentSearchedList);
+  const skillSearched = useAppSelector(isSkillSearched);
+
+  // Searched consultant
+  const consultant = useAppSelector(selectCurrentSearchedConsultant)
+  const consultantSearched = useAppSelector(isConsultantSearched);
+
   const graphFilled = useAppSelector(isGraphFilled);
 
   const allGroups = getUniqueGroups(allNodeData);
@@ -32,11 +45,24 @@ export default function HideAllButton() {
       dispatch(addHiddenGroup(group));
     });
     // Make API request
-    skills.length &&
+    skills.length && skillSearched &&
       dispatch(
-        getFilterGraphDataRequest({
-          skills: skills,
-          hiddenGroups: allSkillGroups,
+        getFilterGraphDataWithSkillsRequest({
+          query: {
+            skills: skills,
+            hiddenGroups: allSkillGroups,
+          },
+          isSearch: false
+        })
+      );
+      consultant.length && consultantSearched &&
+      dispatch(
+        getFilterGraphDataByConsultantRequest({
+          query: {
+            name: consultant,
+            hiddenGroups: allSkillGroups,
+          },
+          isSearch: false
         })
       );
   };

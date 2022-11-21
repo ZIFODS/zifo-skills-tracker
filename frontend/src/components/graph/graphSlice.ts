@@ -27,7 +27,8 @@ export interface GraphState {
   filteredData: GraphData;
   currentSearchedList: string[];
   hiddenGroups: string[];
-  searched: boolean;
+  isSkillSearched: boolean;
+  isConsultantSearched: boolean;
   loading: boolean;
 }
 
@@ -37,7 +38,8 @@ const initialState: GraphState = {
   filteredData: { nodes: [], links: [] },
   currentSearchedList: [],
   hiddenGroups: [],
-  searched: false,
+  isSkillSearched: false,
+  isConsultantSearched: false,
   loading: false,
 };
 
@@ -56,28 +58,42 @@ const graphSlice = createSlice({
     getAllGraphDataFail: (state: any) => {
       state.loading = false;
     },
-    getSearchGraphDataRequest: (state: any, action: any) => {
+    getFilterGraphDataWithSkillsRequest: (state: any, action: any) => {
       state.loading = true;
-      state.currentSearchedList = action.payload.skills;
+      state.currentSearchedList = action.payload.query.skills
     },
-    getSearchGraphDataSuccess: (state: any, action: any) => {
+    getFilterGraphDataWithSkillsSuccess: (state: any, action: any) => {
       state.loading = false;
       state.searched = true;
-      state.searchedData = action.payload.data;
+      state.isConsultantSearched = false;
+      state.isSkillSearched = true;
+      if (action.payload.isSearch) {
+        state.searchedData = action.payload.response.data;
+        state.filteredData = action.payload.response.data;
+      }
+      else {
+        state.filteredData = action.payload.response.data;
+      }
     },
-    getSearchGraphDataFail: (state: any) => {
+    getFilterGraphDataWithSkillsFail: (state: any) => {
       state.loading = false;
     },
-    getFilterGraphDataRequest: (state: any, action: any) => {
+    getFilterGraphDataByConsultantRequest: (state: any, _action: any) => {
       state.loading = true;
-      state.currentSearchList = action.payload.skills;
     },
-    getFilterGraphDataSuccess: (state: any, action: any) => {
+    getFilterGraphDataByConsultantSuccess: (state: any, action: any) => {
       state.loading = false;
-      state.searched = true;
-      state.filteredData = action.payload.data;
+      state.isConsultantSearched = true;
+      state.isSkillSearched = false;
+      if (action.payload.isSearch) {
+        state.searchedData = action.payload.response.data;
+        state.filteredData = action.payload.response.data;
+      }
+      else {
+        state.filteredData = action.payload.response.data;
+      }
     },
-    getFilterGraphDataFail: (state: any) => {
+    getFilterGraphDataByConsultantFail: (state: any) => {
       state.loading = false;
     },
     addHiddenGroup: (state: any, action: any) => {
@@ -104,12 +120,12 @@ export const {
   getAllGraphDataRequest,
   getAllGraphDataSuccess,
   getAllGraphDataFail,
-  getSearchGraphDataRequest,
-  getSearchGraphDataSuccess,
-  getSearchGraphDataFail,
-  getFilterGraphDataRequest,
-  getFilterGraphDataSuccess,
-  getFilterGraphDataFail,
+  getFilterGraphDataWithSkillsRequest,
+  getFilterGraphDataWithSkillsSuccess,
+  getFilterGraphDataWithSkillsFail,
+  getFilterGraphDataByConsultantRequest,
+  getFilterGraphDataByConsultantSuccess,
+  getFilterGraphDataByConsultantFail,
   addHiddenGroup,
   clearHiddenGroups,
   removeHiddenGroup,
@@ -133,7 +149,11 @@ export const selectFilteredLinkData = (state: RootState) =>
 export const isGraphFilled = (state: RootState) =>
   state.graph && state.graph.searchedData.nodes.length > 0;
 export const isGraphSearched = (state: RootState) =>
-  state.graph && state.graph.searched;
+  state.graph && (state.graph.isSkillSearched || state.graph.isConsultantSearched);
+export const isSkillSearched = (state: RootState) =>
+state.graph && state.graph.isSkillSearched;
+export const isConsultantSearched = (state: RootState) =>
+state.graph && state.graph.isConsultantSearched;
 
 export const selectCurrentSearchedList = (state: RootState) =>
   state.graph && state.graph.currentSearchedList;

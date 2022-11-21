@@ -3,8 +3,7 @@ import { Button } from "@mui/material";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import {
   addHiddenGroup,
-  getFilterGraphDataRequest,
-  getSearchGraphDataRequest,
+  getFilterGraphDataWithSkillsRequest,
   selectAllNodeData,
   selectCurrentSearchedList,
 } from "../graph/graphSlice";
@@ -39,7 +38,7 @@ export default function ApplyButton() {
   const searchListGroups = searchList.map(function (skill: any) {
     return skill.group;
   });
-  const groupsToHide = allGroups.filter(function(group: string) {
+  const groupsToHide = allGroups.filter(function (group: string) {
     return !(searchListGroups.includes(group) || group == "Consultant")
   })
 
@@ -48,20 +47,17 @@ export default function ApplyButton() {
     // Make API request
     searchListNames.length &&
       dispatch(
-        getSearchGraphDataRequest({
-          skills: searchList,
+        getFilterGraphDataWithSkillsRequest({
+          query: {
+            skills: searchList,
+            hiddenGroups: []
+          },
+          isSearch: true
         })
       );
-      searchListNames.length &&
-      dispatch(
-        getFilterGraphDataRequest({
-          skills: searchList,
-          hiddenGroups: groupsToHide
-        })
-      );
-      groupsToHide.map(function(group: string) {
-        dispatch(addHiddenGroup(group))
-      })
+    groupsToHide.map(function (group: string) {
+      dispatch(addHiddenGroup(group))
+    })
   };
 
   // Apply button disabled if search list empty or displayed list matches applied list

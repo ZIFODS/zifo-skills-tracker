@@ -18,12 +18,16 @@ import {
   selectFilteredNodeData,
   removeHiddenGroup,
   selectCurrentSearchedList,
-  getFilterGraphDataRequest,
+  getFilterGraphDataWithSkillsRequest,
+  isSkillSearched,
+  isConsultantSearched,
+  getFilterGraphDataByConsultantRequest,
 } from "../graph/graphSlice";
 import { getUniqueGroups } from "../../utils/utils";
 import { groupDisplayNameLinks } from "../../constants/data";
 import ShowAllButton from "./showAllButton";
 import HideAllButton from "./hideAllButton";
+import { selectCurrentSearchedConsultant } from "../consultants/consultantSlice";
 
 /**
  * Splits array of group names into chunks of defined size.
@@ -51,8 +55,13 @@ export default function Categories() {
   const searchedNodeData = useAppSelector(selectSearchedNodeData);
   const filteredNodeData = useAppSelector(selectFilteredNodeData);
 
-  // Searched nodes
+  // Searched skills
   let skills = useAppSelector(selectCurrentSearchedList);
+  const skillSearched = useAppSelector(isSkillSearched);
+
+  // Searched consultant
+  const consultant = useAppSelector(selectCurrentSearchedConsultant)
+  const consultantSearched = useAppSelector(isConsultantSearched);
 
   // Groups
   let hiddenGroups = useAppSelector(selectHiddenGroups);
@@ -84,11 +93,24 @@ export default function Categories() {
       }
     }
     // Make API request
-    skills.length &&
+    skills.length && skillSearched &&
       dispatch(
-        getFilterGraphDataRequest({
-          skills: skills,
-          hiddenGroups: hiddenGroups,
+        getFilterGraphDataWithSkillsRequest({
+          query: {
+            skills: skills,
+            hiddenGroups: hiddenGroups,
+          },
+          isSearch: false
+        })
+      );
+    consultant.length && consultantSearched &&
+      dispatch(
+        getFilterGraphDataByConsultantRequest({
+          query: {
+            name: consultant,
+            hiddenGroups: hiddenGroups,
+          },
+          isSearch: false
         })
       );
   };

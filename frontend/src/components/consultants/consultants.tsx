@@ -1,6 +1,9 @@
 import React from "react";
 import { Stack, Typography, Paper, Box } from "@mui/material";
 import ConsultantList from "./consultantList";
+import ConsultantAutocomplete from "./consultantAutocomplete";
+import ConsultantApplyButton from "./consultantApplyButton";
+
 
 /**
  * Consultants section
@@ -12,11 +15,11 @@ export default function Consultants() {
         border: "1px solid black",
         p: 2.5,
         backgroundColor: "#e5e5e5",
-        width: 200,
-        overflow: "scroll"
+        overflow: "scroll",
+        maxWidth: 250
       }}
     >
-      <Stack spacing={3}>
+      <Stack spacing={2}>
         <Box sx={{ borderBottom: "1px solid black", pb: 1 }}>
           <Typography
             variant="h5"
@@ -25,8 +28,12 @@ export default function Consultants() {
             Consultants
           </Typography>
         </Box>
-        <ConsultantList/>
-      </Stack>   
+        <Stack direction="row" spacing={1}>
+          <ConsultantAutocomplete />
+          <ConsultantApplyButton />
+        </Stack>
+        <ConsultantList />
+      </Stack>
     </Paper>
   );
 }

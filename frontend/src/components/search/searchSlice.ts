@@ -18,8 +18,8 @@ const initialState: SearchState = {
   currentSearch: { group: "", name: "", operator: "", parenthesis: "" },
 };
 
-const searchSlice = createSlice({
-  name: "search",
+const skillSearchSlice = createSlice({
+  name: "skillSearch",
   initialState,
   reducers: {
     // Reducer to update search state
@@ -91,19 +91,19 @@ export const {
   clearSearchList,
   clearCurrentParenthesis,
   removeSkillFromList,
-} = searchSlice.actions;
+} = skillSearchSlice.actions;
 
 // Selectors
 export const selectSearchList = (state: RootState) =>
-  state.search && state.search.searchList;
+  state.skillSearch && state.skillSearch.searchList;
 export const selectCurrentSearchGroup = (state: RootState) =>
-  state.search && state.search.currentSearch.group;
+  state.skillSearch && state.skillSearch.currentSearch.group;
 export const selectCurrentSearchNode = (state: RootState) =>
-  state.search && state.search.currentSearch.name;
+  state.skillSearch && state.skillSearch.currentSearch.name;
 export const selectCurrentSearchOperator = (state: RootState) =>
-  state.search && state.search.currentSearch.operator;
+  state.skillSearch && state.skillSearch.currentSearch.operator;
 export const selectCurrentSearchParenthesis = (state: RootState) =>
-  state.search && state.search.currentSearch.parenthesis;
+  state.skillSearch && state.skillSearch.currentSearch.parenthesis;
 
 // Reducer
-export default searchSlice.reducer;
+export default skillSearchSlice.reducer;
