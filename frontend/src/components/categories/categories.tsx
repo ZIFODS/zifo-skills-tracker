@@ -120,7 +120,7 @@ export default function Categories() {
       sx={{ border: "1px solid black", p: 2.5, backgroundColor: "#e5e5e5" }}
     >
       <Stack direction="row" justifyContent="space-between" alignItems="center">
-        <Box sx={{ borderBottom: "1px solid #1f226a", pb: 1, mb: 1 }}>
+        <Box sx={{ borderBottom: "1px solid black", pb: 1, mb: 1 }}>
           <Typography
             variant="h5"
             sx={{ color: "#1f226a", fontWeight: "bold" }}
