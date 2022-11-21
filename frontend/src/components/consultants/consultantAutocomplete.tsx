@@ -3,6 +3,7 @@ import { Autocomplete, TextField } from "@mui/material";
 import { GraphNode, selectAllNodeData } from "../graph/graphSlice";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { selectCurrentSearchNode, setCurrentNodeToSearch } from "../search/searchSlice";
+import { selectCurrentSearchedConsultant, setCurrentConsultantSearch } from "./consultantSlice";
 
 /**
  * Retrieve sorted consultant names from array of consultants for Autocomplete options.
@@ -24,20 +25,20 @@ function getConsultantNames(nodes: GraphNode[]): string[] {
 /**
  * Autocomplete input for consultant selection.
  */
-export default function NodeAutocomplete() {
+export default function ConsultantAutocomplete() {
 
   const dispatch = useAppDispatch();
 
   // Node data
   const nodeData = useAppSelector(selectAllNodeData);
-  const searchedNode = useAppSelector(selectCurrentSearchNode);
+  const searchedConsultant = useAppSelector(selectCurrentSearchedConsultant);
 
   const nodes = getConsultantNames(nodeData);
 
   // On text change
   const handleChange = (event: any, value: string | null) => {
-    // Set skill node and group to current search
-    // dispatch();
+    // Set consultant name to current search
+    dispatch(setCurrentConsultantSearch(value));
   };
 
   return (
@@ -45,14 +46,14 @@ export default function NodeAutocomplete() {
       disablePortal
       id="combo-box-demo"
       options={nodes}
-      value={searchedNode}
+      value={searchedConsultant}
       onChange={handleChange}
       renderInput={(params) => (
         <TextField
           {...params}
-          label="Filter"
+          label="Consultant name"
           variant="standard"
-          sx={{ minWidth: 280 }}
+          sx={{ width: 200 }}
           InputLabelProps={{ style: { fontSize: 14, margin: 0, padding: 0 } }}
         />
       )}

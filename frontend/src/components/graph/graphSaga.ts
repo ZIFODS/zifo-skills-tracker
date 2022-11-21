@@ -7,6 +7,9 @@ import {
   getFilterGraphDataWithSkillsRequest,
   getFilterGraphDataWithSkillsSuccess,
   getFilterGraphDataWithSkillsFail,
+  getFilterGraphDataByConsultantRequest,
+  getFilterGraphDataByConsultantSuccess,
+  getFilterGraphDataByConsultantFail,
 } from "./graphSlice";
 import GraphService from "./graphService";
 
@@ -30,12 +33,29 @@ export function* filterGraphDataWithSkills(action: PayloadAction<any>): any {
       action.payload.query.hiddenGroups
     );
     yield put(getFilterGraphDataWithSkillsSuccess({
-      response: response, 
+      response: response,
       isSearch: action.payload.isSearch
     }));
   } catch (e: any) {
-    console.log("Graph filter API failed");
+    console.log("Graph skill filter API failed");
     yield put(getFilterGraphDataWithSkillsFail());
+  }
+}
+
+// Generator to get graph data given skills to search and categories to filter
+export function* filterGraphDataByConsultant(action: PayloadAction<any>): any {
+  try {
+    const response = yield call(
+      GraphService.filterGraphDataByConsultant,
+      action.payload.query.name
+    );
+    yield put(getFilterGraphDataByConsultantSuccess({
+      response: response,
+      isSearch: action.payload.isSearch
+    }));
+  } catch (e: any) {
+    console.log("Graph consultant filter API failed");
+    yield put(getFilterGraphDataByConsultantFail());
   }
 }
 
@@ -43,4 +63,5 @@ export function* filterGraphDataWithSkills(action: PayloadAction<any>): any {
 export default function* watchGraphSaga() {
   yield takeLatest(getAllGraphDataRequest.type, getGraphData);
   yield takeLatest(getFilterGraphDataWithSkillsRequest.type, filterGraphDataWithSkills);
+  yield takeLatest(getFilterGraphDataByConsultantRequest.type, filterGraphDataByConsultant);
 }
