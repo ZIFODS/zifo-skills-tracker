@@ -30,7 +30,7 @@ export default function Search() {
                 variant="h5"
                 sx={{ color: "#1f226a", fontWeight: "bold" }}
               >
-                Search
+                Skills
               </Typography>
             </Box>
             <UserGuideButton/>

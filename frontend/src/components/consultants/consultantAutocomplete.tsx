@@ -2,7 +2,7 @@ import React from "react";
 import { Autocomplete, TextField } from "@mui/material";
 import { GraphNode, selectAllNodeData } from "../graph/graphSlice";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
-import { selectCurrentSearchNode, setCurrentNodeToSearch } from "../search/searchSlice";
+import { selectCurrentSearchNode, setCurrentNodeToSearch } from "../skills/searchSlice";
 import { selectCurrentSearchedConsultant, setCurrentConsultantSearch } from "./consultantSlice";
 
 /**
