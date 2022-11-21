@@ -33,17 +33,17 @@ export default function Search() {
                 Skills
               </Typography>
             </Box>
-            <UserGuideButton/>
+            <UserGuideButton />
           </Stack>
           <BitwiseOperators />
         </Stack>
-        <Stack sx={{ height: "100%"}} spacing={3}>
+        <Stack sx={{ height: "100%" }} spacing={3}>
           <Stack direction="row" spacing={3} alignItems="flex-end">
             <NodeAutocomplete />
             <AddSearchButton />
           </Stack>
           <SearchList />
-          <Stack>
+          <Stack direction="row" spacing={2}>
             <ClearButton />
             <SearchButton />
           </Stack>

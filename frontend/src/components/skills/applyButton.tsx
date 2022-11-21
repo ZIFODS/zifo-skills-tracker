@@ -70,13 +70,13 @@ export default function ApplyButton() {
       variant="outlined"
       disabled={isDisabled}
       sx={{
-        mb: 1,
         p: 1,
         fontSize: 15,
         fontWeight: "bold",
         color: "white",
         backgroundColor: !isDisabled ? "#1f226a" : "white",
         border: "2px solid #1a6714",
+        flexGrow: 1
       }}
       onClick={handleChange}
     >

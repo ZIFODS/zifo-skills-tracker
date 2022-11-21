@@ -26,13 +26,13 @@ export default function ClearButton() {
     <Button
       variant="outlined"
       sx={{
-        mb: 1,
         p: 0.5,
         fontSize: 15,
         fontWeight: "bold",
         color: "red",
         backgroundColor: "white",
         border: "2px solid red",
+        flexGrow: 1
       }}
       onClick={handleClearChange}
       disabled={searchList.length === 0}
