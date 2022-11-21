@@ -2,7 +2,7 @@ import React from "react";
 import { IconButton } from "@mui/material";
 import PersonSearchIcon from '@mui/icons-material/PersonSearch';
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
-import { clearCurrentConsultantToSearch, selectCurrentSearchedConsultant } from "./consultantSlice";
+import { clearCurrentConsultantToSearch, selectCurrentConsultantToSearch, setCurrentConsultantSearched } from "./consultantSlice";
 import { getFilterGraphDataByConsultantRequest } from "../graph/graphSlice";
 
 /**
@@ -12,16 +12,17 @@ export default function ConsultantApplyButton() {
 
   const dispatch = useAppDispatch()
 
-  const searchedConsultant = useAppSelector(selectCurrentSearchedConsultant)
+  const consultantToSearch = useAppSelector(selectCurrentConsultantToSearch)
 
   // Clicking apply button
   const handleClick = () => {
     dispatch(getFilterGraphDataByConsultantRequest({
       query: {
-        name: searchedConsultant
+        name: consultantToSearch
       },
       isSearch: true
     }));
+    dispatch(setCurrentConsultantSearched(consultantToSearch))
     dispatch(clearCurrentConsultantToSearch())
   };
 

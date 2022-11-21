@@ -1,36 +1,48 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { RootState } from "../../app/store";
 
-export interface ConsultantSearchState {
+interface ConsultantSearch {
   name: string;
 }
 
+export interface ConsultantSearchState {
+  toSearch: ConsultantSearch;
+  searched: ConsultantSearch;
+}
+
 const initialState: ConsultantSearchState = {
-  name: "",
+  toSearch: { name: "" },
+  searched: { name: "" }
 };
 
 const consultantSearchSlice = createSlice({
   name: "consultantSearch",
   initialState,
   reducers: {
-    setCurrentConsultantSearch: (state: any, action: any) => {
-      state.name = action.payload
+    setCurrentConsultantToSearch: (state: any, action: any) => {
+      state.toSearch.name = action.payload
     },
     clearCurrentConsultantToSearch: (state: any) => {
-      state.name = initialState.name;
+      state.toSearch.name = initialState.toSearch.name;
+    },
+    setCurrentConsultantSearched: (state: any, action: any) => {
+      state.searched.name = action.payload
     },
   }
 });
 
 // Action
 export const {
-  setCurrentConsultantSearch,
-  clearCurrentConsultantToSearch
+  setCurrentConsultantToSearch,
+  clearCurrentConsultantToSearch,
+  setCurrentConsultantSearched
 } = consultantSearchSlice.actions;
 
 // Selector
+export const selectCurrentConsultantToSearch = (state: RootState) =>
+  state.consultantSearch && state.consultantSearch.toSearch.name;
 export const selectCurrentSearchedConsultant = (state: RootState) =>
-  state.consultantSearch && state.consultantSearch.name;
+  state.consultantSearch && state.consultantSearch.searched.name;
 
 // Reducer
 export default consultantSearchSlice.reducer;

@@ -3,7 +3,7 @@ import { Autocomplete, TextField } from "@mui/material";
 import { GraphNode, selectAllNodeData } from "../graph/graphSlice";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { selectCurrentSearchNode, setCurrentNodeToSearch } from "../skills/searchSlice";
-import { selectCurrentSearchedConsultant, setCurrentConsultantSearch } from "./consultantSlice";
+import { selectCurrentSearchedConsultant, setCurrentConsultantToSearch } from "./consultantSlice";
 
 /**
  * Retrieve sorted consultant names from array of consultants for Autocomplete options.
@@ -38,7 +38,7 @@ export default function ConsultantAutocomplete() {
   // On text change
   const handleChange = (event: any, value: string | null) => {
     // Set consultant name to current search
-    dispatch(setCurrentConsultantSearch(value));
+    dispatch(setCurrentConsultantToSearch(value));
   };
 
   return (
