@@ -153,7 +153,7 @@ export default function Categories() {
                             />
                           }
                           label={
-                            <Typography sx={{ fontSize: 14 }}>
+                            <Typography sx={{ fontSize: 14, color: "#808080" }}>
                               {groupDisplayNameLinks[group]}
                             </Typography>
                           }
@@ -180,14 +180,14 @@ export default function Categories() {
                           disabled
                           control={
                             <Checkbox
-                              checked={true}
                               disabled
+                              checked={false}
                               onChange={handleChange}
                               sx={{ transform: "scale(0.8)", p: 0.5, pl: 1.5 }}
                             />
                           }
                           label={
-                            <Typography sx={{ fontSize: 14 }}>
+                            <Typography sx={{ fontSize: 14, color: "#808080" }}>
                               {groupDisplayNameLinks[group]}
                             </Typography>
                           }
