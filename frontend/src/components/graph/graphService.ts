@@ -30,10 +30,17 @@ export default class GraphDataService {
     });
   }
 
-
   // GET request of graph data filtered by consultant
-  public static filterGraphDataByConsultant(consultant: string) {
+  public static filterGraphDataByConsultant(consultant: string, hiddenGroups: string[] = []) {
     let url = `http://${baseURL}:8080/consultant/?consultant_name=${consultant}`;
+
+    if (hiddenGroups !== undefined) {
+      if (hiddenGroups.length > 0) {
+        const hiddenGroupsQuery = hiddenGroups.join("&hidden_categories=");
+        url = url + `&hidden_categories=${hiddenGroupsQuery}`;
+      }
+    }
+
     return axios({
       method: "get",
       url: url,

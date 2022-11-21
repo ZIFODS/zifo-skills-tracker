@@ -47,7 +47,8 @@ export function* filterGraphDataByConsultant(action: PayloadAction<any>): any {
   try {
     const response = yield call(
       GraphService.filterGraphDataByConsultant,
-      action.payload.query.name
+      action.payload.query.name,
+      action.payload.query.hiddenGroups
     );
     yield put(getFilterGraphDataByConsultantSuccess({
       response: response,
