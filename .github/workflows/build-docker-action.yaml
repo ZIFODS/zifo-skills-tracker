@@ -1,4 +1,4 @@
-name: Build & Run Docker Image
+name: Run, test & build docker
 on:
   push:
     branches: [main, master]
@@ -6,7 +6,28 @@ on:
     branches: [main, master]
 
 jobs:
-  docker:
+  integration-test:
+    timeout-minutes: 20
+    runs-on: ubuntu-latest
+    env:
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      TEST_ENV: true
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v1
+
+      - name: Start containers
+        run: docker compose up -d --build;
+
+      - name: Run pipeline
+        run: docker compose exec -T python-api python pipeline/src/run_pipeline.py
+
+      - name: Run integration tests
+        run: docker compose exec -T python-api pytest -vv ./integration_test;
+
+  build-prod:
     timeout-minutes: 20
     runs-on: ubuntu-latest
     env:

@@ -112,16 +112,25 @@ class OrStatusProcesser:
                     return self._not()
 
             else:
+                previous_operator = rules[i - 1]["operator"]
                 previous_parenthesis = rules[i - 1]["parenthesis"]
 
                 # If neither the current nor next operators are OR then not part of OR sequence
                 if current_operator != "OR" and next_operator != "OR":
                     return self._not()
 
-                # If next operator is OR and it's either start of bracket or first OR then it's start of OR sequence
+                # If next operator is OR and it's end of bracket - if previous was OR then end of sequence otherwise not OR
+                # Otherwise if it's either start of bracket or first OR then it's start of OR sequence
                 # Otherwise if next operator is still OR then it's in middle of OR sequence
                 if next_operator == "OR":
-                    if current_operator != "OR" or previous_parenthesis == "]" or current_parenthesis == "[":
+
+                    if current_parenthesis == "]":
+                        if previous_operator == "OR":
+                            return self._end()
+
+                        return self._not()
+
+                    elif current_operator != "OR" or previous_parenthesis == "]" or current_parenthesis == "[":
                         return self._start() 
 
                     return self._middle()
@@ -135,6 +144,8 @@ class OrStatusProcesser:
 
                     return self._middle()
 
+                return self._not()
+
         else:
             # If one skill in list then can't be part of OR sequence
             if i == 0:
@@ -146,10 +157,7 @@ class OrStatusProcesser:
                     return self._end()
 
             # If last operator not OR then not part of OR sequence
-            else:
-                return self._not()
-
-        print("Or sequence not processed correctly")
+            return self._not()
 
 def get_all_end_brackets(bracket_idx_list: list[BracketIndexes]) -> list[int]:
     """

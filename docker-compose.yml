@@ -34,6 +34,7 @@ services:
     environment:
       - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
       - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+      - TEST_ENV=${TEST_ENV}
     volumes:
       - skills-data-volume:/home/skills_user/pipeline/import/
     ports:

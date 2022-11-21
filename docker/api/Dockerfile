@@ -16,7 +16,7 @@ RUN apt-get install -y git
 # Install python dependencies in /.venv
 COPY Pipfile .
 COPY Pipfile.lock .
-RUN PIPENV_VENV_IN_PROJECT=1 pipenv install
+RUN PIPENV_VENV_IN_PROJECT=1 pipenv install --dev
 
 FROM base AS runtime
 
@@ -34,6 +34,7 @@ WORKDIR /home/skills_user
 # Install application into container
 COPY ./app ./app
 COPY ./pipeline ./pipeline
+COPY ./integration_test ./integration_test
 
 # Run as root to avoid pipeline/import permissions error
 USER root
