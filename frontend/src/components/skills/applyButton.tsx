@@ -50,7 +50,7 @@ export default function ApplyButton() {
         getFilterGraphDataWithSkillsRequest({
           query: {
             skills: searchList,
-            hiddenGroups: []
+            hiddenGroups: groupsToHide
           },
           isSearch: true
         })
