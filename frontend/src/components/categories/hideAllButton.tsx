@@ -6,7 +6,7 @@ import {
   addHiddenGroup,
   selectAllNodeData,
   selectCurrentSearchedList,
-  getFilterGraphDataRequest,
+  getFilterGraphDataWithSkillsRequest,
 } from "../graph/graphSlice";
 import { getUniqueGroups } from "../../utils/utils";
 
@@ -34,7 +34,7 @@ export default function HideAllButton() {
     // Make API request
     skills.length &&
       dispatch(
-        getFilterGraphDataRequest({
+        getFilterGraphDataWithSkillsRequest({
           skills: skills,
           hiddenGroups: allSkillGroups,
         })

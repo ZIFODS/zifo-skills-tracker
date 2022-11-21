@@ -56,28 +56,28 @@ const graphSlice = createSlice({
     getAllGraphDataFail: (state: any) => {
       state.loading = false;
     },
-    getSearchGraphDataRequest: (state: any, action: any) => {
+    getSearchGraphDataWithSkillsRequest: (state: any, action: any) => {
       state.loading = true;
       state.currentSearchedList = action.payload.skills;
     },
-    getSearchGraphDataSuccess: (state: any, action: any) => {
+    getSearchGraphDataWithSkillsSuccess: (state: any, action: any) => {
       state.loading = false;
       state.searched = true;
       state.searchedData = action.payload.data;
     },
-    getSearchGraphDataFail: (state: any) => {
+    getSearchGraphDataWithSkillsFail: (state: any) => {
       state.loading = false;
     },
-    getFilterGraphDataRequest: (state: any, action: any) => {
+    getFilterGraphDataWithSkillsRequest: (state: any, action: any) => {
       state.loading = true;
       state.currentSearchList = action.payload.skills;
     },
-    getFilterGraphDataSuccess: (state: any, action: any) => {
+    getFilterGraphDataWithSkillsSuccess: (state: any, action: any) => {
       state.loading = false;
       state.searched = true;
       state.filteredData = action.payload.data;
     },
-    getFilterGraphDataFail: (state: any) => {
+    getFilterGraphDataWithSkillsFail: (state: any) => {
       state.loading = false;
     },
     addHiddenGroup: (state: any, action: any) => {
@@ -104,12 +104,12 @@ export const {
   getAllGraphDataRequest,
   getAllGraphDataSuccess,
   getAllGraphDataFail,
-  getSearchGraphDataRequest,
-  getSearchGraphDataSuccess,
-  getSearchGraphDataFail,
-  getFilterGraphDataRequest,
-  getFilterGraphDataSuccess,
-  getFilterGraphDataFail,
+  getSearchGraphDataWithSkillsRequest,
+  getSearchGraphDataWithSkillsSuccess,
+  getSearchGraphDataWithSkillsFail,
+  getFilterGraphDataWithSkillsRequest,
+  getFilterGraphDataWithSkillsSuccess,
+  getFilterGraphDataWithSkillsFail,
   addHiddenGroup,
   clearHiddenGroups,
   removeHiddenGroup,

@@ -13,7 +13,7 @@ export default class GraphDataService {
     });
 
   // GET request of graph data filtered by skill and with groups hidden.
-  public static filterGraphData(skills: string[], hiddenGroups: string[] = []) {
+  public static filterGraphDataWithSkills(skills: string[], hiddenGroups: string[] = []) {
     const skillsQuery = Buffer.from(JSON.stringify(skills)).toString("base64");
     let url = `http://${baseURL}:8080/skills/?skills=${skillsQuery}`;
 
@@ -22,6 +22,16 @@ export default class GraphDataService {
       url = url + `&hidden_categories=${hiddenGroupsQuery}`;
     }
 
+    return axios({
+      method: "get",
+      url: url,
+    });
+  }
+
+
+  // GET request of graph data filtered by consultant
+  public static filterGraphDataByConsultant(consultant: string) {
+    let url = `http://${baseURL}:8080/consultant/?consultant_name=${consultant}`;
     return axios({
       method: "get",
       url: url,

@@ -5,7 +5,7 @@ import {
   clearHiddenGroups,
   isGraphFilled,
   selectCurrentSearchedList,
-  getFilterGraphDataRequest,
+  getFilterGraphDataWithSkillsRequest,
 } from "../graph/graphSlice";
 
 /**
@@ -23,7 +23,7 @@ export default function ShowAllButton() {
     dispatch(clearHiddenGroups());
     // Make API request
     skills.length &&
-      dispatch(getFilterGraphDataRequest({ skills: skills, hiddenGroups: [] }));
+      dispatch(getFilterGraphDataWithSkillsRequest({ skills: skills, hiddenGroups: [] }));
   };
 
   return (

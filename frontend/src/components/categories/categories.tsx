@@ -18,7 +18,7 @@ import {
   selectFilteredNodeData,
   removeHiddenGroup,
   selectCurrentSearchedList,
-  getFilterGraphDataRequest,
+  getFilterGraphDataWithSkillsRequest,
 } from "../graph/graphSlice";
 import { getUniqueGroups } from "../../utils/utils";
 import { groupDisplayNameLinks } from "../../constants/data";
@@ -86,7 +86,7 @@ export default function Categories() {
     // Make API request
     skills.length &&
       dispatch(
-        getFilterGraphDataRequest({
+        getFilterGraphDataWithSkillsRequest({
           skills: skills,
           hiddenGroups: hiddenGroups,
         })
