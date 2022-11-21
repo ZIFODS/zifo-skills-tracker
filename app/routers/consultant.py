@@ -4,12 +4,8 @@ from app.models.graph import GraphData
 from pipeline.src.neo4j_connect import Neo4jConnection
 from app.logic.cypher import (
     match_consultant_with_name_with_knows_relationship,
-    unwind_nodes,
     compile_results_with_nodes_and_links,
 )
-
-class ConsultantNotFoundError(Exception):
-    ...
 
 consultant_router = APIRouter()
 
