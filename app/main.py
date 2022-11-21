@@ -3,6 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.routers.all_data import all_data_router
 from app.routers.skills import skills_router
+from app.routers.consultant import consultant_router
 
 app = FastAPI()
 
@@ -22,7 +23,7 @@ app.add_middleware(
 
 app.include_router(all_data_router, prefix="/all", tags=["All data"])
 app.include_router(skills_router, prefix="/skills", tags=["Filter with skills"])
-
+app.include_router(consultant_router, prefix="/consultant", tags=["Filter with consultant"])
 
 @app.get("/health", tags=["health_check"])
 def health_check():
