@@ -58,22 +58,44 @@ const graphSlice = createSlice({
     getAllGraphDataFail: (state: any) => {
       state.loading = false;
     },
+
+    getSearchGraphDataWithSkillsRequest: (state: any, action: any) => {
+      state.loading = true;
+      state.currentSearchedList = action.payload.skills
+    },
+    getSearchGraphDataWithSkillsSuccess: (state: any, action: any) => {
+      state.loading = false;
+      state.isConsultantSearched = false;
+      state.isSkillSearched = true;
+      state.searchedData = action.payload.data;
+    },
+    getSearchGraphDataWithSkillsFail: (state: any) => {
+      state.loading = false;
+    },
     getFilterGraphDataWithSkillsRequest: (state: any, action: any) => {
       state.loading = true;
-      state.currentSearchedList = action.payload.query.skills
+      state.currentSearchedList = action.payload.skills
     },
     getFilterGraphDataWithSkillsSuccess: (state: any, action: any) => {
       state.loading = false;
       state.isConsultantSearched = false;
       state.isSkillSearched = true;
-      if (action.payload.isSearch) {
-        state.searchedData = action.payload.response.data;
-      }
-      else {
-        state.filteredData = action.payload.response.data;
-      }
+      state.filteredData = action.payload.data;
     },
     getFilterGraphDataWithSkillsFail: (state: any) => {
+      state.loading = false;
+    },
+
+    getSearchGraphDataByConsultantRequest: (state: any, _action: any) => {
+      state.loading = true;
+    },
+    getSearchGraphDataByConsultantSuccess: (state: any, action: any) => {
+      state.loading = false;
+      state.isConsultantSearched = true;
+      state.isSkillSearched = false;
+      state.searchedData = action.payload.data;
+    },
+    getSearchGraphDataByConsultantFail: (state: any) => {
       state.loading = false;
     },
     getFilterGraphDataByConsultantRequest: (state: any, _action: any) => {
@@ -83,17 +105,12 @@ const graphSlice = createSlice({
       state.loading = false;
       state.isConsultantSearched = true;
       state.isSkillSearched = false;
-      if (action.payload.isSearch) {
-        state.searchedData = action.payload.response.data;
-        state.filteredData = action.payload.response.data;
-      }
-      else {
-        state.filteredData = action.payload.response.data;
-      }
+      state.filteredData = action.payload.data;
     },
     getFilterGraphDataByConsultantFail: (state: any) => {
       state.loading = false;
     },
+
     addHiddenGroup: (state: any, action: any) => {
       state.hiddenGroups.push(action.payload);
     },
@@ -118,12 +135,18 @@ export const {
   getAllGraphDataRequest,
   getAllGraphDataSuccess,
   getAllGraphDataFail,
+  getSearchGraphDataWithSkillsRequest,
+  getSearchGraphDataWithSkillsSuccess,
+  getSearchGraphDataWithSkillsFail,
   getFilterGraphDataWithSkillsRequest,
   getFilterGraphDataWithSkillsSuccess,
   getFilterGraphDataWithSkillsFail,
   getFilterGraphDataByConsultantRequest,
   getFilterGraphDataByConsultantSuccess,
   getFilterGraphDataByConsultantFail,
+  getSearchGraphDataByConsultantRequest,
+  getSearchGraphDataByConsultantSuccess,
+  getSearchGraphDataByConsultantFail,
   addHiddenGroup,
   clearHiddenGroups,
   removeHiddenGroup,

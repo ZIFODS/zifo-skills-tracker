@@ -96,21 +96,15 @@ export default function Categories() {
     skills.length && skillSearched &&
       dispatch(
         getFilterGraphDataWithSkillsRequest({
-          query: {
-            skills: skills,
-            hiddenGroups: hiddenGroups,
-          },
-          isSearch: false
+          skills: skills,
+          hiddenGroups: hiddenGroups,
         })
       );
     consultant.length && consultantSearched &&
       dispatch(
         getFilterGraphDataByConsultantRequest({
-          query: {
-            name: consultant,
-            hiddenGroups: hiddenGroups,
-          },
-          isSearch: false
+          name: consultant,
+          hiddenGroups: hiddenGroups,
         })
       );
   };
