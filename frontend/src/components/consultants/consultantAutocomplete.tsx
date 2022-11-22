@@ -2,8 +2,7 @@ import React from "react";
 import { Autocomplete, TextField } from "@mui/material";
 import { GraphNode, selectAllNodeData } from "../graph/graphSlice";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
-import { selectCurrentSearchNode, setCurrentNodeToSearch } from "../skills/searchSlice";
-import { selectCurrentSearchedConsultant, setCurrentConsultantToSearch } from "./consultantSlice";
+import { selectCurrentConsultantToSearch, setCurrentConsultantToSearch } from "./consultantSlice";
 
 /**
  * Retrieve sorted consultant names from array of consultants for Autocomplete options.
@@ -31,7 +30,7 @@ export default function ConsultantAutocomplete() {
 
   // Node data
   const nodeData = useAppSelector(selectAllNodeData);
-  const searchedConsultant = useAppSelector(selectCurrentSearchedConsultant);
+  const consultantToSearch = useAppSelector(selectCurrentConsultantToSearch);
 
   const nodes = getConsultantNames(nodeData);
 
@@ -46,7 +45,7 @@ export default function ConsultantAutocomplete() {
       disablePortal
       id="combo-box-demo"
       options={nodes}
-      value={searchedConsultant}
+      value={consultantToSearch}
       onChange={handleChange}
       renderInput={(params) => (
         <TextField

@@ -23,7 +23,7 @@ const consultantSearchSlice = createSlice({
       state.toSearch.name = action.payload
     },
     clearCurrentConsultantToSearch: (state: any) => {
-      state.toSearch.name = initialState.toSearch.name;
+      state.toSearch = initialState.toSearch;
     },
     setCurrentConsultantSearched: (state: any, action: any) => {
       state.searched.name = action.payload
