@@ -1,0 +1,20 @@
+[build-system]
+requires = [ "poetry-core",]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poetry]
+name = "zifo-skills-update"
+version = "0.0.1"
+description = ""
+authors = [ "Zifo Developer <unknown@zifornd.com>",]
+license = "MIT"
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = ">=3.10,<3.12"
+
+[tool.poetry.dev-dependencies]
+pytest = "*"
+pytest-cov = "*"
+mypy = "*"
+pre-commit = "*"
