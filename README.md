@@ -1,6 +1,6 @@
-# Zifo Skills Update
+# Zifo Skills Tracker
 
-Zifo Skills Update is a full-stack application that allows users to create, read, update, and delete skills of Zifo employees. It is currently still in active development.
+Zifo Skills Tracker is a full-stack application that allows users to create, read, update, and delete skills of Zifo employees. It is currently still in active development.
 
 ## Getting started
 
