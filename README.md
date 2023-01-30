@@ -22,3 +22,7 @@ npm install
 ```
 
 Once the packages are installed, run `npm start` to launch the frontend server.
+
+Login will eventually use `msal` authentication but for now, username and password are both set to `test`.
+
+The user can register as a pre-joiner, which will save their information to the DB and login as them.
