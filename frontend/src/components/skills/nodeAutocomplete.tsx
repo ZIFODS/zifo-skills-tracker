@@ -63,7 +63,7 @@ export default function NodeAutocomplete() {
       renderInput={(params) => (
         <TextField
           {...params}
-          label="Filter"
+          label="Skill name"
           variant="standard"
           sx={{ minWidth: 280 }}
           InputLabelProps={{ style: { fontSize: 14, margin: 0, padding: 0 } }}

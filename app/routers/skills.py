@@ -85,7 +85,7 @@ async def filter_consultants_with_skills(
         index_at_end_of_bracket = is_index_at_end_of_bracket(i, bracket_idx_list)
 
         or_status = or_status_processor.process(i, rules)
-        is_or, start_or = or_status.is_or, or_status.start_or
+        is_or, start_or, end_or = or_status
 
         ## match
         if i != 0:
@@ -106,7 +106,7 @@ async def filter_consultants_with_skills(
             query += or_skill_with_name(path_count, name)
 
         ## unwind_q
-        if not start_or:
+        if not is_or or end_or:
             query += unwind_nodes(path_count)
 
         ## intersection/union

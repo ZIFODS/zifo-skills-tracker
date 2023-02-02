@@ -25,5 +25,3 @@ The data required to launch this application is stored in an S3 bucket, which yo
 [Joseph Smith](mailto:joe.smith@zifornd.com)
 
 [Ross Burton](mailto:ross.burton@zifornd.com)
-
-[Adam Kent](mailto:adam.kent@zifornd.com)

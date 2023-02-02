@@ -1,6 +1,6 @@
 import { combineReducers } from "@reduxjs/toolkit";
 import graphReducer from "../components/graph/graphSlice";
-import searchReducer from "../components/search/searchSlice";
+import searchReducer from "../components/skills/searchSlice";
 import consultantReducer from "../components/consultants/consultantSlice";
 import hoveredNodeReducer from "../components/graph/hoveredNodeSlice";
 import userGuideReducer from "../components/userGuide/userGuideSlice";

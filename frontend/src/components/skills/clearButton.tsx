@@ -16,23 +16,19 @@ export default function ClearButton() {
   const handleClearChange = () => {
     // Clear search list
     dispatch(clearSearchList());
-    // Clear current graph data
-    dispatch(clearCurrentGraph());
-    // Retrieve all graph data
-    dispatch(getAllGraphDataRequest());
   };
 
   return (
     <Button
       variant="outlined"
       sx={{
-        mb: 1,
         p: 0.5,
         fontSize: 15,
         fontWeight: "bold",
         color: "red",
         backgroundColor: "white",
         border: "2px solid red",
+        flexGrow: 1
       }}
       onClick={handleClearChange}
       disabled={searchList.length === 0}

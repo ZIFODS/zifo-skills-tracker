@@ -48,21 +48,15 @@ export default function HideAllButton() {
     skills.length && skillSearched &&
       dispatch(
         getFilterGraphDataWithSkillsRequest({
-          query: {
-            skills: skills,
-            hiddenGroups: allSkillGroups,
-          },
-          isSearch: false
+          skills: skills,
+          hiddenGroups: allSkillGroups,
         })
       );
       consultant.length && consultantSearched &&
       dispatch(
         getFilterGraphDataByConsultantRequest({
-          query: {
-            name: consultant,
-            hiddenGroups: allSkillGroups,
-          },
-          isSearch: false
+          name: consultant,
+          hiddenGroups: allSkillGroups,
         })
       );
   };

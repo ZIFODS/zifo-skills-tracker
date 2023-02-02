@@ -1,15 +1,15 @@
 from pydantic import BaseModel
 
-class Nodes(BaseModel):
+class Node(BaseModel):
     id: int
     name: str
     group: str
 
-class Links(BaseModel):
+class Link(BaseModel):
     id: int
     source: int
     target: int
 
 class GraphData(BaseModel):
-    nodes: Nodes
-    links: Links
+    nodes: list[Node]
+    links: list[Link]

@@ -20,14 +20,17 @@ export default function Consultants() {
       }}
     >
       <Stack spacing={2}>
-        <Box sx={{ borderBottom: "1px solid black", pb: 1 }}>
-          <Typography
-            variant="h5"
-            sx={{ color: "#1f226a", fontWeight: "bold" }}
-          >
-            Consultants
-          </Typography>
-        </Box>
+        <Stack direction="row" justifyContent="space-between" alignItems="center">
+          <Box sx={{ borderBottom: "1px solid black", pb: 1 }}>
+            <Typography
+              variant="h5"
+              sx={{ color: "#1f226a", fontWeight: "bold" }}
+            >
+              Consultants
+            </Typography>
+          </Box>
+          <Box sx={{ flexGrow: 1 }} />
+        </Stack>
         <Stack direction="row" spacing={1}>
           <ConsultantAutocomplete />
           <ConsultantApplyButton />

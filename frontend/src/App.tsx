@@ -1,6 +1,6 @@
 import React from "react";
 import GraphVis from "./components/graph/graph";
-import Search from "./components/search/search";
+import Search from "./components/skills/search";
 import { Box, Stack } from "@mui/material";
 import Categories from "./components/categories/categories";
 import { useAppDispatch, useAppSelector } from "./app/hooks";
@@ -52,16 +52,16 @@ function App(): JSX.Element {
         }}
       >
         {userGuideOpen ?
-        <UserGuide/> :
-        !graphSearched ? (
-          <LandingDisplay />
-        ) : graphFilled ? (
-          <GraphVis />
-        ) : (
-          <NoResultsDisplay />
-        )}
+          <UserGuide /> :
+          !graphSearched ? (
+            <LandingDisplay />
+          ) : graphFilled ? (
+            <GraphVis />
+          ) : (
+            <NoResultsDisplay />
+          )}
       </Box>
-      <Consultants/>
+      <Consultants />
     </Stack>
   );
 }

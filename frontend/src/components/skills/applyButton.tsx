@@ -4,6 +4,7 @@ import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import {
   addHiddenGroup,
   getFilterGraphDataWithSkillsRequest,
+  getSearchGraphDataWithSkillsRequest,
   selectAllNodeData,
   selectCurrentSearchedList,
 } from "../graph/graphSlice";
@@ -47,12 +48,15 @@ export default function ApplyButton() {
     // Make API request
     searchListNames.length &&
       dispatch(
+        getSearchGraphDataWithSkillsRequest({
+          skills: searchList,
+        })
+      );
+    searchListNames.length &&
+      dispatch(
         getFilterGraphDataWithSkillsRequest({
-          query: {
-            skills: searchList,
-            hiddenGroups: []
-          },
-          isSearch: true
+          skills: searchList,
+          hiddenGroups: groupsToHide
         })
       );
     groupsToHide.map(function (group: string) {
@@ -70,13 +74,13 @@ export default function ApplyButton() {
       variant="outlined"
       disabled={isDisabled}
       sx={{
-        mb: 1,
         p: 1,
         fontSize: 15,
         fontWeight: "bold",
         color: "white",
         backgroundColor: !isDisabled ? "#1f226a" : "white",
         border: "2px solid #1a6714",
+        flexGrow: 1
       }}
       onClick={handleChange}
     >

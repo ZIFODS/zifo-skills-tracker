@@ -96,21 +96,15 @@ export default function Categories() {
     skills.length && skillSearched &&
       dispatch(
         getFilterGraphDataWithSkillsRequest({
-          query: {
-            skills: skills,
-            hiddenGroups: hiddenGroups,
-          },
-          isSearch: false
+          skills: skills,
+          hiddenGroups: hiddenGroups,
         })
       );
     consultant.length && consultantSearched &&
       dispatch(
         getFilterGraphDataByConsultantRequest({
-          query: {
-            name: consultant,
-            hiddenGroups: hiddenGroups,
-          },
-          isSearch: false
+          name: consultant,
+          hiddenGroups: hiddenGroups,
         })
       );
   };
@@ -120,7 +114,7 @@ export default function Categories() {
       sx={{ border: "1px solid black", p: 2.5, backgroundColor: "#e5e5e5" }}
     >
       <Stack direction="row" justifyContent="space-between" alignItems="center">
-        <Box sx={{ borderBottom: "1px solid #1f226a", pb: 1, mb: 1 }}>
+        <Box sx={{ borderBottom: "1px solid black", pb: 1, mb: 1 }}>
           <Typography
             variant="h5"
             sx={{ color: "#1f226a", fontWeight: "bold" }}
@@ -153,7 +147,7 @@ export default function Categories() {
                             />
                           }
                           label={
-                            <Typography sx={{ fontSize: 14 }}>
+                            <Typography sx={{ fontSize: 14, color: "#808080" }}>
                               {groupDisplayNameLinks[group]}
                             </Typography>
                           }
@@ -180,14 +174,14 @@ export default function Categories() {
                           disabled
                           control={
                             <Checkbox
-                              checked={true}
                               disabled
+                              checked={false}
                               onChange={handleChange}
                               sx={{ transform: "scale(0.8)", p: 0.5, pl: 1.5 }}
                             />
                           }
                           label={
-                            <Typography sx={{ fontSize: 14 }}>
+                            <Typography sx={{ fontSize: 14, color: "#808080" }}>
                               {groupDisplayNameLinks[group]}
                             </Typography>
                           }
