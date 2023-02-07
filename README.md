@@ -12,7 +12,15 @@ poetry install
 poetry shell
 ```
 
-Once the environment has been activated, run `bash run-api.sh` to launch the API server.
+Once the environment has been activated, you will need to configure environment variables with the following info:
+
+- API_SECERET_KEY
+- AWS_ACCESS_KEY_ID
+- AWS_SECRET_ACCESS_KEY
+
+The API secret key can be generated using `openssl rand -hex 32`. The AWS keys must be granted access to the S3 bucket that stores the schema.
+
+Run `bash run-api.sh` to launch the API server.
 
 For the frontend, you will need to install [Node.js](https://nodejs.org/en/download/) and then install the dependencies by entering the following commands sequentially from the root directory:
 
