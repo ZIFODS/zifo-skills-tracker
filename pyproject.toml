@@ -20,6 +20,9 @@ python-multipart = "*"
 python-jose = {extras = ["cryptography"], version = "*"}
 passlib = {extras = ["bcrypt"], version = "*"}
 python-decouple = "*"
+pandas = "*"
+s3fs = "*"
+openpyxl = "*"
 
 [tool.poetry.dev-dependencies]
 pytest = "*"
