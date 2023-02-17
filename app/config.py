@@ -3,10 +3,10 @@ import os
 from decouple import config
 
 # MongoDB Replica Set
-MONGODB_HOST = config("MONGODB_HOST", "127.0.0.1")
+MONGODB_HOST = config("MONGODB_HOST", "localhost")
 MONGODB_PORT = int(config("MONGODB_PORT", 27017))
-MONGODB_COLLECTION = "testdb"
-MONGODB_DATABASE = "testdb"
+MONGODB_COLLECTION = "test"
+MONGODB_DATABASE = "test"
 
 # Azure login
 AZURE_CLIENT_ID = config("AZURE_CLIENT_ID", None)
