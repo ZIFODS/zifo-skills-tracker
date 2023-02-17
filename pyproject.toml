@@ -23,6 +23,8 @@ msal = "*"
 pymongo = "*"
 motor = "*"
 aiocache = "*"
+itsdangerous = "*"
+passlib = "*"
 
 [tool.poetry.dev-dependencies]
 pytest = "*"
