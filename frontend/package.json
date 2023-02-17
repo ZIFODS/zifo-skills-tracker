@@ -25,7 +25,8 @@
     "react-router-dom": "*",
     "zustand": "*",
     "react-error-boundary": "*",
-    "react-helmet-async": "*"
+    "react-helmet-async": "*",
+    "http-proxy-middleware": "*"
   },
   "scripts": {
     "start": "react-scripts start",

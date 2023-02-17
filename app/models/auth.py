@@ -1,13 +1,28 @@
-from sqlalchemy import Boolean, Column, String
+import datetime
 
-from app.database import Base
+from pydantic import BaseModel
 
 
-class User(Base):
-    __tablename__ = "users"
+class InternalAuthToken(BaseModel):
+    code: str
 
-    username = Column(String, primary_key=True, index=True)
-    email = Column(String, unique=True, index=True)
-    full_name = Column(String)
-    hashed_password = Column(String)
-    disabled = Column(Boolean, default=False)
+
+class ExternalAuthToken(BaseModel):
+    code: str
+
+
+class InternalAccessTokenData(BaseModel):
+    sub: str
+
+
+class ExternalUser(BaseModel):
+    email: str
+    username: str
+    external_sub_id: str
+
+
+class InternalUser(BaseModel):
+    external_sub_id: str
+    internal_sub_id: str
+    username: str
+    created_at: datetime.datetime

@@ -1,6 +1,7 @@
 import { Suspense } from "react";
 import { Outlet } from "react-router-dom";
 import { MainLayout } from "../components/Layout";
+import { Navigate } from "react-router-dom";
 
 const App = () => {
   return (
@@ -22,6 +23,9 @@ export const protectedRoutes = [
   {
     path: "/",
     element: <App />,
-    children: [],
+    children: [
+      { path: "/", element: <div>Logged in!</div> },
+      { path: "/login", element: <Navigate to="/" /> },
+    ],
   },
 ];

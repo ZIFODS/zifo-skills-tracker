@@ -9,7 +9,6 @@ import {
 } from "@mui/material";
 import { useAuth } from "../../../lib/auth";
 import { useNavigate } from "react-router-dom";
-import { LoginCredentials } from "../api/login";
 
 type LoginBoxProps = {
   onSuccess: () => void;
@@ -21,15 +20,7 @@ export function LoginBox({ onSuccess }: LoginBoxProps) {
   const { login, isLoggingIn } = useAuth();
 
   const useClickLogin = async () => {
-    const credentials: LoginCredentials = {
-      grant_type: "",
-      username: "test",
-      password: "test",
-      scope: "",
-      client_id: "",
-      client_secret: "",
-    };
-    await login(credentials);
+    await login(null);
     onSuccess();
   };
 
