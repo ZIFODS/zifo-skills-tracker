@@ -7,7 +7,7 @@ from starlette.responses import JSONResponse, RedirectResponse
 from app import config
 from app.models.auth import ExternalAuthToken, InternalAccessTokenData, InternalUser
 from app.utils.exceptions import AuthorizationException, exception_handling
-from app.utils.mongo import MongoClient
+from app.utils.mongo import db_client
 from app.utils.security import schemes as auth_schemes
 from app.utils.security import util as auth_util
 from app.utils.security.providers import AzureAuthProvider
@@ -20,9 +20,6 @@ csrf_token_redirect_cookie_scheme = auth_schemes.CSRFTokenRedirectCookieBearer()
 access_token_cookie_scheme = auth_schemes.AccessTokenCookieBearer(
     authorizationUrl="/auth/login", tokenUrl="/auth/callback"
 )
-
-# Initialize db client
-db_client = MongoClient()
 
 
 @auth_router.get("/login")

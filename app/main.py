@@ -7,12 +7,9 @@ from app.config import FRONTEND_URL, SESSION_SECRET_KEY
 from app.routers.auth import auth_router
 from app.routers.skills import skills_router
 from app.utils.exceptions import exception_handling
-from app.utils.mongo import MongoClient
+from app.utils.mongo import db_client
 
 app = FastAPI()
-
-# Initialize db client
-db_client = MongoClient()
 
 
 origins = [

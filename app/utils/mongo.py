@@ -19,14 +19,11 @@ class MongoClient:
     """Database client interface"""
 
     def __init__(self):
-        mongodb_uri = (
-            f"mongodb://"
-            f"{config.MONGODB_HOST}:"
-            f"{config.MONGODB_PORT}/"
-            f"{config.MONGODB_DATABASE}?"
-            f"authSource={config.MONGODB_COLLECTION}"
+        logger.info("Starting MongoDB client")
+        self._motor_client = AsyncIOMotorClient(
+            config.MONGODB_HOST, config.MONGODB_PORT
         )
-        self._motor_client = AsyncIOMotorClient(mongodb_uri)
+        logger.info("Connected to MongoDB")
         # Mongo database
         self._db = self._motor_client[config.MONGODB_DATABASE]
         # Mongo collections
@@ -222,3 +219,7 @@ class MongoClient:
             external_user.external_sub_id
         )
         return encrypted_external_sub_id
+
+
+# Initialize db client
+db_client = MongoClient()
