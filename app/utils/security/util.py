@@ -1,4 +1,3 @@
-import datetime
 import hashlib
 import logging
 import os
@@ -8,7 +7,7 @@ from jwt import decode as jwt_decode
 from jwt import encode as jwt_encode
 
 from app import config
-from app.models.auth import InternalAccessTokenData, InternalUser
+from app.models.auth import ExternalToken
 from app.utils.cache import cache
 from app.utils.exceptions import UnauthorizedUser
 from app.utils.mongo import MongoClient
@@ -20,7 +19,8 @@ logger = logging.getLogger(__name__)
 
 
 async def create_state_csrf_token() -> str:
-    """Creates a CSRF token to mitigate CSRF attacks on redirects from
+    """
+    Creates a CSRF token to mitigate CSRF attacks on redirects from
     from the Authentication provider.
 
     The token is added in an HTTPOnly, secure cookie on the browser
@@ -30,8 +30,11 @@ async def create_state_csrf_token() -> str:
     returned by the Auth provider. We also check that we did add this
     token in the cache at some time in the past.
 
-    Returns:
-            state_csrf_token: The csrf token
+
+    Returns
+    -------
+    state_csrf_token : str
+        The CSRF token
     """
     state_csrf_token = hashlib.sha256(os.urandom(1024)).hexdigest()
 
@@ -43,13 +46,17 @@ async def create_state_csrf_token() -> str:
 
 async def validate_state_csrf_token(
     state_csrf_token: str, state_csrf_token_cookie: str
-):
-    """Checks the validity of a state token received by the redirect url,
+) -> None:
+    """
+    Checks the validity of a state token received by the redirect url,
     against the state token that the server added in the browser cookie.
 
-    Args:
-            state_csrf_token: The token returned in the redirect url
-            state_csrf_token_cookie: The token saved previously in the cookie
+    Parameters
+    ----------
+    state_csrf_token : str
+        The token returned in the redirect url
+    state_csrf_token_cookie : str
+        The token saved previously in the cookie
     """
     if state_csrf_token != state_csrf_token_cookie:
         raise UnauthorizedUser("Failed to validate state token")
@@ -64,53 +71,44 @@ async def validate_state_csrf_token(
 
 
 async def create_internal_access_token(
-    access_token_data: InternalAccessTokenData,
+    external_access_token: ExternalToken,
 ) -> str:
-    """Creates a JWT access token to return to the user.
-
-    Args:
-            access_token_data: The data to be included in the JWT access token
-
-    Returns:
-            encoded_jwt: The encoded JWT access token
     """
-    expires_delta = datetime.timedelta(minutes=int(config.ACCESS_TOKEN_EXPIRE_MINUTES))
-    to_encode = access_token_data.dict()
-    expire = datetime.datetime.utcnow() + expires_delta
-    to_encode.update(dict(exp=expire))
-    encoded_jwt = jwt_encode(
-        to_encode, config.JWT_SECRET_KEY, algorithm=config.ALGORITHM
-    )
+    Creates a JWT access token to return to the user.
 
-    return encoded_jwt
+    Parameters
+    ----------
+    external_access_token : ExternalToken
+        Azure access token
+
+    Returns
+    -------
+    internal_access_token : str
+        JWT encoded internal access token
+    """
+    to_encode = external_access_token.dict()
+    return jwt_encode(to_encode, config.JWT_SECRET_KEY, algorithm=config.ALGORITHM)
 
 
-async def validate_internal_access_token(internal_access_token: str) -> InternalUser:
-    """Checks the validity of an internal access token. If the token
-    is valid it also checks whether there is an associated user
-    in the database, and returns it.
+async def validate_internal_access_token(internal_access_token: str) -> ExternalToken:
+    """
+    Checks the validity of an internal access token and decodes it.
 
-    Args:
-            internal_access_token: Internal access token
+    Parameters
+    ----------
+    internal_access_token : str
+        JWT encoded internal access token
 
-    Returns:
-            internal_user: A user object as defined in this application
+    Returns
+    -------
+    external_access_token : ExternalToken
+        Azure access token
     """
     try:
-        payload = jwt_decode(
+        external_access_token = jwt_decode(
             internal_access_token, config.JWT_SECRET_KEY, algorithms=[config.ALGORITHM]
         )
-
-        internal_sub_id: str = payload.get("sub")
-        if internal_sub_id is None:
-            raise UnauthorizedUser("Missing 'sub' id from access token")
+        return ExternalToken(**external_access_token)
 
     except PyJWTError as exc:
         raise UnauthorizedUser(f"Failed to validate access token: {exc}")
-
-    internal_user = await db_client.get_user_by_internal_sub_id(internal_sub_id)
-
-    if internal_user is None:
-        raise UnauthorizedUser(f"User {internal_sub_id} does not exist")
-
-    return internal_user

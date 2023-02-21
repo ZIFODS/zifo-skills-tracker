@@ -59,48 +59,45 @@ class MongoClient:
         """
         await self._session.end_session()
 
-    async def get_user_by_external_sub_id(
+    async def get_user_by_external_id(
         self, external_user: ExternalUser
     ) -> Optional[InternalUser]:
         """
-        Returns a user from the database, based on the external sub_id of
-        the authentication provider.
+        Returns a user from the database, based on the user's id from Azure.
 
         Parameters
         ----------
         external_user : ExternalUser
-            An object representing a user with information based on the external provider's service.
+            An object representing a user with information from Azure.
 
         Returns
         -------
         internal_user : Optional[InternalUser]
             A user object as defined in this application. If no user is found, returns None.
         """
-        encrypted_external_sub_id = await self._encrypt_external_sub_id(external_user)
+        encrypted_external_id = await self._encrypt_external_id(external_user)
 
         mongo_user = await self._users_coll.find_one(
-            {"external_sub_id": encrypted_external_sub_id}
+            {"external_id": encrypted_external_id}
         )
 
         if mongo_user:
             return InternalUser(
-                internal_sub_id=mongo_user["internal_sub_id"],
-                external_sub_id=mongo_user["external_sub_id"],
+                internal_id=mongo_user["internal_id"],
+                external_id=mongo_user["external_id"],
                 username=mongo_user["username"],
                 created_at=mongo_user["created_at"],
             )
 
         return None
 
-    async def get_user_by_internal_sub_id(
-        self, internal_sub_id: str
-    ) -> Optional[InternalUser]:
+    async def get_user_by_internal_id(self, internal_id: str) -> Optional[InternalUser]:
         """
-        Returns a user from the database, based on the internal sub_id
+        Returns a user from the database, based on the internal id.
 
         Parameters
         ----------
-        internal_sub_id : str
+        internal_id : str
             The unique id of the user as defined in this application
 
         Returns
@@ -108,12 +105,12 @@ class MongoClient:
         internal_user : Optional[InternalUser]
             A user object as defined in this application. If no user is found, returns None.
         """
-        mongo_user = await self._users_coll.find_one({"_id": internal_sub_id})
+        mongo_user = await self._users_coll.find_one({"_id": internal_id})
 
         if mongo_user:
             return InternalUser(
-                internal_sub_id=mongo_user["internal_sub_id"],
-                external_sub_id=mongo_user["external_sub_id"],
+                internal_id=mongo_user["internal_id"],
+                external_id=mongo_user["external_id"],
                 username=mongo_user["username"],
                 created_at=mongo_user["created_at"],
             )
@@ -122,30 +119,26 @@ class MongoClient:
 
     async def create_internal_user(self, external_user: ExternalUser) -> InternalUser:
         """
-        Creates a user in the database based on the external sub_id of
-        the authentication provider.
-
-        The user will also be assigned an internal sub_id for authentication
-        within the internal system (backend application)
+        Creates a internal user in the database based on the user's information from Azure.
 
         Parameters
         ----------
         external_user : ExternalUser
-            An object representing a user with information based on the external provider's service.
+            An object representing a user with information from Azure.
 
         Returns
         -------
         internal_user : InternalUser
             A user object as defined in this application
         """
-        encrypted_external_sub_id = await self._encrypt_external_sub_id(external_user)
+        encrypted_external_id = await self._encrypt_external_id(external_user)
         unique_identifier = str(uuid4())
 
         result = await self._users_coll.insert_one(
             dict(
                 _id=unique_identifier,
-                internal_sub_id=unique_identifier,
-                external_sub_id=encrypted_external_sub_id,
+                internal_id=unique_identifier,
+                external_id=encrypted_external_id,
                 username=external_user.username,
                 created_at=datetime.datetime.utcnow(),
             )
@@ -156,8 +149,8 @@ class MongoClient:
         mongo_user = await self._users_coll.find_one({"_id": mongo_user_id})
 
         return InternalUser(
-            internal_sub_id=mongo_user["internal_sub_id"],
-            external_sub_id=mongo_user["external_sub_id"],
+            internal_id=mongo_user["internal_id"],
+            external_id=mongo_user["external_id"],
             username=mongo_user["username"],
             created_at=mongo_user["created_at"],
         )
@@ -166,12 +159,12 @@ class MongoClient:
         self, internal_user: InternalUser
     ) -> Optional[InternalUser]:
         """
-        Updates a user in the database.
+        Updates an internal user's information in the database.
 
         Parameters
         ----------
         internal_user : InternalUser
-            A user objects as defined in this application
+            A user object as defined in this application
 
         Returns
         -------
@@ -179,7 +172,7 @@ class MongoClient:
             A user object as defined in this application. If no user is found, returns None.
         """
         result = await self._users_coll.update_one(
-            {"internal_sub_id": internal_user.internal_sub_id},
+            {"internal_id": internal_user.internal_id},
             {"$set": internal_user.dict()},
         )
 
@@ -188,21 +181,21 @@ class MongoClient:
 
         return None
 
-    async def _encrypt_external_sub_id(sefl, external_user: ExternalUser) -> str:
+    async def _encrypt_external_id(sefl, external_user: ExternalUser) -> str:
         """
-        Encrypt the subject id received from the external provider. These ids are
+        Encrypt the user id received from Azure. These ids are
         used to uniquely identify a user in the system of the external provider and
         are usually public. However, it is better to be stored encrypted just in case.
 
         Parameters
         ----------
         external_user : ExternalUser
-            An object representing a user with information based on the external provider's service.
+            An object representing a user with information from Azure.
 
         Returns
         -------
-        encrypted_external_sub_id : str
-            The encrypted external subject id
+        encrypted_external_id : str
+            The encrypted external user id
         """
         salt = external_user.email.lower()
         salt = salt.replace(" ", "")
@@ -215,10 +208,8 @@ class MongoClient:
         # As per passlib the last character of the salt should always be one of [.Oeu]
         salt = salt + "O"
 
-        encrypted_external_sub_id = bcrypt.using(salt=salt).hash(
-            external_user.external_sub_id
-        )
-        return encrypted_external_sub_id
+        encrypted_external_id = bcrypt.using(salt=salt).hash(external_user.id)
+        return encrypted_external_id
 
 
 # Initialize db client
