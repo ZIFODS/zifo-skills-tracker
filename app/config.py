@@ -14,7 +14,7 @@ AZURE_AUTHORITY = config(
     "AZURE_AUTHORITY", f"https://login.microsoftonline.com/{AZURE_TENANT_ID}"
 )
 AZURE_DISCOVERY_URL = f"{AZURE_AUTHORITY}/v2.0/.well-known/openid-configuration"
-AZURE_REDIRECT_URL = config("AZURE_REDIRECT_URL", None)
+AZURE_REDIRECT_URI = config("AZURE_REDIRECT_URI", None)
 
 # Front end endpoint
 FRONTEND_URL = "http://localhost:3000"

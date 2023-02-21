@@ -41,7 +41,7 @@ class AzureAuthProvider:
         # Request access_token from Azure
         result = self.msal_client.acquire_token_by_authorization_code(
             external_auth_code,
-            redirect_uri=config.AZURE_REDIRECT_URL,
+            redirect_uri=config.AZURE_REDIRECT_URI,
             scopes=["User.Read"],
         )
 
@@ -104,7 +104,7 @@ class AzureAuthProvider:
         request_uri = self.msal_client.get_authorization_request_url(
             scopes=["User.Read"],
             state=state_csrf_token,
-            redirect_uri=config.AZURE_REDIRECT_URL,
+            redirect_uri=config.AZURE_REDIRECT_URI,
         )
 
         return request_uri, state_csrf_token
