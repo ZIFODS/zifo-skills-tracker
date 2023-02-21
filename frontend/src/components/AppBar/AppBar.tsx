@@ -62,79 +62,71 @@ function ResponsiveAppBar() {
 
   return (
     <AppBar position="static" elevation={0} color="transparent">
-      <Container maxWidth="xl">
-        <Toolbar disableGutters>
-          <Box
-            component="img"
-            sx={{ width: 50, height: 20, mr: 4 }}
-            src={require("../../assets/zifo-logo.png")}
-          />
-          <Typography
-            variant="h6"
-            noWrap
-            component="a"
-            href="/"
-            sx={{
-              mr: 2,
-              display: { xs: "none", md: "flex" },
-              fontWeight: 700,
-              fontFamily: "monospace",
-              color: "inherit",
-              textDecoration: "none",
-            }}
-          >
-            Skills tracker
-          </Typography>
+      <Toolbar disableGutters sx={{ mx: 8 }}>
+        <Box
+          component="img"
+          sx={{ width: 50, height: 20, mr: 4 }}
+          src={require("../../assets/zifo-logo.png")}
+        />
+        <Typography
+          variant="h6"
+          noWrap
+          component="a"
+          href="/"
+          sx={{
+            mr: 2,
+            display: { xs: "none", md: "flex" },
+            fontWeight: 700,
+            fontFamily: "monospace",
+            color: "inherit",
+            textDecoration: "none",
+          }}
+        >
+          Skills tracker
+        </Typography>
 
-          <Box sx={{ flexGrow: 1, display: { xs: "flex", md: "none" } }}>
-            <IconButton
-              size="large"
-              onClick={handleOpenNavMenu}
-              color="inherit"
-            >
-              <MenuIcon />
+        <Box sx={{ flexGrow: 1, display: { xs: "flex", md: "none" } }}>
+          <IconButton size="large" onClick={handleOpenNavMenu} color="inherit">
+            <MenuIcon />
+          </IconButton>
+        </Box>
+
+        <Box sx={{ flexGrow: 1, ml: 1, display: { xs: "none", md: "flex" } }} />
+
+        <Box sx={{ flexGrow: 0 }}>
+          <Tooltip title="Open settings">
+            <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
+              <Avatar
+                alt={user?.userName.toUpperCase()}
+                src="/static/images/avatar/2.jpg"
+                sx={{ bgcolor: "#141a54" }}
+              />
             </IconButton>
-          </Box>
-
-          <Box
-            sx={{ flexGrow: 1, ml: 1, display: { xs: "none", md: "flex" } }}
-          />
-
-          <Box sx={{ flexGrow: 0 }}>
-            <Tooltip title="Open settings">
-              <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                <Avatar
-                  alt={user?.userName.toUpperCase()}
-                  src="/static/images/avatar/2.jpg"
-                  sx={{ bgcolor: "#141a54" }}
-                />
-              </IconButton>
-            </Tooltip>
-            <Menu
-              sx={{ mt: "45px" }}
-              id="menu-appbar"
-              anchorEl={anchorElUser}
-              anchorOrigin={{
-                vertical: "top",
-                horizontal: "right",
-              }}
-              keepMounted
-              transformOrigin={{
-                vertical: "top",
-                horizontal: "right",
-              }}
-              open={Boolean(anchorElUser)}
-              onClose={handleCloseUserMenu}
-            >
-              {settings.map((setting) => (
-                <MenuItem key={setting.name} onClick={() => setting.onClick()}>
-                  <Typography textAlign="center">{setting.name}</Typography>
-                </MenuItem>
-              ))}
-            </Menu>
-          </Box>
-        </Toolbar>
-      </Container>
+          </Tooltip>
+          <Menu
+            sx={{ mt: "45px" }}
+            id="menu-appbar"
+            anchorEl={anchorElUser}
+            anchorOrigin={{
+              vertical: "top",
+              horizontal: "right",
+            }}
+            keepMounted
+            transformOrigin={{
+              vertical: "top",
+              horizontal: "right",
+            }}
+            open={Boolean(anchorElUser)}
+            onClose={handleCloseUserMenu}
+          >
+            {settings.map((setting) => (
+              <MenuItem key={setting.name} onClick={() => setting.onClick()}>
+                <Typography textAlign="center">{setting.name}</Typography>
+              </MenuItem>
+            ))}
+          </Menu>
+        </Box>
+      </Toolbar>
     </AppBar>
   );
 }

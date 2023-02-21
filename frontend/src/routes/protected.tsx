@@ -2,7 +2,7 @@ import { Suspense } from "react";
 import { Outlet } from "react-router-dom";
 import { MainLayout } from "../components/Layout";
 import { Navigate } from "react-router-dom";
-import { TrackerRoutes } from "../features/skills";
+import { DashboardRoutes } from "../features/dashboard";
 
 const App = () => {
   return (
@@ -26,8 +26,8 @@ export const protectedRoutes = [
     element: <App />,
     children: [
       {
-        path: "/tracker",
-        element: <TrackerRoutes />,
+        path: "/",
+        element: <DashboardRoutes />,
       },
     ],
   },

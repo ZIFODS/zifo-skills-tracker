@@ -10,23 +10,12 @@ export const Layout = ({ children }: LayoutProps) => {
     <Box
       sx={{
         display: "flex",
-        pt: 15,
         justifyContent: "center",
         alignItems: "center",
+        p: 2,
       }}
     >
-      <Paper
-        elevation={10}
-        sx={{
-          border: 3,
-          borderRadius: 5,
-          width: "22vw",
-        }}
-      >
-        <Stack alignItems="center" spacing={5}>
-          {children}
-        </Stack>
-      </Paper>
+      {children}
     </Box>
   );
 };
