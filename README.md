@@ -17,6 +17,10 @@ You will need to configure environment variables by adding them to a `.env` file
 
 The JWT and session secret keys can be generated using `openssl rand -hex 32`. The AWS keys must be granted access to the S3 bucket that stores the schema. The Azure keys should be requested from [Joe Smith](mailto:joe.smith@zifornd.com).
 
+More information on Azure configuration can be found in the [Authentication](docs/Authentication.md) documentation.
+
+## Running the application
+
 Once the variables are configured, using docker to launch the application:
 
 ```
