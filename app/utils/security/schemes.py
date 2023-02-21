@@ -7,9 +7,10 @@ from app.utils.security import util as auth_util
 
 
 class CSRFTokenRedirectCookieBearer:
-    """Scheme that checks the validity of the state parameter
-    returned by the Authentication provider when it redirects
-    the user to the application after a successful sign in.
+    """
+    Scheme that checks the validity of the state parameter returned by the
+    Authentication provider when it redirects the user to the application after
+    a successful sign in.
     """
 
     async def __call__(self, request: Request) -> None:
@@ -31,9 +32,9 @@ class CSRFTokenRedirectCookieBearer:
 
 
 class AccessTokenCookieBearer(OAuth2AuthorizationCodeBearer):
-    """Scheme that checks the validity of the access token
-    that is stored to an HTTPOnly secure cookie in order
-    to authorize the user.
+    """
+    Scheme that checks the validity of the access token that is stored to an
+    HTTPOnly secure cookie to authorize the user.
     """
 
     async def __call__(self, request: Request) -> InternalUser:
@@ -44,9 +45,8 @@ class AccessTokenCookieBearer(OAuth2AuthorizationCodeBearer):
 
             # Remove Bearer
             internal_access_token = internal_access_token.split()[1]
-
-            internal_user = await auth_util.validate_internal_access_token(
+            external_access_token = await auth_util.validate_internal_access_token(
                 internal_access_token
             )
 
-            return internal_user
+            return external_access_token

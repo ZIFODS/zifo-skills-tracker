@@ -1,5 +1,3 @@
-import os
-
 from decouple import config
 
 # MongoDB Replica Set
@@ -22,7 +20,7 @@ AZURE_REDIRECT_URL = config("AZURE_REDIRECT_URL", None)
 FRONTEND_URL = "http://localhost:3000"
 
 # Request session
-SESSION_SECRET_KEY = config("SECRET_KEY", os.urandom(32))
+SESSION_SECRET_KEY = config("SESSION_SECRET_KEY", None)
 
 # JWT access token configuration
 JWT_SECRET_KEY = config("JWT_SECRET_KEY", None)

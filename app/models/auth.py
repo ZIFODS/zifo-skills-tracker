@@ -3,26 +3,19 @@ import datetime
 from pydantic import BaseModel
 
 
-class InternalAuthToken(BaseModel):
-    code: str
-
-
-class ExternalAuthToken(BaseModel):
-    code: str
-
-
-class InternalAccessTokenData(BaseModel):
-    sub: str
+class ExternalToken(BaseModel):
+    access_token: str
+    expires_in: int
 
 
 class ExternalUser(BaseModel):
+    id: str
     email: str
     username: str
-    external_sub_id: str
 
 
 class InternalUser(BaseModel):
-    external_sub_id: str
-    internal_sub_id: str
+    external_id: str
+    internal_id: str
     username: str
     created_at: datetime.datetime
