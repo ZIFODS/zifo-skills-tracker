@@ -25,6 +25,7 @@ motor = "*"
 aiocache = "*"
 itsdangerous = "*"
 passlib = "*"
+neo4j = "*"
 
 [tool.poetry.dev-dependencies]
 pytest = "*"
