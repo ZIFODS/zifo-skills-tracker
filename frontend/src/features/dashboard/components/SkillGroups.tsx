@@ -9,54 +9,14 @@ import {
   FormGroup,
   FormControlLabel,
   Checkbox,
+  Divider,
 } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import SaveIcon from "@mui/icons-material/Save";
+import { useUserSkills } from "../api/getUserSkills";
+import { Skill } from "../types";
 
 type SkillGroupsProps = {};
-
-const groups = [
-  {
-    name: "Services",
-    color: "#9013FE20",
-  },
-  {
-    name: "Scientific Products and Applications",
-    color: "#41750520",
-  },
-  {
-    name: "Methodologies",
-    color: "#4A4A4A20",
-  },
-  {
-    name: "R&D Processes",
-    color: "#4A90E220",
-  },
-  {
-    name: "Products & Applications",
-    color: "#A16C1D20",
-  },
-  {
-    name: "Regulatory",
-    color: "#D0021B20",
-  },
-  {
-    name: "Data Management",
-    color: "#7ED32120",
-  },
-  {
-    name: "Languages",
-    color: "#F0C41920",
-  },
-  {
-    name: "Programming Languages",
-    color: "#3B247820",
-  },
-  {
-    name: "Infrastructure Technologies",
-    color: "#50E3C220",
-  },
-];
 
 const exampleSkills = [
   "C#",
@@ -77,69 +37,168 @@ const exampleSkills = [
   "Express",
 ];
 
+type CategoryMap = {
+  [key: string]: {
+    displayName: string;
+    color: string;
+  };
+};
+
+const categoryMap: CategoryMap = {
+  Service: {
+    displayName: "Services",
+    color: "#9013FE20",
+  },
+  Methodology: {
+    displayName: "Methodologies",
+    color: "#41750520",
+  },
+  Scientific_Products_And_Applications: {
+    displayName: "Scientific Products & Applications",
+    color: "#4A4A4A20",
+  },
+  R_And_D_Processes: {
+    displayName: "R&D Processes",
+    color: "#4A90E220",
+  },
+  Products_And_Applications: {
+    displayName: "Products and Applications",
+    color: "#A16C1D20",
+  },
+  Regulation: {
+    displayName: "Regulatory",
+    color: "#D0021B20",
+  },
+  Data_Management: {
+    displayName: "Data Management",
+    color: "#7ED32120",
+  },
+  Languages: {
+    displayName: "Languages",
+    color: "#F0C41920",
+  },
+  Programming_languages: {
+    displayName: "Programming Languages",
+    color: "#3B247820",
+  },
+  Miscellaneous: {
+    displayName: "Miscellaneous",
+    color: "#FFFFFF20",
+  },
+  Infrastructure_Technologies: {
+    displayName: "Infrastructure Technologies",
+    color: "#50E3C220",
+  },
+};
+
+const organiseSkillsByGroup = (skills: Skill[] | undefined) => {
+  const groups: { [key: string]: string[] } = {};
+  if (!skills) return groups;
+  skills.forEach((skill) => {
+    if (groups[skill.category]) {
+      groups[skill.category].push(skill.name);
+    } else {
+      groups[skill.category] = [skill.name];
+    }
+  });
+  Object.keys(categoryMap).forEach((category) => {
+    if (!groups[category]) {
+      groups[category] = [];
+    }
+  });
+  return groups;
+};
+
 export function SkillGroups({}: SkillGroupsProps) {
+  const userSkills = useUserSkills().data;
+  console.log(userSkills);
+  const userSkillsByCategory = organiseSkillsByGroup(userSkills?.skills);
+
+  console.log(userSkillsByCategory);
+
   return (
-    <Grid container columnSpacing={4}>
-      <Grid item xs={6}>
-        <Box sx={{ height: "83vh", overflow: "scroll", px: 2, py: 1 }}>
-          <Grid container columnSpacing={8} rowSpacing={4}>
-            {groups.map((group) => (
-              <Grid item xs={12}>
-                <Paper elevation={4} sx={{ backgroundColor: "#c6c6c6" }}>
-                  <Stack
-                    direction="row"
-                    justifyContent="space-between"
+    <Grid container justifyContent="space-around">
+      <Grid item xs={7}>
+        <Box sx={{ height: "83vh", overflow: "scroll", py: 1 }}>
+          <Grid container columnSpacing={6} rowSpacing={6}>
+            {userSkillsByCategory &&
+              Object.entries(userSkillsByCategory).map(([category, skills]) => (
+                <Grid item xs={6}>
+                  <Paper
+                    elevation={4}
                     sx={{
-                      backgroundColor: group.color,
-                      borderBottom: "2px solid black",
-                      px: 1,
+                      backgroundColor: "#c6c6c6",
+                      // height: "100%"
                     }}
                   >
-                    <Typography
-                      sx={{ p: 1, fontSize: 16, fontWeight: "bold" }}
-                      variant="h6"
+                    <Stack
+                      direction="row"
+                      justifyContent="space-between"
+                      sx={{
+                        backgroundColor: categoryMap[category].color,
+                        borderBottom: "2px solid black",
+                        px: 1,
+                      }}
                     >
-                      {group.name}
-                    </Typography>
-                    <IconButton>
-                      <EditIcon sx={{ fontSize: 16 }} />
-                    </IconButton>
-                  </Stack>
-                  <Grid
-                    container
-                    justifyContent="flex-start"
-                    alignItems="flex-start"
-                    sx={{ px: 1 }}
-                  >
-                    {exampleSkills.map((skill) => (
-                      <Grid item>
-                        <Stack direction="row">
-                          <Typography
-                            sx={{ p: 1, fontSize: 14, color: "#000000" }}
-                            variant="body2"
-                          >
-                            {skill}
-                          </Typography>
-                          <Typography
-                            sx={{ p: 1, fontSize: 14, color: "#4A4A4A70" }}
-                            variant="body2"
-                          >
-                            |
-                          </Typography>
-                        </Stack>
-                      </Grid>
-                    ))}
-                  </Grid>
-                </Paper>
-              </Grid>
-            ))}
+                      <Typography
+                        sx={{ p: 1, fontSize: 16, fontWeight: "bold" }}
+                        variant="h6"
+                      >
+                        {categoryMap[category].displayName}
+                      </Typography>
+                      <IconButton>
+                        <EditIcon sx={{ fontSize: 16 }} />
+                      </IconButton>
+                    </Stack>
+                    <Grid
+                      container
+                      justifyContent="flex-start"
+                      alignItems="flex-start"
+                      sx={{ px: 1 }}
+                    >
+                      {skills.map((skill, i) => (
+                        <Grid item>
+                          <Stack direction="row">
+                            <Typography
+                              sx={{
+                                py: 1,
+                                px: 0.5,
+                                fontSize: 14,
+                                color: "#000000",
+                              }}
+                              variant="body2"
+                            >
+                              {skill}
+                            </Typography>
+
+                            {i !== skills.length - 1 && (
+                              <Typography
+                                sx={{
+                                  py: 1,
+                                  px: 0.5,
+                                  fontSize: 14,
+                                  color: "#4A4A4A70",
+                                }}
+                                variant="body2"
+                              >
+                                |
+                              </Typography>
+                            )}
+                          </Stack>
+                        </Grid>
+                      ))}
+                    </Grid>
+                  </Paper>
+                </Grid>
+              ))}
           </Grid>
         </Box>
       </Grid>
-      <Grid item xs={6}>
+      <Divider flexItem orientation="vertical" sx={{ mr: "-1px" }} />
+      <Grid item xs={4}>
         <Paper
-          elevation={8}
-          sx={{ my: 1, mx: 2, backgroundColor: "#cfcfcf", border: 2 }}
+          elevation={10}
+          sx={{ my: 1, backgroundColor: "#cfcfcf", border: 3 }}
         >
           <Stack
             direction="row"
