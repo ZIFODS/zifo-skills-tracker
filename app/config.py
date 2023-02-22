@@ -6,6 +6,11 @@ MONGODB_PORT = int(config("MONGODB_PORT", 27017))
 MONGODB_COLLECTION = "test"
 MONGODB_DATABASE = "test"
 
+# neo4j
+NEO4J_URI = config("NEO4J_URI", "bolt://localhost:7687")
+NEO4J_USER = config("NEO4J_USER", "neo4j")
+NEO4J_PASSWORD = config("NEO4J_PASSWORD", "test")
+
 # Azure login
 AZURE_CLIENT_ID = config("AZURE_CLIENT_ID", None)
 AZURE_CLIENT_SECRET = config("AZURE_CLIENT_SECRET", None)
