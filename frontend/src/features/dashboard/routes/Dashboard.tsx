@@ -27,7 +27,7 @@ export const Dashboard = () => {
   return (
     <Layout>
       <Grid container justifyContent="space-around">
-        <Grid item xs={7}>
+        <Grid item xs={6}>
           <Box sx={{ height: "83vh", overflow: "scroll", py: 1 }}>
             <Grid container columnSpacing={6} rowSpacing={6}>
               {Object.keys(categoryMap).map((category) => {
@@ -45,7 +45,7 @@ export const Dashboard = () => {
           </Box>
         </Grid>
         <Divider flexItem orientation="vertical" sx={{ mr: "-1px" }} />
-        <Grid item xs={4}>
+        <Grid item xs={5}>
           {categoryEdit && (
             <SkillCategoryEdit
               name={categoryEdit}
