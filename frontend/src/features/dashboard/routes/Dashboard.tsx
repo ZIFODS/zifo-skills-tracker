@@ -9,7 +9,13 @@ import { Skill } from "../types";
 import { categoryMap } from "../../../utils/skillCategories";
 
 const filterSkillsByCategory = (skills: Skill[], category: string) => {
-  return skills.filter((skill) => skill.category === category);
+  return sortSkillsByName(
+    skills.filter((skill) => skill.category === category)
+  );
+};
+
+const sortSkillsByName = (skills: Skill[]) => {
+  return skills.sort((a, b) => a.name.localeCompare(b.name));
 };
 
 export const Dashboard = () => {
