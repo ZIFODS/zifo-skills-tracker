@@ -11,20 +11,20 @@ import {
   Checkbox,
 } from "@mui/material";
 import SaveIcon from "@mui/icons-material/Save";
-import { useGetSkills } from "../api/getSkills";
-import { SkillsRequest } from "../types";
 import { categoryMap } from "../../../utils/skillCategories";
+import { Skill } from "../types";
 
 type SkillCategoryEditProps = {
   name: string;
+  allSkills: Skill[];
+  userSkills: Skill[];
 };
 
-export function SkillCategoryEdit({ name }: SkillCategoryEditProps) {
-  const getSkillsRequest: SkillsRequest = {
-    category: name,
-  };
-  const skills = useGetSkills(getSkillsRequest, [name])?.data?.skills || [];
-
+export function SkillCategoryEdit({
+  name,
+  allSkills,
+  userSkills,
+}: SkillCategoryEditProps) {
   return (
     <Paper elevation={10} sx={{ my: 1, backgroundColor: "#cfcfcf", border: 3 }}>
       <Stack
@@ -49,7 +49,7 @@ export function SkillCategoryEdit({ name }: SkillCategoryEditProps) {
       <Box>
         <FormGroup>
           <Grid container>
-            {skills.map((skill, i) => (
+            {allSkills.map((skill, i) => (
               <Grid item xs={6}>
                 <Box
                   sx={{
@@ -68,13 +68,13 @@ export function SkillCategoryEdit({ name }: SkillCategoryEditProps) {
               </Grid>
             ))}
 
-            {!(skills.length % 2) || (
+            {!(allSkills.length % 2) || (
               <Grid item xs={6}>
                 <Box
                   sx={{
                     height: "100%",
                     backgroundColor:
-                      (skills.length - 1) % 4 && (skills.length - 2) % 4
+                      (allSkills.length - 1) % 4 && (allSkills.length - 2) % 4
                         ? "#00000010"
                         : "#00000020",
                   }}

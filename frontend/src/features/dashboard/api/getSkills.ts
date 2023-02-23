@@ -9,10 +9,15 @@ export const getSkills = (request?: SkillsRequest): Promise<SkillsResponse> => {
   return axios.get("/skills");
 };
 
-export const useGetSkills = (request?: SkillsRequest, keys?: any[]) => {
-  keys = keys || [];
+type useGetSkillsProps = {
+  request?: SkillsRequest;
+  keys?: any[];
+};
+
+export const useGetSkills = (props: useGetSkillsProps) => {
+  const keys = props.keys || [];
   return useQuery({
     queryKey: ["all-skills", ...keys],
-    queryFn: () => getSkills(request),
+    queryFn: () => getSkills(props.request),
   });
 };

@@ -6,13 +6,13 @@ import { categoryMap } from "../../../utils/skillCategories";
 
 type SkillCategoryKnownProps = {
   name: string;
-  skills: Skill[];
+  userSkills: Skill[];
   setCategoryEdit: (category: string) => void;
 };
 
 export function SkillCategoryKnown({
   name,
-  skills,
+  userSkills,
   setCategoryEdit,
 }: SkillCategoryKnownProps) {
   const handleEditClick = (category: string) => {
@@ -52,7 +52,20 @@ export function SkillCategoryKnown({
         alignItems="flex-start"
         sx={{ px: 1 }}
       >
-        {skills.map((skill, i) => (
+        {userSkills.length === 0 && (
+          <Typography
+            sx={{
+              py: 1,
+              px: 0.5,
+              fontSize: 14,
+              color: "#4A4A4A70",
+            }}
+            variant="body2"
+          >
+            No skills added
+          </Typography>
+        )}
+        {userSkills.map((skill, i) => (
           <Grid item>
             <Stack direction="row">
               <Typography
@@ -67,7 +80,7 @@ export function SkillCategoryKnown({
                 {skill.name}
               </Typography>
 
-              {i !== skills.length - 1 && (
+              {i !== userSkills.length - 1 && (
                 <Typography
                   sx={{
                     py: 1,
