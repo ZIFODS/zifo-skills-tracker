@@ -1,0 +1,49 @@
+version: "3.8"
+services:
+  mongodb:
+    image: mongo:latest
+    container_name: zifo-skills-mongodb
+    network_mode: host
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongosh localhost:27017/test --quiet
+      interval: 5s
+      timeout: 10s
+      retries: 20
+
+  python-api:
+    image: zifo-skills-api
+    build:
+      context: .
+      dockerfile: ./docker/api/Dockerfile
+    container_name: zifo-skills-api
+    network_mode: host
+    depends_on:
+      mongodb:
+        condition: service_healthy
+    healthcheck:
+      test: wget http://localhost:8080/docs -O - || exit 1
+      interval: 5s
+      timeout: 10s
+      retries: 20
+
+  # react-frontend:
+  #   image: zifo-skills-frontend
+  #   build:
+  #     context: .
+  #     dockerfile: ./docker/frontend/Dockerfile
+  #   container_name: zifo-skills-frontend
+  #   network_mode: host
+  #   volumes:
+  #     - /node_modules
+  #   depends_on:
+  #     python-api:
+  #       condition: service_healthy
+  #   healthcheck:
+  #     test: wget http://localhost:3000/docs -O - || exit 1
+  #     interval: 5s
+  #     timeout: 10s
+  #     retries: 20
+
+networks:
+  zifo-skills-network:
+    name: zifo-skills-network

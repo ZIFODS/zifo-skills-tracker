@@ -1,8 +1,8 @@
-export type TokenResponse = {
-  access_token: string;
-  token_type: string;
+export type LogoutResponse = {
+  isLoggedIn: boolean;
 };
 
 export type UserResponse = {
-  username: string;
+  userLoggedIn: boolean;
+  userName: string;
 };

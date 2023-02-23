@@ -2,7 +2,7 @@ from typing import Any
 
 from fastapi import APIRouter
 
-from app.schemas.skills import SkillList
+from app.models.skills import SkillList
 from app.utils.skills import pull_skills_schema_from_s3
 
 skills_router = APIRouter()

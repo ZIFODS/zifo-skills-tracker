@@ -1,179 +1,183 @@
-from datetime import timedelta
+import logging
 
-from fastapi import APIRouter, Depends, HTTPException, status
-from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
-from jose import JWTError, jwt
-from sqlalchemy.orm import Session
+from fastapi import APIRouter, Depends, Request
+from fastapi.encoders import jsonable_encoder
+from starlette.responses import JSONResponse, RedirectResponse
 
-import app.crud.auth as crud
-import app.models.auth as models
-from app.database import SessionLocal, engine
-from app.schemas.auth import Token, TokenData, User, UserAuth
-from app.utils.security import (
-    ACCESS_TOKEN_EXPIRE_MINUTES,
-    ALGORITHM,
-    SECRET_KEY,
-    create_access_token,
-    verify_password,
+from app import config
+from app.models.auth import ExternalToken
+from app.utils.exceptions import AuthorizationException, exception_handling
+from app.utils.mongo import db_client
+from app.utils.security import schemes as auth_schemes
+from app.utils.security import util as auth_util
+from app.utils.security.providers import AzureAuthProvider
+
+logger = logging.getLogger(__name__)
+
+auth_router = APIRouter(prefix="/auth", tags=["Authentication"])
+
+csrf_token_redirect_cookie_scheme = auth_schemes.CSRFTokenRedirectCookieBearer()
+access_token_cookie_scheme = auth_schemes.AccessTokenCookieBearer(
+    authorizationUrl="/auth/login", tokenUrl="/auth/callback"
 )
 
-auth_router = APIRouter()
 
-models.Base.metadata.create_all(bind=engine)
-
-
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
-
-
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/token")
-
-
-def authenticate_user(username: str, password: str, db: Session = Depends(get_db)):
-    # do msal authentication with username and password here:
-    user = crud.get_user_by_username(db, username)
-
-    if not user:
-        return False
-
-    if not verify_password(password, user.hashed_password):
-        return False
-
-    return user
-
-
-async def get_current_user(
-    token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)
-):
-    credentials_exception = HTTPException(
-        status_code=status.HTTP_401_UNAUTHORIZED,
-        detail="Could not validate credentials",
-        headers={"WWW-Authenticate": "Bearer"},
-    )
-
-    try:
-        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-        username: str = payload.get("sub")
-        if username is None:
-            raise credentials_exception
-        token_data = TokenData(username=username)
-
-    except JWTError:
-        raise credentials_exception
-
-    user = crud.get_user_by_username(db, username=token_data.username)
-    if user is None:
-        raise credentials_exception
-
-    return user
-
-
-async def get_current_active_user(current_user: User = Depends(get_current_user)):
-    if current_user.disabled:
-        raise HTTPException(status_code=400, detail="Inactive user")
-
-    return current_user
-
-
-@auth_router.get("/me", response_model=User)
-async def get_me_user(current_user: User = Depends(get_current_active_user)):
+@auth_router.get("/login")
+async def login_redirect():
     """
-    Get current user.
-
-    Parameters
-    ----------
-    current_user : User
-        Current user.
+    Endpoint for redirecting the user to the external authentication provider.
+    CSRF token is generated and stored in a HTTPOnly cookie.
 
     Returns
     -------
-    User
-        Current user.
-
-    Raises
-    ------
-    HTTPException
-        If user is inactive.
+    response : RedirectResponse
+        Redirects the user to the external authentication provider
     """
-    return current_user
+    async with exception_handling():
+        provider = AzureAuthProvider()
 
+        request_uri, state_csrf_token = await provider.get_request_uri()
 
-@auth_router.post("/token", response_model=Token)
-async def login_for_access_token(
-    form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)
-):
-    """
-    Generate access token for user.
-    If user is not present in app databasse, create user.
+        response = RedirectResponse(url=request_uri)
 
-    Parameters
-    ----------
-    form_data : OAuth2PasswordRequestForm
-        Form data for user login.
-    db : Session
-        Database session.
-
-    Returns
-    -------
-    dict
-        Access token and token type.
-
-    Raises
-    ------
-    HTTPException
-        If user credentials are incorrect.
-    """
-    user = authenticate_user(form_data.username, form_data.password, db)
-
-    if not user:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Incorrect username or password",
-            headers={"WWW-Authenticate": "Bearer"},
+        # Make this a secure cookie for production use
+        response.set_cookie(
+            key="state", value=f"Bearer {state_csrf_token}", httponly=True
         )
 
-    access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
-    access_token = create_access_token(
-        data={"sub": user.username}, expires_delta=access_token_expires
-    )
-
-    return {"access_token": access_token, "token_type": "bearer"}
+        return response
 
 
-@auth_router.post("/create", response_model=User)
-def create_user(user: UserAuth, db: Session = Depends(get_db)):
+@auth_router.get("/callback")
+async def azure_login_callback(
+    request: Request, _=Depends(csrf_token_redirect_cookie_scheme)
+):
     """
-    Create new user.
+    Callback endpoint for the external authentication provider after the user
+    has authenticated. This endpoint is called by the external provider.
+    External authorization code is exchanged for an external access token. Token is
+    then encoded to generate internal access token. Internal access token is stored
+    in a HTTPOnly cookie.
 
     Parameters
     ----------
-    user : UserAuth
-        User data.
-    db : Session
-        Database session.
+    request : Request
+        The request object which contains the authorization code
 
     Returns
     -------
-    User
-        New user.
-
-    Raises
-    ------
-    HTTPException
-        If username or email is already registered.
+    response : RedirectResponse
+        Redirects the user to the frontend home page with the internal access token
     """
-    db_username = crud.get_user_by_username(db, username=user.username)
-    if db_username:
-        raise HTTPException(status_code=400, detail="Username already registered")
+    async with exception_handling():
+        code = request.query_params.get("code")
 
-    db_email = crud.get_user_by_email(db, email=user.email)
-    if db_email:
-        raise HTTPException(status_code=400, detail="Email already registered")
+        if not code:
+            raise AuthorizationException("Missing external authentication token")
 
-    user = crud.create_user(db=db, user=user)
+        provider = AzureAuthProvider()
 
-    return user
+        # Exchange external authorization code for external access token
+        external_access_token = await provider.get_token(external_auth_code=code)
+
+        # Authenticate token and get user's info from external provider
+        external_user = await provider.get_user(
+            external_access_token=external_access_token
+        )
+
+        # Get or create the internal user
+        internal_user = await db_client.get_user_by_external_id(external_user)
+        if internal_user is None:
+            internal_user = await db_client.create_internal_user(external_user)
+
+        # Create internal access token
+        internal_access_token = await auth_util.create_internal_access_token(
+            external_access_token
+        )
+
+        # Redirect the user to the frontend
+        response = RedirectResponse(url=config.FRONTEND_URL)
+
+        # Delete state cookie. No longer required
+        response.delete_cookie(key="state")
+
+        # Assign access token cookie
+        response.set_cookie(
+            key="access_token",
+            value=f"Bearer {internal_access_token}",
+            httponly=True,
+            max_age=external_access_token.expires_in,
+        )
+
+        return response
+
+
+@auth_router.get("/logout")
+async def logout(
+    _: ExternalToken = Depends(access_token_cookie_scheme),
+) -> JSONResponse:
+    """
+    Endpoint for logging out the user.
+    Deletes the HTTPOnly access token cookie.
+
+    Parameters
+    ----------
+    _ : ExternalToken
+        Azure access token
+
+    Returns
+    -------
+    response : JSONResponse
+        A JSON response with the status of the user's session
+    """
+    async with exception_handling():
+        response = JSONResponse(
+            content=jsonable_encoder(
+                {
+                    "userLoggedIn": False,
+                }
+            ),
+        )
+
+        response.delete_cookie(key="access_token")
+
+        return response
+
+
+@auth_router.get("/me")
+async def user_session_status(
+    external_access_token: ExternalToken = Depends(access_token_cookie_scheme),
+) -> JSONResponse:
+    """
+    Endpoint for checking the status of the user's session based on validity
+    of HTTPOnly access token cookie.
+
+    Parameters
+    ----------
+    external_access_token : ExternalToken
+        Azure access token
+
+    Returns
+    -------
+    response : JSONResponse
+        A JSON response with the status of the user's session
+    """
+    async with exception_handling():
+        provider = AzureAuthProvider()
+        external_user = await provider.get_user(
+            external_access_token=external_access_token
+        )
+        internal_user = await db_client.get_user_by_external_id(external_user)
+
+        logged_id = True if internal_user else False
+
+        response = JSONResponse(
+            content=jsonable_encoder(
+                {
+                    "userLoggedIn": logged_id,
+                    "userName": external_user.username,
+                }
+            ),
+        )
+
+        return response

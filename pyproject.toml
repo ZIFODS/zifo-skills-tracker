@@ -3,7 +3,7 @@ requires = [ "poetry-core",]
 build-backend = "poetry.core.masonry.api"
 
 [tool.poetry]
-name = "zifo-skills-update"
+name = "zifo-skills-tracker"
 version = "0.0.1"
 description = ""
 authors = [ "Zifo Developer <unknown@zifornd.com>",]
@@ -13,16 +13,18 @@ readme = "README.md"
 [tool.poetry.dependencies]
 python = ">=3.10,<3.12"
 fastapi = "*"
-sqlalchemy = "*"
 pydantic = "*"
 hypercorn = "*"
-python-multipart = "*"
-python-jose = {extras = ["cryptography"], version = "*"}
-passlib = {extras = ["bcrypt"], version = "*"}
 python-decouple = "*"
 pandas = "*"
 s3fs = "*"
 openpyxl = "*"
+msal = "*"
+pymongo = "*"
+motor = "*"
+aiocache = "*"
+itsdangerous = "*"
+passlib = "*"
 
 [tool.poetry.dev-dependencies]
 pytest = "*"
@@ -32,3 +34,4 @@ pre-commit = "*"
 black = "*"
 isort = "*"
 flake8 = "*"
+types-requests = "*"
