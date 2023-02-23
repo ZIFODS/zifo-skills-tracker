@@ -25,6 +25,14 @@ export function SkillCategoryEdit({
   allSkills,
   userSkills,
 }: SkillCategoryEditProps) {
+  const [checkedSkills, setCheckedSkills] = React.useState<string[]>([]);
+
+  userSkills.forEach((userSkill) => {
+    if (!checkedSkills.includes(userSkill.name)) {
+      setCheckedSkills([...checkedSkills, userSkill.name]);
+    }
+  });
+
   return (
     <Paper elevation={10} sx={{ my: 1, backgroundColor: "#cfcfcf", border: 3 }}>
       <Stack
@@ -60,7 +68,15 @@ export function SkillCategoryEdit({
                 >
                   <FormControlLabel
                     sx={{ px: 2 }}
-                    control={<Checkbox defaultChecked size="small" />}
+                    control={
+                      <Checkbox
+                        checked={checkedSkills.includes(skill.name)}
+                        onChange={() =>
+                          setCheckedSkills([...checkedSkills, skill.name])
+                        }
+                        size="small"
+                      />
+                    }
                     label={skill.name}
                     componentsProps={{ typography: { fontSize: 14 } }}
                   />
