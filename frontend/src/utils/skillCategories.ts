@@ -1,4 +1,4 @@
-type CategoryMap = {
+export type CategoryMap = {
   [key: string]: {
     displayName: string;
     color: string;
