@@ -8,7 +8,7 @@ export const getUserSkills = (): Promise<SkillsResponse> => {
 
 export const useUserSkills = () => {
   return useQuery({
-    queryKey: ["playlists"],
+    queryKey: ["user-skills"],
     queryFn: () => getUserSkills(),
   });
 };

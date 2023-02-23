@@ -6,3 +6,7 @@ export type Skill = {
 export type SkillsResponse = {
   skills: Skill[];
 };
+
+export type SkillsRequest = {
+  category: string;
+};
