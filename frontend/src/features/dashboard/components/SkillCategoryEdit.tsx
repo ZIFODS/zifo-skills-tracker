@@ -54,7 +54,7 @@ export function SkillCategoryEdit({
           <SaveIcon sx={{ fontSize: 20 }} />
         </IconButton>
       </Stack>
-      <Box>
+      <Box sx={{ maxHeight: "78vh", overflow: "scroll" }}>
         <FormGroup>
           <Grid container>
             {allSkills.map((skill, i) => (
