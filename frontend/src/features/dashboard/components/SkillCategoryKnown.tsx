@@ -1,8 +1,17 @@
 import * as React from "react";
-import { Typography, Grid, Paper, Stack, IconButton } from "@mui/material";
+import {
+  Typography,
+  Grid,
+  Paper,
+  Stack,
+  IconButton,
+  LinearProgress,
+  Box,
+} from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import { Skill } from "../types";
 import { categoryMap } from "../../../utils/skillCategories";
+import { useGetUserSkills } from "../api/getUserSkills";
 
 type SkillCategoryKnownProps = {
   name: string;
@@ -19,11 +28,14 @@ export function SkillCategoryKnown({
     setCategoryEdit(category);
   };
 
+  const { isFetching } = useGetUserSkills();
+
   return (
     <Paper
       elevation={4}
       sx={{
         backgroundColor: "#c6c6c6",
+        opacity: isFetching ? 0.5 : 1,
         // height: "100%"
       }}
     >
@@ -46,6 +58,7 @@ export function SkillCategoryKnown({
           <EditIcon sx={{ fontSize: 16 }} />
         </IconButton>
       </Stack>
+      {isFetching && <LinearProgress />}
       <Grid
         container
         justifyContent="flex-start"

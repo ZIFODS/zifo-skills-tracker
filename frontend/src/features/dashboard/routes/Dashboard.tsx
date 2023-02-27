@@ -35,8 +35,20 @@ export const Dashboard = () => {
   const allSkills = useGetSkills({ keys: [categoryEdit] }).data?.skills || [];
   const userSkills = useGetUserSkills().data?.skills || [];
 
-  // order categoryMap by category display name alphabetically
+  const [filteredUserSkills, setFilteredUserSkills] = React.useState<Skill[]>(
+    []
+  );
+
+  // Order categoryMap by category display name alphabetically
   const orderedCategoryMap = sortCategoryMap(categoryMap);
+
+  // Filter user skills by category when categoryEdit changes
+  React.useEffect(() => {
+    if (!categoryEdit) {
+      return;
+    }
+    setFilteredUserSkills(filterSkillsByCategory(userSkills, categoryEdit));
+  }, [categoryEdit, userSkills, allSkills]);
 
   return (
     <Layout>
@@ -64,7 +76,7 @@ export const Dashboard = () => {
             <SkillCategoryEdit
               name={categoryEdit}
               allSkills={filterSkillsByCategory(allSkills, categoryEdit)}
-              userSkills={filterSkillsByCategory(userSkills, categoryEdit)}
+              userSkills={filteredUserSkills}
             />
           )}
         </Grid>
