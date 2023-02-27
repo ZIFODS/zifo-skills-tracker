@@ -6,6 +6,7 @@ from starlette.responses import JSONResponse
 from app.config import FRONTEND_URL, SESSION_SECRET_KEY
 from app.routers.auth import auth_router
 from app.routers.skills import skills_router
+from app.routers.user_skills import user_skills_router
 from app.utils.exceptions import exception_handling
 from app.utils.mongo import db_client
 
@@ -30,6 +31,7 @@ app.add_middleware(
 
 app.include_router(auth_router)
 app.include_router(skills_router)
+app.include_router(user_skills_router)
 
 
 @app.get("/health", tags=["health_check"])
