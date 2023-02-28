@@ -6,9 +6,9 @@ export const getUserSkills = (): Promise<SkillsResponse> => {
   return axios.get("/skills/user");
 };
 
-export const useUserSkills = () => {
+export const useGetUserSkills = () => {
   return useQuery({
-    queryKey: ["playlists"],
+    queryKey: ["user-skills"],
     queryFn: () => getUserSkills(),
   });
 };

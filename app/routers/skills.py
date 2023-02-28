@@ -1,4 +1,4 @@
-from typing import Any
+from typing import Any, Optional
 
 from fastapi import APIRouter, Depends
 
@@ -7,13 +7,12 @@ from app.models.skills import SkillList
 from app.routers.auth import access_token_cookie_scheme
 from app.utils.neo4j_connect import Neo4jConnection
 from app.utils.security.providers import AzureAuthProvider
-from app.utils.skills import pull_skills_schema_from_s3
 
 skills_router = APIRouter(prefix="/skills", tags=["Skills"])
 
 
 @skills_router.get("/", response_model=SkillList)
-async def list_all_skills() -> Any:
+async def list_all_skills(category: Optional[str] = None) -> Any:
     """
     Returns a list of all skills in the current skills schema.
 
@@ -21,23 +20,26 @@ async def list_all_skills() -> Any:
     -------
     SkillList
     """
-    schema_df = pull_skills_schema_from_s3()
-    schema_dict = schema_df.astype(str).to_dict(orient="list")
-    schema_dict = {
-        key: [v for v in val if v != "nan"] for key, val in schema_dict.items()
-    }
+    match = "MATCH (s:Skill)"
+    if category:
+        match = "MATCH (s:Skill {category: $category})"
 
-    skills = [
+    query = " ".join(
         [
-            {"name": str(v), "category": str(key)}
-            for key, val in schema_dict.items()
-            for v in val
+            match,
+            """
+            UNWIND s as skills
+            WITH collect(distinct {name: s.name, category: s.category}) as skillsOut
+            RETURN skillsOut
+            """,
         ]
-    ]
+    )
 
-    response = {"skills": skills}
+    conn = Neo4jConnection()
+    result = conn.query(query, parameters={"category": category})
+    conn.close()
 
-    return response
+    return {"skills": result[0][0]}
 
 
 @skills_router.get("/user")
