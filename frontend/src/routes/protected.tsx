@@ -2,10 +2,11 @@ import { Suspense } from "react";
 import { Outlet } from "react-router-dom";
 import { MainLayout } from "../components/Layout";
 import { Navigate } from "react-router-dom";
+import { DashboardRoutes } from "../features/dashboard";
 
 const App = () => {
   return (
-    <MainLayout header="Apex Res">
+    <MainLayout>
       <Suspense
         fallback={
           <div className="h-full w-full flex items-center justify-center">
@@ -24,8 +25,10 @@ export const protectedRoutes = [
     path: "/",
     element: <App />,
     children: [
-      { path: "/", element: <div>Logged in!</div> },
-      { path: "/login", element: <Navigate to="/" /> },
+      {
+        path: "/",
+        element: <DashboardRoutes />,
+      },
     ],
   },
 ];
