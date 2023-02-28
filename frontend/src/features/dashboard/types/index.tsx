@@ -1,8 +1,8 @@
 export type Skill = {
   name: string;
-  section: string;
+  category: string;
 };
 
 export type SkillsResponse = {
-  skills: string;
+  skills: Skill[];
 };

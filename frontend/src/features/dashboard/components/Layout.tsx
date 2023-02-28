@@ -10,9 +10,8 @@ export const Layout = ({ children }: LayoutProps) => {
     <Box
       sx={{
         display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        p: 2,
+        py: 2,
+        px: 3,
       }}
     >
       {children}
