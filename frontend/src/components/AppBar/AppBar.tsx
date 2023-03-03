@@ -43,8 +43,6 @@ function ResponsiveAppBar() {
 
   const { logout, user } = useAuth();
 
-  console.log(user?.userName);
-
   const settingOnClick = () => {
     navigate("/settings");
   };

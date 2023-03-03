@@ -2,7 +2,8 @@ import * as React from "react";
 import { ErrorBoundary } from "react-error-boundary";
 import { HelmetProvider } from "react-helmet-async";
 import { BrowserRouter as Router } from "react-router-dom";
-import { QueryClient, QueryClientProvider } from "react-query";
+import { QueryClientProvider } from "react-query";
+import { queryClient } from "../lib/react-query";
 import Button from "@mui/material/Button";
 import { AuthProvider } from "../lib/auth";
 
@@ -28,8 +29,6 @@ type AppProviderProps = {
 };
 
 export const AppProvider = ({ children }: AppProviderProps) => {
-  const [queryClient] = React.useState(() => new QueryClient());
-
   return (
     <React.Suspense
       fallback={

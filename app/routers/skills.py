@@ -1,12 +1,9 @@
 from typing import Any, Optional
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, HTTPException
 
-from app.models.auth import ExternalToken
-from app.models.skills import SkillList
-from app.routers.auth import access_token_cookie_scheme
+from app.models.skills import Skill, SkillList
 from app.utils.neo4j_connect import Neo4jConnection
-from app.utils.security.providers import AzureAuthProvider
 
 skills_router = APIRouter(prefix="/skills", tags=["Skills"])
 
@@ -14,7 +11,7 @@ skills_router = APIRouter(prefix="/skills", tags=["Skills"])
 @skills_router.get("/", response_model=SkillList)
 async def list_all_skills(category: Optional[str] = None) -> Any:
     """
-    Returns a list of all skills in the current skills schema.
+    Returns a list of all skills.
 
     Returns
     -------
@@ -42,32 +39,88 @@ async def list_all_skills(category: Optional[str] = None) -> Any:
     return {"skills": result[0][0]}
 
 
-@skills_router.get("/user")
-async def list_user_skills(
-    external_access_token: ExternalToken = Depends(access_token_cookie_scheme),
-) -> Any:
+@skills_router.get("/{skill_name}")
+async def get_skill(skill_name: str) -> Any:
     """
-    Returns a list of skills for a given user.
+    Returns a single skill using its name.
+
+    Parameters
+    ----------
+    skill_name : str
+        The name of the skill to return
 
     Returns
     -------
-    SkillList
+    Skill
     """
-    provider = AzureAuthProvider()
-    external_user = await provider.get_user(external_access_token=external_access_token)
-    email = external_user.email
-
     query = """
-    MATCH (c:Consultant {email: $email})-[:KNOWS]->(s:Skill)
+    MATCH (s:Skill {name: $skill_name})
     UNWIND s as skills
     WITH collect(distinct {name: s.name, category: s.category}) as skillsOut
     RETURN skillsOut
     """
 
     conn = Neo4jConnection()
-    result = conn.query(query, parameters={"email": email})
+    result = conn.query(query, parameters={"skill_name": skill_name})
     conn.close()
 
-    print(result[0][0])
+    if not result[0][0]:
+        raise HTTPException(status_code=404, detail="Skill not found")
 
-    return {"skills": result[0][0]}
+    return {"skill": result[0][0]}
+
+
+@skills_router.post("/")
+async def add_skill(skill: Skill) -> Any:
+    """
+    Adds a new skill to the database.
+
+    Parameters
+    ----------
+    skill : Skill
+        The skill to add
+
+    Returns
+    -------
+    Skill
+    """
+    query = """
+    MERGE (s:Skill {name: $skill, category: $category})
+    RETURN s
+    """
+    conn = Neo4jConnection()
+    result = conn.query(
+        query, parameters={"skill": skill.name, "category": skill.category}
+    )
+    conn.close()
+
+    return {"message": "Skill added successfully", "result": result[0]}
+
+
+@skills_router.delete("/{skill_name}")
+async def delete_skill(skill_name: str) -> Any:
+    """
+    Deletes a skill from the database.
+
+    Parameters
+    ----------
+    skill_name : str
+        The name of the skill to delete
+
+    Returns
+    -------
+    Skill
+    """
+    query = """
+    MATCH (s:Skill {name: $skill})
+    DETACH DELETE s
+    RETURN s
+    """
+    conn = Neo4jConnection()
+    result = conn.query(query, parameters={"skill": skill_name})
+    conn.close()
+
+    if not result:
+        raise HTTPException(status_code=404, detail="Skill not found")
+
+    return {"message": "Skill deleted successfully", "result": result[0]}

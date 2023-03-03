@@ -9,10 +9,13 @@ import {
   FormGroup,
   FormControlLabel,
   Checkbox,
+  LinearProgress,
 } from "@mui/material";
 import SaveIcon from "@mui/icons-material/Save";
 import { categoryMap } from "../../../utils/skillCategories";
 import { Skill } from "../types";
+import { useCreateUserSkill } from "../api/createUserSkill";
+import { useDeleteUserSkill } from "../api/deleteUserSkill";
 
 type SkillCategoryEditProps = {
   name: string;
@@ -25,16 +28,94 @@ export function SkillCategoryEdit({
   allSkills,
   userSkills,
 }: SkillCategoryEditProps) {
-  const [checkedSkills, setCheckedSkills] = React.useState<string[]>([]);
+  const [checkedSkills, setCheckedSkills] = React.useState<string[]>(
+    userSkills.map((skill) => skill.name)
+  );
+  const [addedSkills, setAddedSkills] = React.useState<string[]>([]);
+  const [removedSkills, setRemovedSkills] = React.useState<string[]>([]);
 
-  userSkills.forEach((userSkill) => {
-    if (!checkedSkills.includes(userSkill.name)) {
-      setCheckedSkills([...checkedSkills, userSkill.name]);
+  const createSkillMutation = useCreateUserSkill();
+  const deleteSkillMutation = useDeleteUserSkill();
+
+  // When checkbox is checked/unchecked, register/ungregister skills in checked skills state
+  // If the checked skill is not present in users current skills in DB, add it to added skills state
+  // Similarly, if the unchecked skill is present in users current skills in DB, add it to removed skills state
+  const handleCheck = (event: React.ChangeEvent<HTMLInputElement>) => {
+    name = event.target.name;
+    if (event.target.checked) {
+      setCheckedSkills([...checkedSkills, name]);
+      if (!userSkills.filter((skill) => skill.name === name).length) {
+        setAddedSkills([...addedSkills, name]);
+      } else if (removedSkills.includes(name)) {
+        setRemovedSkills(
+          removedSkills.filter((skill) => {
+            return skill !== name;
+          })
+        );
+      }
+    } else {
+      setCheckedSkills(
+        checkedSkills.filter((skill) => {
+          return skill !== name;
+        })
+      );
+      if (userSkills.filter((skill) => skill.name === name).length) {
+        setRemovedSkills([...removedSkills, name]);
+      } else if (addedSkills.includes(name)) {
+        setAddedSkills(
+          addedSkills.filter((skill) => {
+            return skill !== name;
+          })
+        );
+      }
     }
-  });
+  };
+
+  // When save button is clicked, create/delete skills in DB
+  const handleSave = () => {
+    addedSkills.forEach((skillName) => {
+      const skill = allSkills.find((skill) => skill.name === skillName);
+      if (skill) {
+        createSkillMutation.mutateAsync(skill);
+      }
+    });
+    removedSkills.forEach((skillName) => {
+      const skill = allSkills.find((skill) => skill.name === skillName);
+      if (skill) {
+        deleteSkillMutation.mutateAsync(skill);
+      }
+    });
+  };
+
+  // When create/delete skill mutation is successful, clear added/removed skills state
+  React.useEffect(() => {
+    setAddedSkills([]);
+    setRemovedSkills([]);
+  }, [createSkillMutation.isSuccess, deleteSkillMutation.isSuccess]);
+
+  // When user skills are loaded, set checked skills state
+  React.useEffect(() => {
+    if (!userSkills) {
+      return;
+    }
+    setCheckedSkills(userSkills.map((skill) => skill.name));
+  }, [userSkills]);
 
   return (
-    <Paper elevation={10} sx={{ my: 1, backgroundColor: "#cfcfcf", border: 3 }}>
+    <Paper
+      elevation={10}
+      sx={{
+        my: 1,
+        backgroundColor: "#cfcfcf",
+        border: 3,
+        opacity:
+          !allSkills.length ||
+          createSkillMutation.isLoading ||
+          deleteSkillMutation.isLoading
+            ? 0.5
+            : 1,
+      }}
+    >
       <Stack
         direction="row"
         justifyContent="space-between"
@@ -51,10 +132,13 @@ export function SkillCategoryEdit({
           {categoryMap[name].displayName}
         </Typography>
         <IconButton>
-          <SaveIcon sx={{ fontSize: 20 }} />
+          <SaveIcon sx={{ fontSize: 20 }} onClick={handleSave} />
         </IconButton>
       </Stack>
       <Box sx={{ maxHeight: "78vh", overflow: "scroll" }}>
+        {(!allSkills.length ||
+          createSkillMutation.isLoading ||
+          deleteSkillMutation.isLoading) && <LinearProgress />}
         <FormGroup>
           <Grid container>
             {allSkills.map((skill, i) => (
@@ -67,18 +151,33 @@ export function SkillCategoryEdit({
                   }}
                 >
                   <FormControlLabel
-                    sx={{ px: 2 }}
+                    sx={{
+                      px: 2,
+                    }}
                     control={
                       <Checkbox
+                        name={skill.name}
                         checked={checkedSkills.includes(skill.name)}
-                        onChange={() =>
-                          setCheckedSkills([...checkedSkills, skill.name])
-                        }
+                        onChange={handleCheck}
                         size="small"
                       />
                     }
                     label={skill.name}
-                    componentsProps={{ typography: { fontSize: 14 } }}
+                    componentsProps={{
+                      typography: {
+                        fontSize: 14,
+                        fontWeight:
+                          addedSkills.includes(skill.name) ||
+                          removedSkills.includes(skill.name)
+                            ? "bold"
+                            : "",
+                        color: addedSkills.includes(skill.name)
+                          ? "#417505"
+                          : removedSkills.includes(skill.name)
+                          ? "#D0021B"
+                          : "",
+                      },
+                    }}
                   />
                 </Box>
               </Grid>

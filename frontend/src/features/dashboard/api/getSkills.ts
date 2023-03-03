@@ -4,9 +4,9 @@ import { SkillsRequest, SkillsResponse } from "../types";
 
 export const getSkills = (request?: SkillsRequest): Promise<SkillsResponse> => {
   if (request?.category) {
-    return axios.get(`/skills?category=${request.category}`);
+    return axios.get(`/skills/?category=${request.category}`);
   }
-  return axios.get("/skills");
+  return axios.get("/skills/");
 };
 
 type useGetSkillsProps = {
