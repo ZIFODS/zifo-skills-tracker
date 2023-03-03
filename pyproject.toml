@@ -1,0 +1,36 @@
+[build-system]
+requires = [ "poetry-core",]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poetry]
+name = "zifo-skills-tracker"
+version = "0.0.1"
+description = ""
+authors = [ "Zifo Developer <unknown@zifornd.com>",]
+license = "MIT"
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = ">=3.10,<3.12"
+fastapi = "*"
+pydantic = "*"
+hypercorn = "*"
+python-decouple = "*"
+openpyxl = "*"
+msal = "*"
+pymongo = "*"
+motor = "*"
+aiocache = "*"
+itsdangerous = "*"
+passlib = "*"
+neo4j = "*"
+
+[tool.poetry.dev-dependencies]
+pytest = "*"
+pytest-cov = "*"
+mypy = "*"
+pre-commit = "*"
+black = "*"
+isort = "*"
+flake8 = "*"
+types-requests = "*"
