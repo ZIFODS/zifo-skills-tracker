@@ -8,9 +8,10 @@ import requests
 root_dir = (Path(__file__).parent / "../").resolve()
 sys.path.append(str(root_dir))
 
-from app.models.graph import Rule  # noqa: E402
 from integration_test.expected_results import ExpectedResults  # noqa: E402
 from pipeline.src.utils import Categories  # noqa: E402
+
+from app.models.graph import Rule  # noqa: E402
 
 
 def base64_encode(query: list[Rule]) -> str:
