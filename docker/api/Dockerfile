@@ -18,8 +18,8 @@ WORKDIR /home/skills-user
 
 # Install poetry separated from system interpreter
 RUN python3 -m venv $POETRY_VENV \
-&& $POETRY_VENV/bin/pip install -U pip setuptools \
-&& $POETRY_VENV/bin/pip install poetry==${POETRY_VERSION}
+    && $POETRY_VENV/bin/pip install -U pip setuptools \
+    && $POETRY_VENV/bin/pip install poetry==${POETRY_VERSION}
 
 # Add `poetry` to PATH
 ENV PATH="${PATH}:${POETRY_VENV}/bin"
@@ -30,9 +30,8 @@ RUN poetry install --without dev
 
 # Copy source code
 COPY ./app ./app
-COPY ./.env ./.env
 
 # Run the server
-EXPOSE 8000
+EXPOSE 8080
 
 CMD ["poetry", "run", "hypercorn", "app.main:app", "--reload", "--bind", "0.0.0.0:8080"]

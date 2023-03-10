@@ -1,6 +1,7 @@
 from fastapi import Request
 from fastapi.security.oauth2 import OAuth2AuthorizationCodeBearer
 
+from app import config
 from app.utils.exceptions import UnauthorizedUser, exception_handling
 from app.utils.security import util as auth_util
 
@@ -14,6 +15,9 @@ class CSRFTokenRedirectCookieBearer:
 
     async def __call__(self, request: Request) -> None:
         async with exception_handling():
+            if not config.PROD_ENV:
+                return
+
             # State token from redirect
             state_csrf_token = request.query_params.get("state")
 
@@ -42,6 +46,9 @@ class AccessTokenCookieBearer(OAuth2AuthorizationCodeBearer):
 
     async def __call__(self, request: Request) -> str:
         async with exception_handling():
+            if not config.PROD_ENV:
+                return "demo"
+
             internal_access_token = request.cookies.get("access_token")
             if not internal_access_token:
                 raise UnauthorizedUser("Invalid access token cookie")

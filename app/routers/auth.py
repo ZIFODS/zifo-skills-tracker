@@ -33,6 +33,10 @@ async def login_redirect():
         Redirects the user to the external authentication provider
     """
     async with exception_handling():
+
+        if not config.PROD_ENV:
+            return RedirectResponse(url="/auth/callback")
+
         provider = AzureAuthProvider()
 
         request_uri, state_csrf_token = await provider.get_request_uri()
@@ -69,6 +73,10 @@ async def azure_login_callback(
         Redirects the user to the frontend home page with the internal access token
     """
     async with exception_handling():
+
+        if not config.PROD_ENV:
+            return RedirectResponse(url=config.FRONTEND_URL)
+
         code = request.query_params.get("code")
 
         if not code:
@@ -162,6 +170,17 @@ async def user_session_status(
         A JSON response with the status of the user's session
     """
     async with exception_handling():
+
+        if not config.PROD_ENV:
+            return JSONResponse(
+                content=jsonable_encoder(
+                    {
+                        "userLoggedIn": True,
+                        "userName": "Test User",
+                    }
+                ),
+            )
+
         provider = AzureAuthProvider()
         external_user = await provider.get_user(
             external_access_token=external_access_token

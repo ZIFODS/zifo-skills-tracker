@@ -17,11 +17,10 @@ services:
       dockerfile: ./docker/api/Dockerfile
     container_name: zifo-skills-api
     environment:
-      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
-      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
-      - TEST_ENV=${TEST_ENV}
+      - SKILLS_ENV=${SKILLS_ENV}
     volumes:
-      - skills-data-volume:/home/skills_user/pipeline/import/
+      - ./.env.demo:/home/skills-user/.env.demo
+      - ./.env.prod:/home/skills-user/.env.prod
     depends_on:
       mongodb:
         condition: service_healthy
