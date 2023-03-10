@@ -1,17 +1,17 @@
 import * as React from "react";
 import MenuIcon from "@mui/icons-material/Menu";
 import {
-  Stack,
   AppBar,
   Box,
   Toolbar,
   IconButton,
   Typography,
   Menu,
-  Container,
   Avatar,
   Tooltip,
   MenuItem,
+  Button,
+  Stack,
 } from "@mui/material";
 import { useAuth } from "../../lib/auth";
 import { useNavigate } from "react-router";
@@ -42,6 +42,25 @@ function ResponsiveAppBar() {
   };
 
   const { logout, user } = useAuth();
+
+  const graphOnClick = () => {
+    navigate("/graph");
+  };
+
+  const updateOnClick = () => {
+    navigate("/update");
+  };
+
+  const pages = [
+    {
+      name: "Graph",
+      onClick: graphOnClick,
+    },
+    {
+      name: "Update",
+      onClick: updateOnClick,
+    },
+  ];
 
   const settingOnClick = () => {
     navigate("/settings");
@@ -83,13 +102,16 @@ function ResponsiveAppBar() {
           Skills tracker
         </Typography>
 
-        <Box sx={{ flexGrow: 1, display: { xs: "flex", md: "none" } }}>
-          <IconButton size="large" onClick={handleOpenNavMenu} color="inherit">
-            <MenuIcon />
-          </IconButton>
-        </Box>
-
-        <Box sx={{ flexGrow: 1, ml: 1, display: { xs: "none", md: "flex" } }} />
+        <Stack spacing={2} direction="row" sx={{ flexGrow: 1, ml: 1 }}>
+          {pages.map((page) => (
+            <Button
+              sx={{ my: 2, mx: 0.5, color: "#2b2b2b" }}
+              onClick={() => page.onClick()}
+            >
+              {page.name}
+            </Button>
+          ))}
+        </Stack>
 
         <Box sx={{ flexGrow: 0 }}>
           <Tooltip title="Open settings">

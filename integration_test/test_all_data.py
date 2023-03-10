@@ -1,9 +1,6 @@
 import pytest
 import requests
 
-from pathlib import Path
-import sys
-
 
 @pytest.fixture()
 def all_data_response():

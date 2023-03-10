@@ -1,66 +1,38 @@
-FROM python:3.10-slim as base
-
-# Setup env
-ENV LANG C.UTF-8
-ENV LC_ALL C.UTF-8
-ENV PYTHONDONTWRITEBYTECODE 1
-ENV PYTHONUNBUFFERED 1
-
-FROM base AS python-deps
-
-# Install pipenv and compilation dependencies
-RUN pip install pipenv
-RUN apt-get update
-RUN apt-get install -y git
-
-# Install python dependencies in /.venv
-COPY Pipfile .
-COPY Pipfile.lock .
-RUN PIPENV_VENV_IN_PROJECT=1 pipenv install --dev
-
-FROM base AS runtime
-RUN apt-get -y update
-
-# Install poetry and dependencies
-RUN pip install --upgrade pip
-RUN pip install poetry
+FROM python:3.10 as base
+LABEL maintainer="Joseph Smith"
+LABEL version="0.1.0"
+LABEL description="FastAPI server for Zifo Skills Tracker"
 
 # Install wget for health check
 RUN apt-get -y update && apt-get -y install wget
 
-# Copy virtual env from python-deps stage
-COPY --from=python-deps /.venv /.venv
-ENV PATH="/.venv/bin:$PATH"
+# Configure Poetry
+ENV POETRY_VERSION=1.2.2
+ENV POETRY_HOME=/opt/poetry
+ENV POETRY_VENV=/opt/poetry-venv
+ENV POETRY_CACHE_DIR=/opt/.cache
 
 # Create and switch to a new user
-RUN useradd --create-home skills_user
-WORKDIR /home/skills_user
-
-# Install application into container
-COPY ./app ./app
-COPY ./pipeline ./pipeline
-COPY ./integration_test ./integration_test
-
-# Run as root to avoid pipeline/import permissions error
-USER root
-RUN mkdir ./pipeline/import
-RUN chown -R skills_user:skills_user ./pipeline/import
-
-# Run the application with Docker run
-CMD ["hypercorn", "app.main:app", "--reload", "--bind", "0.0.0.0:8080"]
-FROM python-deps as runtime
-
-# # Create new user
 RUN useradd --create-home skills-user
-USER skills-user
 WORKDIR /home/skills-user
 
-COPY pyproject.toml .
-RUN poetry install
+# Install poetry separated from system interpreter
+RUN python3 -m venv $POETRY_VENV \
+&& $POETRY_VENV/bin/pip install -U pip setuptools \
+&& $POETRY_VENV/bin/pip install poetry==${POETRY_VERSION}
+
+# Add `poetry` to PATH
+ENV PATH="${PATH}:${POETRY_VENV}/bin"
+
+# Install dependencies
+COPY ./pyproject.toml ./pyproject.toml
+RUN poetry install --without dev
 
 # Copy source code
 COPY ./app ./app
-COPY .env .
+COPY ./.env ./.env
 
-# # Run the application with Docker run
+# Run the server
+EXPOSE 8000
+
 CMD ["poetry", "run", "hypercorn", "app.main:app", "--reload", "--bind", "0.0.0.0:8080"]

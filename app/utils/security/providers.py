@@ -55,14 +55,14 @@ class AzureAuthProvider:
 
         return ExternalToken(access_token=access_token, expires_in=expires_in)
 
-    async def get_user(self, external_access_token: ExternalToken) -> ExternalUser:
+    async def get_user(self, external_access_token: str) -> ExternalUser:
         """
         Receives an authentication token from Microsoft Azure and exchanges it for an access token.
         It then retrieves the user's details from the Azure user-info endpoint.
 
         Parameters
         ----------
-        external_access_token : ExternalToken
+        external_access_token : str
             Azure access token
 
         Returns
@@ -73,7 +73,7 @@ class AzureAuthProvider:
         # Request user's information from Azure
         userinfo_response = requests.get(
             "https://graph.microsoft.com/v1.0/me",
-            headers={"Authorization": "Bearer " + external_access_token.access_token},
+            headers={"Authorization": "Bearer " + external_access_token},
         )
 
         response_data = userinfo_response.json()

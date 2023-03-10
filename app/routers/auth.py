@@ -5,7 +5,6 @@ from fastapi.encoders import jsonable_encoder
 from starlette.responses import JSONResponse, RedirectResponse
 
 from app import config
-from app.models.auth import ExternalToken
 from app.utils.exceptions import AuthorizationException, exception_handling
 from app.utils.mongo import db_client
 from app.utils.security import schemes as auth_schemes
@@ -82,7 +81,7 @@ async def azure_login_callback(
 
         # Authenticate token and get user's info from external provider
         external_user = await provider.get_user(
-            external_access_token=external_access_token
+            external_access_token=external_access_token.access_token
         )
 
         # Get or create the internal user
@@ -114,7 +113,7 @@ async def azure_login_callback(
 
 @auth_router.get("/logout")
 async def logout(
-    _: ExternalToken = Depends(access_token_cookie_scheme),
+    _: str = Depends(access_token_cookie_scheme),
 ) -> JSONResponse:
     """
     Endpoint for logging out the user.
@@ -122,7 +121,7 @@ async def logout(
 
     Parameters
     ----------
-    _ : ExternalToken
+    _ : str
         Azure access token
 
     Returns
@@ -146,7 +145,7 @@ async def logout(
 
 @auth_router.get("/me")
 async def user_session_status(
-    external_access_token: ExternalToken = Depends(access_token_cookie_scheme),
+    external_access_token: str = Depends(access_token_cookie_scheme),
 ) -> JSONResponse:
     """
     Endpoint for checking the status of the user's session based on validity
@@ -154,7 +153,7 @@ async def user_session_status(
 
     Parameters
     ----------
-    external_access_token : ExternalToken
+    external_access_token : str
         Azure access token
 
     Returns

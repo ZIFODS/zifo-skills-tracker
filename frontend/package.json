@@ -1,5 +1,5 @@
 {
-  "name": "frontend",
+  "name": "zifo-skills-tracker",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
@@ -7,31 +7,27 @@
     "@emotion/styled": "*",
     "@mui/icons-material": "*",
     "@mui/material": "*",
-    "@reduxjs/toolkit": "^1.8.5",
-    "@testing-library/jest-dom": "^5.16.5",
-    "@testing-library/react": "^13.4.0",
-    "@testing-library/user-event": "^13.5.0",
-    "@types/jest": "^29.0.3",
-    "@types/node": "^18.7.18",
-    "@types/react": "^18.0.21",
-    "@types/react-dom": "^18.0.6",
-    "axios": "^0.27.2",
-    "buffer": "^6.0.3",
-    "d3": "^7.6.1",
-    "prettier": "^2.7.1",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
-    "react-redux": "^8.0.4",
-    "react-scripts": "5.0.1",
-    "redux-saga": "^1.2.1",
-    "typescript": "^4.8.3",
-    "web-vitals": "^2.1.4",
+    "@testing-library/jest-dom": "*",
+    "@testing-library/react": "*",
+    "@testing-library/user-event": "*",
+    "@types/jest": "*",
+    "@types/node": "*",
+    "@types/react": "*",
+    "@types/react-dom": "*",
+    "axios": "*",
+    "prettier": "*",
+    "react": "*",
+    "react-dom": "*",
+    "react-scripts": "*",
+    "typescript": "*",
     "react-query": "*",
     "react-query-auth": "^1.1.0",
     "react-router-dom": "*",
     "zustand": "*",
     "react-error-boundary": "*",
-    "react-helmet-async": "*"
+    "react-helmet-async": "*",
+    "d3": "*",
+    "@types/d3": "*"
   },
   "scripts": {
     "start": "react-scripts start",
@@ -57,8 +53,5 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
-  },
-  "devDependencies": {
-    "@types/d3": "^7.4.0"
   }
 }

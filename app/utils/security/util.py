@@ -39,7 +39,7 @@ async def create_state_csrf_token() -> str:
     state_csrf_token = hashlib.sha256(os.urandom(1024)).hexdigest()
 
     # Values not necessary. We only need to check for existence
-    await cache.set(state_csrf_token, {"valid": True})
+    await cache.set(state_csrf_token, {"valid": True})  # type: ignore
 
     return state_csrf_token
 
@@ -62,12 +62,12 @@ async def validate_state_csrf_token(
         raise UnauthorizedUser("Failed to validate state token")
 
     # Also, check that we 100% cached that token in the past
-    cached_token = await cache.get(state_csrf_token)
+    cached_token = await cache.get(state_csrf_token)  # type: ignore
 
     if not cached_token:
         raise UnauthorizedUser("Failed to validate against cached state token")
 
-    await cache.delete(state_csrf_token)
+    await cache.delete(state_csrf_token)  # type: ignore
 
 
 async def create_internal_access_token(

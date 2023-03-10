@@ -1,16 +1,3 @@
-from fastapi import FastAPI
-from fastapi.middleware.cors import CORSMiddleware
-
-from app.routers.all_data import all_data_router
-from app.routers.skills import skills_router
-from app.routers.consultant import consultant_router
-
-app = FastAPI()
-
-origins = [
-    "http://ec2-35-176-61-224.eu-west-2.compute.amazonaws.com:3000",
-    "http://localhost:3000",
-    "http://react-frontend:3000",
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from starlette.middleware.sessions import SessionMiddleware
@@ -18,13 +5,15 @@ from starlette.responses import JSONResponse
 
 from app.config import FRONTEND_URL, SESSION_SECRET_KEY
 from app.routers.auth import auth_router
+from app.routers.categories import categories_router
+from app.routers.consultants import consultants_router
+from app.routers.graph import graph_router
 from app.routers.skills import skills_router
 from app.routers.user_skills import user_skills_router
 from app.utils.exceptions import exception_handling
 from app.utils.mongo import db_client
 
 app = FastAPI()
-
 
 origins = [
     FRONTEND_URL,
@@ -38,9 +27,6 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-app.include_router(all_data_router, prefix="/all", tags=["All data"])
-app.include_router(skills_router, prefix="/skills", tags=["Filter with skills"])
-app.include_router(consultant_router, prefix="/consultant", tags=["Filter with consultant"])
 app.add_middleware(
     SessionMiddleware,
     secret_key=SESSION_SECRET_KEY,
@@ -49,6 +35,9 @@ app.add_middleware(
 app.include_router(auth_router)
 app.include_router(skills_router)
 app.include_router(user_skills_router)
+app.include_router(categories_router)
+app.include_router(consultants_router)
+app.include_router(graph_router)
 
 
 @app.get("/health", tags=["health_check"])

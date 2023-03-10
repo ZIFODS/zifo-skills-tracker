@@ -1,6 +1,9 @@
+from app.models.graph import GraphData
+
+
 class ExpectedResults:
 
-    EMPTY = {"nodes": [], "links": []}
+    EMPTY: GraphData = GraphData(nodes=[], links=[])
 
     LUKE_EVANS = {
         "nodes": [

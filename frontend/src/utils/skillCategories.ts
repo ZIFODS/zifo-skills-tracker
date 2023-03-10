@@ -15,7 +15,7 @@ export const categoryMap: CategoryMap = {
     color: "#41750520",
   },
   Scientific_Products_And_Applications: {
-    displayName: "Scientific Products & Applications",
+    displayName: "Scientific Products and Apps",
     color: "#4A4A4A20",
   },
   R_And_D_Processes: {
@@ -23,7 +23,7 @@ export const categoryMap: CategoryMap = {
     color: "#4A90E220",
   },
   Products_And_Applications: {
-    displayName: "Products and Applications",
+    displayName: "Products and Apps",
     color: "#A16C1D20",
   },
   Regulation: {
@@ -50,4 +50,14 @@ export const categoryMap: CategoryMap = {
     displayName: "Infrastructure Technologies",
     color: "#50E3C220",
   },
+};
+
+export const getUniqueCategories = (nodes: any): any[] => {
+  return [
+    ...new Set(
+      nodes.map(function (node: any) {
+        return node.category;
+      })
+    ),
+  ];
 };

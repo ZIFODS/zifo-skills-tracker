@@ -1,17 +1,16 @@
-import pytest
-import requests
 import base64
 import json
-
-from pathlib import Path
 import sys
+from pathlib import Path
+
+import requests
 
 root_dir = (Path(__file__).parent / "../").resolve()
 sys.path.append(str(root_dir))
 
-from pipeline.src.utils import Categories
-from app.models.rule import Rule
-from integration_test.expected_results import ExpectedResults
+from app.models.graph import Rule  # noqa: E402
+from integration_test.expected_results import ExpectedResults  # noqa: E402
+from pipeline.src.utils import Categories  # noqa: E402
 
 
 def base64_encode(query: list[Rule]) -> str:
@@ -197,7 +196,8 @@ def test_single_redux_skill_with_miscellaneous_and_programming_languages_hidden(
     response = requests.get(url)
     assert response.status_code == 200
     assert (
-        response.json() == ExpectedResults.LUKE_EVANS_NO_MISCELLANEOUS_NO_PROGRAMMING_LANGUAGES
+        response.json()
+        == ExpectedResults.LUKE_EVANS_NO_MISCELLANEOUS_NO_PROGRAMMING_LANGUAGES
     )
 
 

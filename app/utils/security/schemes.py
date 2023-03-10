@@ -1,7 +1,6 @@
 from fastapi import Request
 from fastapi.security.oauth2 import OAuth2AuthorizationCodeBearer
 
-from app.models.auth import InternalUser
 from app.utils.exceptions import UnauthorizedUser, exception_handling
 from app.utils.security import util as auth_util
 
@@ -16,12 +15,16 @@ class CSRFTokenRedirectCookieBearer:
     async def __call__(self, request: Request) -> None:
         async with exception_handling():
             # State token from redirect
-            state_csrf_token: str = request.query_params.get("state")
+            state_csrf_token = request.query_params.get("state")
+
+            if not state_csrf_token:
+                raise UnauthorizedUser("Invalid state token from Azure")
+
             # State token from cookie
-            state_csrf_token_cookie: str = request.cookies.get("state")
+            state_csrf_token_cookie = request.cookies.get("state")
 
             if not state_csrf_token_cookie:
-                raise UnauthorizedUser("Invalid state token")
+                raise UnauthorizedUser("Invalid state token in cookie")
 
             # Remove Bearer
             state_csrf_token_cookie = state_csrf_token_cookie.split()[1]
@@ -37,9 +40,9 @@ class AccessTokenCookieBearer(OAuth2AuthorizationCodeBearer):
     HTTPOnly secure cookie to authorize the user.
     """
 
-    async def __call__(self, request: Request) -> InternalUser:
+    async def __call__(self, request: Request) -> str:
         async with exception_handling():
-            internal_access_token: str = request.cookies.get("access_token")
+            internal_access_token = request.cookies.get("access_token")
             if not internal_access_token:
                 raise UnauthorizedUser("Invalid access token cookie")
 
@@ -49,4 +52,4 @@ class AccessTokenCookieBearer(OAuth2AuthorizationCodeBearer):
                 internal_access_token
             )
 
-            return external_access_token
+            return external_access_token.access_token

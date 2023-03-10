@@ -3,6 +3,7 @@ import { Outlet } from "react-router-dom";
 import { MainLayout } from "../components/Layout";
 import { Navigate } from "react-router-dom";
 import { DashboardRoutes } from "../features/dashboard";
+import { GraphRoutes } from "../features/graph";
 
 const App = () => {
   return (
@@ -26,8 +27,16 @@ export const protectedRoutes = [
     element: <App />,
     children: [
       {
-        path: "/",
+        path: "/update",
         element: <DashboardRoutes />,
+      },
+      {
+        path: "/graph",
+        element: <GraphRoutes />,
+      },
+      {
+        path: "/",
+        element: <Navigate to="/graph" />,
       },
     ],
   },
