@@ -1,10 +1,11 @@
 export type Skill = {
   name: string;
   category: string;
+  type: string;
 };
 
 export type SkillsResponse = {
-  skills: Skill[];
+  items: Skill[];
 };
 
 export type SkillsRequest = {

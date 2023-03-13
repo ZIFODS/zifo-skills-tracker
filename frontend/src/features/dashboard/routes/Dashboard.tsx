@@ -32,8 +32,8 @@ const sortCategoryMap = (categoryMap: CategoryMap) => {
 export const Dashboard = () => {
   const [categoryEdit, setCategoryEdit] = React.useState<string | null>(null);
 
-  const allSkills = useGetSkills({ keys: [categoryEdit] }).data?.skills || [];
-  const userSkills = useGetUserSkills().data?.skills || [];
+  const allSkills = useGetSkills({ keys: [categoryEdit] }).data?.items || [];
+  const userSkills = useGetUserSkills().data?.items || [];
 
   const [filteredUserSkills, setFilteredUserSkills] = React.useState<Skill[]>(
     []
