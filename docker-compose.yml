@@ -1,25 +1,11 @@
 version: "3.8"
 services:
-
-  neo4j-db:
-    image: neo4j:4.4.12
-    container_name: zifo-skills-neo4j
-    environment:
-      - NEO4J_AUTH=neo4j/test
-      - NEO4JLABS_PLUGINS=["apoc"]
-      - NEO4J_dbms_security_procedures_unrestricted=apoc.*
-    volumes:
-      - skills-data-volume:/var/lib/neo4j/import
-    ports:
-      - "7474:7474"
-      - "7687:7687"
-    expose:
-      - 7474
-      - 7687
-    networks:
-      - zifo-skills-network
+  mongodb:
+    image: mongo:latest
+    container_name: zifo-skills-mongodb
+    network_mode: host
     healthcheck:
-      test: wget http://localhost:7474 -O - || exit 1
+      test: echo 'db.runCommand("ping").ok' | mongosh localhost:27017/test --quiet
       interval: 5s
       timeout: 10s
       retries: 20
@@ -36,13 +22,10 @@ services:
       - TEST_ENV=${TEST_ENV}
     volumes:
       - skills-data-volume:/home/skills_user/pipeline/import/
-    ports:
-      - "8080:8080"
     depends_on:
-      neo4j-db:
+      mongodb:
         condition: service_healthy
-    networks:
-      - zifo-skills-network
+    network_mode: host
     healthcheck:
       test: wget http://localhost:8080/docs -O - || exit 1
       interval: 5s
@@ -55,19 +38,17 @@ services:
       context: .
       dockerfile: ./docker/frontend/Dockerfile
     container_name: zifo-skills-frontend
-    ports:
-      - 3000:3000
-    networks:
-      - zifo-skills-network
+    network_mode: host
     volumes:
       - /node_modules
     depends_on:
       python-api:
         condition: service_healthy
-
-networks:
-  zifo-skills-network:
-    name: zifo-skills-network
+    healthcheck:
+      test: wget http://localhost:3000/docs -O - || exit 1
+      interval: 5s
+      timeout: 10s
+      retries: 20
 
 volumes:
   skills-data-volume:

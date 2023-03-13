@@ -26,13 +26,13 @@ svg {
 
 .consultNodes text {
   font-size: 9px;
-  font-weight: bold;
+  font-weight: 700;
   font-family: "helvetica";
 }
 
 .consultNodesDeselected text {
   font-size: 9px;
-  font-weight: bold;
+  font-weight: 700;
   font-family: "helvetica";
   opacity: 0.1;
 }
@@ -68,7 +68,7 @@ div.tooltip {
   border: 1px solid black;
   border-radius: 8px;
   pointer-events: none;
-  font-weight: bold;
+  font-weight: 700;
 }
 
 .foreignObject {
