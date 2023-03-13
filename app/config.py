@@ -2,7 +2,7 @@ from decouple import config
 
 # MongoDB Replica Set
 MONGODB_HOST = config("MONGODB_HOST", "localhost")
-MONGODB_PORT = int(config("MONGODB_PORT", 27017))
+MONGODB_PORT = config("MONGODB_PORT", 27017, cast=int)
 MONGODB_COLLECTION = "test"
 MONGODB_DATABASE = "test"
 
