@@ -61,7 +61,7 @@ async def get_consultant(consultant_email: str) -> Consultant:
     """
 
     conn = Neo4jConnection()
-    result = conn.query(query, parameters={"email": consultant_email})
+    result = conn.query(query, email=consultant_email)
     conn.close()
 
     if not result:
@@ -89,7 +89,7 @@ async def create_consultant(consultant: ConsultantCreate) -> Consultant:
     MATCH (s:Consultant {email: $email})
     RETURN s
     """
-    result = conn.query(exists_query, parameters={"email": consultant.email})
+    result = conn.query(exists_query, email=consultant.email)
     conn.close()
     if result:
         raise HTTPException(status_code=409, detail="Consultant already exists")
@@ -100,9 +100,7 @@ async def create_consultant(consultant: ConsultantCreate) -> Consultant:
     RETURN consultantOut
     """
     conn = Neo4jConnection()
-    result = conn.query(
-        query, parameters={"name": consultant.name, "email": consultant.email}
-    )
+    result = conn.query(query, name=consultant.name, email=consultant.email)
     conn.close()
 
     return result[0][0]
@@ -134,7 +132,7 @@ async def delete_consultant(consultant_email: str) -> Message:
     RETURN consultantOut
     """
     conn = Neo4jConnection()
-    result = conn.query(query, parameters={"email": consultant_email})
+    result = conn.query(query, email=consultant_email)
     conn.close()
 
     if not result:

@@ -55,8 +55,6 @@ export default function Graph() {
 
   const graphData = useGetGraph(graphQuery, setSearchedGraphData);
 
-  console.log(graphSearched, graphFilled);
-
   const allCategories = useGetAllCategories().data;
 
   React.useEffect(() => {

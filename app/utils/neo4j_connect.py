@@ -28,18 +28,17 @@ class Neo4jConnection:
         """
         self.driver.close()
 
-    def query(self, query, parameters=None):
+    def query(self, query, **kwargs):
         """
         Makes query for initating session
         Arguments
         ----------
         query : query
-        parameters : None
 
         Returns
         ----------
         response : list
         """
         with self.driver.session() as session:
-            response = list(session.run(query, parameters))
+            response = list(session.run(query, **kwargs))
             return response

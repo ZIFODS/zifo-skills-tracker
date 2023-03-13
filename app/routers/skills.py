@@ -35,7 +35,7 @@ async def list_all_skills(category: Optional[str] = None) -> SkillList:
     )
 
     conn = Neo4jConnection()
-    result = conn.query(query, parameters={"category": category})
+    result = conn.query(query, category=category)
     conn.close()
 
     skills = result[0][0]
@@ -70,7 +70,7 @@ async def get_skill(skill_name: str) -> Skill:
     """
 
     conn = Neo4jConnection()
-    result = conn.query(query, parameters={"name": skill_name})
+    result = conn.query(query, name=skill_name)
     conn.close()
 
     if not result:
@@ -99,7 +99,7 @@ async def create_skill(skill: SkillCreate) -> Skill:
     MATCH (s:Skill {name: $name})
     RETURN s
     """
-    result = conn.query(exists_query, parameters={"name": skill.name})
+    result = conn.query(exists_query, name=skill.name)
     conn.close()
     if result:
         raise HTTPException(status_code=409, detail="Skill already exists")
@@ -110,9 +110,7 @@ async def create_skill(skill: SkillCreate) -> Skill:
     RETURN skillOut
     """
     conn = Neo4jConnection()
-    result = conn.query(
-        query, parameters={"name": skill.name, "category": skill.category}
-    )
+    result = conn.query(query, name=skill.name, category=skill.category)
     conn.close()
 
     return result[0][0]
@@ -144,7 +142,7 @@ async def delete_skill(skill_name: str) -> Message:
     RETURN skillOut
     """
     conn = Neo4jConnection()
-    result = conn.query(query, parameters={"skill": skill_name})
+    result = conn.query(query, skill=skill_name)
     conn.close()
 
     if not result:
