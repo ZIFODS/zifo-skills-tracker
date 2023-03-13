@@ -1,4 +1,3 @@
-import logging
 from typing import Tuple
 
 import requests
@@ -8,8 +7,6 @@ from app import config
 from app.models.auth import ExternalToken, ExternalUser
 from app.utils.exceptions import ProviderConnectionError, UnauthorizedUser
 from app.utils.security.util import create_state_csrf_token
-
-logger = logging.getLogger(__name__)
 
 
 class AzureAuthProvider:

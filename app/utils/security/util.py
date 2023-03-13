@@ -1,5 +1,4 @@
 import hashlib
-import logging
 import os
 
 from jwt import PyJWTError
@@ -14,8 +13,6 @@ from app.utils.mongo import MongoClient
 
 # Initialize db client
 db_client = MongoClient()
-
-logger = logging.getLogger(__name__)
 
 
 async def create_state_csrf_token() -> str:
