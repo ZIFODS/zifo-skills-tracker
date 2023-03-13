@@ -1,6 +1,5 @@
 import base64
 import json
-import logging
 from typing import Optional
 
 from fastapi import APIRouter, HTTPException, Query
@@ -28,8 +27,6 @@ from app.logic.cypher import (
 )
 from app.models.graph import GraphData, Rule
 from app.utils.neo4j_connect import Neo4jConnection
-
-logger = logging.getLogger(__name__)
 
 graph_router = APIRouter(prefix="/graph", tags=["Graph"])
 
@@ -195,8 +192,6 @@ def process_skills_query(
                 path_count, hidden_categories
             )
         query += compile_results_with_nodes_and_links(path_count)
-
-    logger.warn(query)
 
     return query
 

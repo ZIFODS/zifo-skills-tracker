@@ -43,7 +43,7 @@ async def list_user_skills(
     )
 
     conn = Neo4jConnection()
-    result = conn.query(query, parameters={"email": email, "category": category})
+    result = conn.query(query, email=email, category=category)
     conn.close()
 
     return SkillList(items=result[0][0])
@@ -82,7 +82,7 @@ async def get_user_skill(
     """
 
     conn = Neo4jConnection()
-    result = conn.query(query, parameters={"email": email, "name": skill_name})
+    result = conn.query(query, email=email, name=skill_name)
     conn.close()
 
     if not result:
@@ -122,7 +122,7 @@ async def create_user_skill(
     MATCH (c:Consultant {email: $email})-[:KNOWS]->(s:Skill {name: $name})
     RETURN s
     """
-    result = conn.query(exists_query, parameters={"email": email, "name": skill.name})
+    result = conn.query(exists_query, email=email, name=skill.name)
     conn.close()
     if result:
         raise HTTPException(status_code=409, detail="Skill already linked to user")
@@ -135,7 +135,9 @@ async def create_user_skill(
     conn = Neo4jConnection()
     result = conn.query(
         query,
-        parameters={"email": email, "name": skill.name, "category": skill.category},
+        email=email,
+        name=skill.name,
+        category=skill.category,
     )
     conn.close()
 
@@ -183,7 +185,8 @@ async def delete_user_skill(
     conn = Neo4jConnection()
     result = conn.query(
         query,
-        parameters={"email": email, "name": skill_name},
+        email=email,
+        name=skill_name,
     )
     conn.close()
 
