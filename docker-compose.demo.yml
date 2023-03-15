@@ -1,0 +1,36 @@
+version: "3.8"
+services:
+  mongodb:
+    extends:
+      file: ./docker-compose.prod.yml
+      service: mongodb
+
+  python-api:
+    image: zifo-skills-api
+    build:
+      context: .
+      dockerfile: ./docker/api/Dockerfile
+    container_name: zifo-skills-api
+    environment:
+      - SKILLS_ENV=demo
+    volumes:
+      - ./.env.demo:/home/skills-user/.env.demo
+    depends_on:
+      mongodb:
+        condition: service_healthy
+    network_mode: host
+    healthcheck:
+      test: wget http://localhost:8080/docs -O - || exit 1
+      interval: 5s
+      timeout: 10s
+      retries: 20
+
+  react-frontend:
+    extends:
+      file: ./docker-compose.prod.yml
+      service: react-frontend
+    depends_on:
+      - python-api
+
+volumes:
+  skills-data-volume:

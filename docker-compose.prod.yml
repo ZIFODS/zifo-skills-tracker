@@ -17,9 +17,8 @@ services:
       dockerfile: ./docker/api/Dockerfile
     container_name: zifo-skills-api
     environment:
-      - SKILLS_ENV=${SKILLS_ENV}
+      - SKILLS_ENV=production
     volumes:
-      - ./.env.demo:/home/skills-user/.env.demo
       - ./.env.prod:/home/skills-user/.env.prod
     depends_on:
       mongodb:

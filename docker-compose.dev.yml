@@ -1,0 +1,55 @@
+version: "3.8"
+services:
+  neo4j-db:
+    image: neo4j:4.4.12
+    container_name: zifo-skills-neo4j
+    environment:
+      - NEO4J_AUTH=neo4j/test
+      - NEO4JLABS_PLUGINS=["apoc"]
+      - NEO4J_dbms_security_procedures_unrestricted=apoc.*
+    volumes:
+      - ./data:/var/lib/neo4j/import
+    network_mode: host
+    healthcheck:
+      test: wget http://localhost:7474 || exit 1
+      interval: 1s
+      timeout: 10s
+      retries: 20
+      start_period: 3s
+
+  mongodb:
+    extends:
+      file: ./docker-compose.prod.yml
+      service: mongodb
+
+  python-api:
+    image: zifo-skills-api
+    build:
+      context: .
+      dockerfile: ./docker/api/Dockerfile.dev
+    container_name: zifo-skills-api
+    environment:
+      - SKILLS_ENV=test
+    volumes:
+      - ./.env.dev:/home/skills-user/.env.dev
+    depends_on:
+      mongodb:
+        condition: service_healthy
+      neo4j-db:
+        condition: service_healthy
+    network_mode: host
+    healthcheck:
+      test: wget http://localhost:8080/docs -O - || exit 1
+      interval: 5s
+      timeout: 10s
+      retries: 20
+
+  react-frontend:
+    extends:
+      file: ./docker-compose.prod.yml
+      service: react-frontend
+    depends_on:
+      - python-api
+
+volumes:
+  skills-data-volume:

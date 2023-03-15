@@ -4,6 +4,7 @@ from decouple import Config, RepositoryEnv
 
 
 class Env:
+    DEV = "dev"
     DEMO = "demo"
     PRODUCTION = "production"
 
@@ -14,8 +15,10 @@ if os.environ.get("SKILLS_ENV") == Env.PRODUCTION:
 
 if PROD_ENV:
     config = Config(RepositoryEnv(".env.prod"))
-else:
+elif os.environ.get("SKILLS_ENV") == Env.DEMO:
     config = Config(RepositoryEnv(".env.demo"))
+else:
+    config = Config(RepositoryEnv(".env.dev"))
 
 # MongoDB Replica Set
 MONGODB_HOST = config("MONGODB_HOST", "localhost")
