@@ -1,6 +1,6 @@
 from typing import Optional
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Query
 
 from app import config
 from app.models.common import Message
@@ -172,9 +172,9 @@ async def create_user_skill(
     return SkillList(items=result[0][0])
 
 
-@user_skills_router.delete("/{skill_name}")
+@user_skills_router.delete("/")
 async def delete_user_skill(
-    skill_name: str,
+    skill_names: list[str] = Query(),
     external_access_token: str = Depends(access_token_cookie_scheme),
 ) -> Message:
     """
@@ -182,8 +182,8 @@ async def delete_user_skill(
 
     Parameters
     ----------
-    skill_name : str
-        The name of the skill to delete
+    skill_names : list[str]
+        The names of the skills to delete
 
     Returns
     -------
@@ -204,8 +204,25 @@ async def delete_user_skill(
         )
         email = external_user.email
 
+    exists_query = """
+    UNWIND $skill_names as skill_name
+    MATCH (c:Consultant {email: $email})-[:KNOWS]->(s:Skill {name: skill_name})
+    RETURN s
+    """
+    conn = Neo4jConnection()
+    result = conn.query(exists_query, email=email, skill_names=skill_names)
+    conn.close()
+    if len(result) != len(skill_names):
+        skill_names_linked = [r[0]["name"] for r in result]
+        skill_names_not_linked = ", ".join([s for s in skill_names if s not in skill_names_linked])
+        raise HTTPException(
+            status_code=409,
+            detail=f"The following skills are not linked to the user: {skill_names_not_linked}",
+        )
+
     query = """
-        MATCH (c:Consultant {email: $email})-[r:KNOWS]->(s:Skill {name: $name})
+        UNWIND $skill_names as skill_name
+        MATCH (c:Consultant {email: $email})-[r:KNOWS]->(s:Skill {name: skill_name})
         WITH r, {name: s.name, type: labels(s)[0],  category: s.category} as skillOut
         DELETE r
         RETURN skillOut
@@ -215,11 +232,10 @@ async def delete_user_skill(
     result = conn.query(
         query,
         email=email,
-        name=skill_name,
+        skill_names=skill_names,
     )
     conn.close()
+    
+    skill_names_removed = ", ".join([r[0]["name"] for r in result])
 
-    if not result:
-        raise HTTPException(status_code=404, detail="Skill not found for user")
-
-    return Message(message=f"Removed {skill_name} for user {email}")
+    return Message(message=f"Removed {skill_names_removed} for user {email}")
