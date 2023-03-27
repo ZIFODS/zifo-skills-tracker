@@ -106,16 +106,16 @@ async def get_user_skill(
 
 @user_skills_router.post("/")
 async def create_user_skill(
-    skill: SkillCreate,
+    skills: list[SkillCreate],
     external_access_token: str = Depends(access_token_cookie_scheme),
-) -> Skill:
+) -> SkillList:
     """
     Creates a relationship between a skill and the current user.
 
     Parameters
     ----------
-    skill : SkillCreate
-        The skill to link to the current user
+    skills : list[SkillCreate]
+        The skills to link to the current user
 
     Returns
     -------
@@ -124,7 +124,7 @@ async def create_user_skill(
     Raises
     ------
     HTTPException
-        404 if the skill is already linked to the current user
+        404 if any skill is already linked to the current user
     """
     if not config.PROD_ENV:
         email = "anthony_hopkins@gmail.com"
@@ -136,28 +136,32 @@ async def create_user_skill(
         )
         email = external_user.email
 
+    skills = [s.dict() for s in skills]
+
     conn = Neo4jConnection()
     exists_query = """
-    MATCH (c:Consultant {email: $email})-[:KNOWS]->(s:Skill {name: $name})
+    UNWIND $skills as skills
+    MATCH (c:Consultant {email: $email})-[:KNOWS]->(s:Skill {name: skills.name})
     RETURN s
     """
-    result = conn.query(exists_query, email=email, name=skill.name)
+    result = conn.query(exists_query, email=email, skills=skills)
     conn.close()
     if result:
-        raise HTTPException(status_code=409, detail="Skill already linked to user")
+        skill_names_linked = ", ".join([r[0]["name"] for r in result])
+        raise HTTPException(
+            status_code=409,
+            detail=f"The following skills are already linked to the user: {skill_names_linked}",
+        )
 
     query = """
-    MATCH (c:Consultant {email: $email}), (s:Skill {name: $name, category: $category})
-    WITH {name: s.name, type: labels(s)[0],  category: s.category} as skillOut
-    RETURN skillOut
+    UNWIND $skills as skill
+    MATCH (s:Skill {name: skill.name}), (c:Consultant {email: $email})
+    MERGE (c)-[:KNOWS]->(s)
+    WITH {name: s.name, type: labels(s)[0],  category: s.category} as skillsMerged
+    RETURN COLLECT(skillsMerged) as skillsOut
     """
     conn = Neo4jConnection()
-    result = conn.query(
-        query,
-        email=email,
-        name=skill.name,
-        category=skill.category,
-    )
+    result = conn.query(query, email=email, skills=skills)
     conn.close()
 
     if not result:
@@ -165,7 +169,7 @@ async def create_user_skill(
             status_code=404, detail="Skill not found and could not be linked to user"
         )
 
-    return result[0][0]
+    return SkillList(items=result[0][0])
 
 
 @user_skills_router.delete("/{skill_name}")
