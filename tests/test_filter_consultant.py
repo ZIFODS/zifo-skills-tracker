@@ -6,7 +6,7 @@ import requests
 root_dir = (Path(__file__).parent / "../").resolve()
 sys.path.append(str(root_dir))
 
-from integration_test.expected_results import ExpectedResults  # noqa: E402
+from tests.utils.expected_results import ExpectedResults  # noqa: E402
 
 
 def test_consultant_luke_evans():

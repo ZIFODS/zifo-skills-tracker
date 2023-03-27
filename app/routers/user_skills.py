@@ -2,6 +2,7 @@ from typing import Optional
 
 from fastapi import APIRouter, Depends, HTTPException
 
+from app import config
 from app.models.common import Message
 from app.models.skills import Skill, SkillCreate, SkillList
 from app.routers.auth import access_token_cookie_scheme
@@ -23,9 +24,15 @@ async def list_user_skills(
     -------
     SkillList
     """
-    provider = AzureAuthProvider()
-    external_user = await provider.get_user(external_access_token=external_access_token)
-    email = external_user.email
+    if not config.PROD_ENV:
+        email = "anthony_hopkins@gmail.com"
+
+    else:
+        provider = AzureAuthProvider()
+        external_user = await provider.get_user(
+            external_access_token=external_access_token
+        )
+        email = external_user.email
 
     match = "MATCH (c:Consultant {email: $email})-[:KNOWS]->(s:Skill)"
     if category:
@@ -71,9 +78,15 @@ async def get_user_skill(
     HTTPException
         404 if the skill is not linked to the current user
     """
-    provider = AzureAuthProvider()
-    external_user = await provider.get_user(external_access_token=external_access_token)
-    email = external_user.email
+    if not config.PROD_ENV:
+        email = "anthony_hopkins@gmail.com"
+
+    else:
+        provider = AzureAuthProvider()
+        external_user = await provider.get_user(
+            external_access_token=external_access_token
+        )
+        email = external_user.email
 
     query = """
     MATCH (c:Consultant {email: $email})-[:KNOWS]->(s:Skill {name: $name})
@@ -113,9 +126,15 @@ async def create_user_skill(
     HTTPException
         404 if the skill is already linked to the current user
     """
-    provider = AzureAuthProvider()
-    external_user = await provider.get_user(external_access_token=external_access_token)
-    email = external_user.email
+    if not config.PROD_ENV:
+        email = "anthony_hopkins@gmail.com"
+
+    else:
+        provider = AzureAuthProvider()
+        external_user = await provider.get_user(
+            external_access_token=external_access_token
+        )
+        email = external_user.email
 
     conn = Neo4jConnection()
     exists_query = """
@@ -171,9 +190,15 @@ async def delete_user_skill(
     HTTPException
         404 if the skill is not found for the current user
     """
-    provider = AzureAuthProvider()
-    external_user = await provider.get_user(external_access_token=external_access_token)
-    email = external_user.email
+    if not config.PROD_ENV:
+        email = "anthony_hopkins@gmail.com"
+
+    else:
+        provider = AzureAuthProvider()
+        external_user = await provider.get_user(
+            external_access_token=external_access_token
+        )
+        email = external_user.email
 
     query = """
         MATCH (c:Consultant {email: $email})-[r:KNOWS]->(s:Skill {name: $name})

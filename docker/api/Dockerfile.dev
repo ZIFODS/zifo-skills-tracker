@@ -26,10 +26,11 @@ ENV PATH="${PATH}:${POETRY_VENV}/bin"
 
 # Install dependencies
 COPY ./pyproject.toml ./pyproject.toml
-RUN poetry install --without dev
+RUN poetry install
 
 # Copy source code
 COPY ./app ./app
+COPY ./tests ./tests
 
 # Run the server
 EXPOSE 8080

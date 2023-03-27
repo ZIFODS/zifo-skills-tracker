@@ -1,4 +1,24 @@
-from decouple import config
+import os
+
+from decouple import Config, RepositoryEnv
+
+
+class Env:
+    DEV = "dev"
+    DEMO = "demo"
+    PRODUCTION = "production"
+
+
+PROD_ENV = False
+if os.environ.get("SKILLS_ENV") == Env.PRODUCTION:
+    PROD_ENV = True
+
+if PROD_ENV:
+    config = Config(RepositoryEnv(".env.prod"))
+elif os.environ.get("SKILLS_ENV") == Env.DEMO:
+    config = Config(RepositoryEnv(".env.demo"))
+else:
+    config = Config(RepositoryEnv(".env.dev"))
 
 # MongoDB Replica Set
 MONGODB_HOST = config("MONGODB_HOST", "localhost")

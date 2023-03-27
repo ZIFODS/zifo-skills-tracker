@@ -18,22 +18,33 @@ The data required to launch this application is stored in an S3 bucket, which yo
 
 ## Getting started
 
-You will need to configure environment variables by adding them to a `.env` file in the root directory with the following info:
+There are 3 environments that can be launched using this application:
 
-- JWT_SECERET_KEY
-- SESSION_SECRET_KEY
-- AZURE_CLIENT_ID
-- AZURE_CLIENT_SECRET
-- AZURE_TENANT_ID
-- AZURE_REDIRECT_URI
+- [`prod`](./docker-compose.prod.yml) - The production environment
+- [`demo`](./docker-compose.demo.yml) - The demo environment
+- [`dev`](./docker-compose.dev.yml) - The development environment
 
-The JWT and session secret keys can be generated using `openssl rand -hex 32`. The Azure keys should be requested from [Joe Smith](mailto:joe.smith@zifornd.com).
+You will need to configure environment variables by adding them to the corresponding `.env` file in the root directory with the following info:
+
+| .env.prod           | .env.demo          | .env.prod          |
+| ---                 | ---                | ---                |
+| SESSION_SECRET_KEY  | SESSION_SECRET_KEY | SESSION_SECRET_KEY |
+| NEO4J_URI           | NEO4J_URI          | NEO4J_URI          |
+| NEO4J_USER          | NEO4J_USER         | NEO4J_USER         |
+| NEO4J_PASSWORD      | NEO4J_PASSWORD     | NEO4J_PASSWORD     |
+| JWT_SECERET_KEY     | -                  | -                  |
+| AZURE_CLIENT_ID     | -                  | -                  |
+| AZURE_CLIENT_SECRET | -                  | -                  |
+| AZURE_TENANT_ID     | -                  | -                  |
+| AZURE_REDIRECT_URI  | -                  | -                  |
+
+The JWT and session secret keys can be generated using `openssl rand -hex 32`. The Azure keys and Neo4j credentials should be requested from [Joe Smith](mailto:joe.smith@zifornd.com).
 
 More information on Azure configuration can be found in the [Authentication](docs/Authentication.md) documentation.
 
 ## Running the application
 
-Once the variables are configured, using docker to launch the application:
+Once the variables are configured, using docker compose to launch the application:
 
 ```
 docker-compose up -d --build

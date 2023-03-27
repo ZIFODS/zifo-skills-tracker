@@ -4,9 +4,9 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.poetry]
 name = "zifo-skills-tracker"
-version = "0.0.1"
+version = "0.0.2"
 description = ""
-authors = [ "Zifo Developer <unknown@zifornd.com>",]
+authors = [ "Joseph Smith <joe.smith@zifornd.com>",]
 license = "MIT"
 readme = "README.md"
 
@@ -28,6 +28,7 @@ requests = "*"
 pandas = "*"
 boto3 = "*"
 s3fs = "*"
+dvc = { version = "*", extras = ["s3"] }
 
 [tool.poetry.dev-dependencies]
 pytest = "*"
