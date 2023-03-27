@@ -73,18 +73,15 @@ export function SkillCategoryEdit({
 
   // When save button is clicked, create/delete skills in DB
   const handleSave = () => {
-    addedSkills.forEach((skillName) => {
-      const skill = allSkills.find((skill) => skill.name === skillName);
-      if (skill) {
-        createSkillMutation.mutateAsync(skill);
-      }
-    });
-    removedSkills.forEach((skillName) => {
-      const skill = allSkills.find((skill) => skill.name === skillName);
-      if (skill) {
-        deleteSkillMutation.mutateAsync(skill);
-      }
-    });
+    if (addedSkills.length) {
+      const skillsToAdd = allSkills.filter((skill) =>
+        addedSkills.includes(skill.name)
+      );
+      createSkillMutation.mutateAsync(skillsToAdd);
+    }
+    if (removedSkills.length) {
+      deleteSkillMutation.mutateAsync(removedSkills);
+    }
   };
 
   // When create/delete skill mutation is successful, clear added/removed skills state
