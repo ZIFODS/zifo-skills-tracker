@@ -29,7 +29,7 @@ services:
       dockerfile: ./docker/api/Dockerfile.dev
     container_name: zifo-skills-api
     environment:
-      - SKILLS_ENV=test
+      - SKILLS_ENV=dev
     volumes:
       - ./.env.dev:/home/skills-user/.env.dev
     depends_on:
