@@ -29,7 +29,7 @@ const sortCategoryMap = (categoryMap: CategoryMap) => {
     }, {} as typeof categoryMap);
 };
 
-export const Dashboard = () => {
+export const Update = () => {
   const [categoryEdit, setCategoryEdit] = React.useState<string | null>(null);
 
   const allSkills = useGetSkills({ keys: [categoryEdit] }).data?.items || [];
