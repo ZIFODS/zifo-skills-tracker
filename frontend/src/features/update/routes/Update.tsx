@@ -55,7 +55,7 @@ export const Update = () => {
       <Grid container justifyContent="space-around">
         <Grid item xs={6}>
           <Box sx={{ height: "83vh", overflow: "scroll", py: 1 }}>
-            <Grid container columnSpacing={6} rowSpacing={6}>
+            <Grid container columnSpacing={6} rowSpacing={6} sx={{ px: 1 }}>
               {Object.keys(orderedCategoryMap).map((category) => {
                 return (
                   <Grid item xs={6}>
