@@ -8,13 +8,13 @@ services:
   python-api:
     image: zifo-skills-api
     build:
-      context: .
+      context: ..
       dockerfile: ./docker/api/Dockerfile
     container_name: zifo-skills-api
     environment:
       - SKILLS_ENV=demo
     volumes:
-      - ./.env.demo:/home/skills-user/.env.demo
+      - ../.env.demo:/home/skills-user/.env.demo
     depends_on:
       mongodb:
         condition: service_healthy

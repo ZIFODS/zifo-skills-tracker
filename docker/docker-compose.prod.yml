@@ -13,13 +13,13 @@ services:
   python-api:
     image: zifo-skills-api
     build:
-      context: .
+      context: ..
       dockerfile: ./docker/api/Dockerfile
     container_name: zifo-skills-api
     environment:
       - SKILLS_ENV=production
     volumes:
-      - ./.env.prod:/home/skills-user/.env.prod
+      - ../.env.prod:/home/skills-user/.env.prod
     depends_on:
       mongodb:
         condition: service_healthy
@@ -33,7 +33,7 @@ services:
   react-frontend:
     image: zifo-skills-frontend
     build:
-      context: .
+      context: ..
       dockerfile: ./docker/frontend/Dockerfile
     container_name: zifo-skills-frontend
     network_mode: host
