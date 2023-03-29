@@ -1,5 +1,4 @@
 import * as React from "react";
-import MenuIcon from "@mui/icons-material/Menu";
 import {
   AppBar,
   Box,
@@ -15,6 +14,7 @@ import {
 } from "@mui/material";
 import { useAuth } from "../../lib/auth";
 import { useNavigate } from "react-router";
+import zifoLogoImage from "../../assets/zifo-logo.png";
 
 function ResponsiveAppBar() {
   const navigate = useNavigate();
@@ -82,8 +82,8 @@ function ResponsiveAppBar() {
       <Toolbar disableGutters sx={{ mx: 8 }}>
         <Box
           component="img"
-          sx={{ width: 50, height: 20, mr: 4 }}
-          src={require("../../assets/zifo-logo.png")}
+          sx={{ width: 50, height: 23, mr: 4 }}
+          src={zifoLogoImage}
         />
         <Typography
           variant="h6"

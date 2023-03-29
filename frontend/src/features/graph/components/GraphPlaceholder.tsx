@@ -1,5 +1,6 @@
 import React from "react";
 import { Stack, Typography, CircularProgress } from "@mui/material";
+import zifoLogoImage from "../../../assets/zifo-logo.png";
 
 interface GraphPlaceholderProps {
   graphSearched: boolean;
@@ -18,11 +19,7 @@ export default function GraphPlaceholder({
       <Typography variant="h4" align="center" sx={{ color: "#808080", px: 10 }}>
         Perform a search to visualise Consultants and their skills
       </Typography>
-      <img
-        src={require("../../../assets/zifo-logo.png")}
-        width="150"
-        height="75"
-      />
+      <img src={zifoLogoImage} width="150" height="75" />
     </Stack>
   ) : !graphFilled ? (
     <Stack spacing={5}>
