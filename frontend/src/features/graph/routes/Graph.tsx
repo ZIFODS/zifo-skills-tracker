@@ -10,6 +10,7 @@ import { SkillSearchElement } from "../types";
 import { GetGraphQuery, useGetGraph } from "../api/getGraph";
 import { getUniqueCategories } from "../../../utils/skillCategories";
 import { useGetAllCategories } from "../api/getAllCategories";
+import Loading from "../../../components/Loading/Loading";
 
 export default function Graph() {
   const [skillSearch, setSkillSearch] = React.useState<SkillSearchElement[]>(
@@ -53,15 +54,22 @@ export default function Graph() {
   const [graphSearched, setGraphSearched] = React.useState(false);
   const [graphFilled, setGraphFilled] = React.useState(false);
 
-  const graphData = useGetGraph(graphQuery, setSearchedGraphData);
-
-  const allCategories = useGetAllCategories().data;
+  const graphData = useGetGraph(
+    graphQuery,
+    setGraphSearched,
+    setGraphFilled,
+    setSearchedGraphData,
+    setSearchedCategories,
+    setFilteredCategories,
+    setFilteredConsultants
+  );
 
   React.useEffect(() => {
     if (skillApplyClicked && skillSearch.length > 0) {
       setGraphQuery({
         skills: skillSearch,
       });
+      setAppliedSkillSearch(skillSearch);
       setSkillApplyClicked(false);
     }
   }, [skillApplyClicked]);
@@ -74,57 +82,6 @@ export default function Graph() {
       setConsultantApplyClicked(false);
     }
   }, [consultantApplyClicked]);
-
-  React.useEffect(() => {
-    if (graphQuery !== null) {
-      if (graphQuery.consultant !== undefined) {
-        if (graphQuery.skills !== undefined) {
-          setAppliedSkillSearch(skillSearch);
-        }
-      }
-      setGraphSearched(true);
-    }
-  }, [graphQuery]);
-
-  React.useEffect(() => {
-    if (searchedGraphData.nodes !== undefined && allCategories !== undefined) {
-      if (searchedGraphData.nodes.length > 0) {
-        setGraphFilled(true);
-      } else {
-        setGraphFilled(false);
-      }
-      setSearchedCategories(
-        getUniqueCategories(
-          searchedGraphData.nodes.filter((node: any) => node.type == "Skill")
-        )
-      );
-      setHiddenCategories(
-        allCategories.items.filter(
-          (category: string) =>
-            !getUniqueCategories(
-              searchedGraphData.nodes.filter(
-                (node: any) => node.type == "Skill"
-              )
-            ).includes(category)
-        )
-      );
-    }
-  }, [searchedGraphData]);
-
-  React.useEffect(() => {
-    if (graphData.data) {
-      setFilteredCategories(
-        searchedCategories.filter(
-          (category: string) => !hiddenCategories.includes(category)
-        )
-      );
-      setFilteredConsultants(
-        graphData.data.nodes
-          .filter((node: any) => node.type == "Consultant")
-          .map((node: any) => node.name)
-      );
-    }
-  }, [graphData.data]);
 
   React.useEffect(() => {
     if (graphQuery?.consultant !== undefined) {
@@ -178,6 +135,8 @@ export default function Graph() {
       >
         {userGuideOpen ? (
           <UserGuide setUserGuideOpen={setUserGuideOpen} />
+        ) : graphData.isFetching ? (
+          <Loading />
         ) : graphSearched && graphFilled ? (
           <GraphVis
             graphData={graphData.data}
