@@ -2,6 +2,7 @@ import * as React from "react";
 import { UserResponse } from "../features/auth";
 import { loginEndpoint, getUser, logout } from "../features/auth";
 import { initReactQueryAuth } from "react-query-auth";
+import Loading from "../components/Loading/Loading";
 
 async function loadUser() {
   const user = await getUser().catch(() => null);
@@ -27,11 +28,7 @@ const authConfig = {
   registerFn,
   logoutFn,
   LoaderComponent() {
-    return (
-      <div className="w-screen h-screen flex justify-center items-center">
-        Loading...
-      </div>
-    );
+    return <Loading />;
   },
 };
 
