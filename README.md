@@ -20,9 +20,9 @@ The data required to launch this application is stored in an S3 bucket, which yo
 
 There are 3 environments that can be launched using this application:
 
-- [`prod`](./docker-compose.prod.yml) - The production environment
-- [`demo`](./docker-compose.demo.yml) - The demo environment
-- [`dev`](./docker-compose.dev.yml) - The development environment
+- [`prod`](./docker/docker-compose.prod.yml) - The production environment
+- [`demo`](./docker/docker-compose.demo.yml) - The demo environment
+- [`dev`](./docker/docker-compose.dev.yml) - The development environment
 
 You will need to configure environment variables by adding them to the corresponding `.env` file in the root directory with the following info:
 
@@ -47,5 +47,5 @@ More information on Azure configuration can be found in the [Authentication](doc
 Once the variables are configured, using docker compose to launch the application:
 
 ```
-docker-compose up -d --build
+docker compose -f docker/docker-compose.dev.yml up -d --build
 ```
