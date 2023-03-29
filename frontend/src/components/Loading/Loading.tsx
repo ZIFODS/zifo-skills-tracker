@@ -1,10 +1,8 @@
-import { Stack, Box, CircularProgress } from "@mui/material";
-import zifoLogoImage from "../../assets/zifo-logo.png";
+import { Box, CircularProgress } from "@mui/material";
 
 export default function Loading() {
   return (
-    <Stack
-      spacing={8}
+    <Box
       sx={{
         display: "flex",
         justifyContent: "center",
@@ -13,11 +11,6 @@ export default function Loading() {
       }}
     >
       <CircularProgress size={80} />
-      <Box
-        component="img"
-        sx={{ width: 150, height: 75 }}
-        src={zifoLogoImage}
-      />
-    </Stack>
+    </Box>
   );
 }
