@@ -1,14 +1,12 @@
-import { useNavigate } from "react-router-dom";
-
-import { Layout } from "../components/Layout";
-import { LoginBox } from "../components/LoginBox";
+import * as React from "react";
+import { useAuth } from "../../../lib/auth";
 
 export const Login = () => {
-  const navigate = useNavigate();
+  const { login } = useAuth();
 
-  return (
-    <Layout>
-      <LoginBox onSuccess={() => navigate("/")} />
-    </Layout>
-  );
+  React.useEffect(() => {
+    login(null);
+  }, []);
+
+  return <></>;
 };
