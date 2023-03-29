@@ -2,6 +2,19 @@ import React from "react";
 import { Paper, Typography, Box, Stack, IconButton } from "@mui/material";
 import PersonSearchIcon from "@mui/icons-material/PersonSearch";
 import ClearIcon from "@mui/icons-material/Clear";
+import searchBarImage from "../../../assets/search-bar.png";
+import andOrToggleAndSelectedImage from "../../../assets/and-or-toggle-and-selected.png";
+import andOrToggleOrSelectedImage from "../../../assets/and-or-toggle-or-selected.png";
+import bracketedQueryImage from "../../../assets/bracketed-query.png";
+import bracketToggleOpenSelectedImage from "../../../assets/bracket-toggle-open-selected.png";
+import bracketToggleClosedSelectedImage from "../../../assets/bracket-toggle-closed-selected.png";
+import clearApplyImage from "../../../assets/clear-apply.png";
+import skillImage from "../../../assets/skill.png";
+import consultantSearchImage from "../../../assets/consultants-search.png";
+import categoriesImage from "../../../assets/categories.png";
+import consultantSectionImage from "../../../assets/consultants-section.png";
+import nodeHoverImage from "../../../assets/node-hover.png";
+import consultantHoverImage from "../../../assets/consultants-hover.png";
 
 interface UserGuideProps {
   setUserGuideOpen: React.Dispatch<React.SetStateAction<boolean>>;
@@ -58,11 +71,7 @@ export default function UserGuide({ setUserGuideOpen }: UserGuideProps) {
               <BoldInLineText text="+" /> to add it to the search query.
             </Typography>
             <Box>
-              <img
-                src={require("../../../assets/search-bar.png")}
-                width="300"
-                height="100%"
-              />
+              <img src={searchBarImage} width="300" height="100%" />
             </Box>
           </Stack>
           <Stack spacing={1}>
@@ -82,15 +91,11 @@ export default function UserGuide({ setUserGuideOpen }: UserGuideProps) {
             </Typography>
             <Stack direction="row" spacing={3}>
               <img
-                src={require("../../../assets/and-or-toggle-and-selected.png")}
+                src={andOrToggleAndSelectedImage}
                 width="100"
                 height="100%"
               />
-              <img
-                src={require("../../../assets/and-or-toggle-or-selected.png")}
-                width="100"
-                height="100%"
-              />
+              <img src={andOrToggleOrSelectedImage} width="100" height="100%" />
             </Stack>
           </Stack>
           <Stack spacing={1}>
@@ -102,11 +107,7 @@ export default function UserGuide({ setUserGuideOpen }: UserGuideProps) {
               For example, you might want to find a Consultant that knows either
               Python or R Studio but also knows either French or German.
             </Typography>
-            <img
-              src={require("../../../assets/bracketed-query.png")}
-              width="300"
-              height="100%"
-            />
+            <img src={bracketedQueryImage} width="300" height="100%" />
           </Stack>
           <Stack spacing={1}>
             <Typography>
@@ -125,12 +126,12 @@ export default function UserGuide({ setUserGuideOpen }: UserGuideProps) {
             </Typography>
             <Stack direction="row" spacing={3}>
               <img
-                src={require("../../../assets/bracket-toggle-open-selected.png")}
+                src={bracketToggleOpenSelectedImage}
                 width="70"
                 height="100%"
               />
               <img
-                src={require("../../../assets/bracket-toggle-closed-selected.png")}
+                src={bracketToggleClosedSelectedImage}
                 width="70"
                 height="100%"
               />
@@ -151,16 +152,8 @@ export default function UserGuide({ setUserGuideOpen }: UserGuideProps) {
               the <BoldInLineText text="x" /> button on the skill itself.
             </Typography>
             <Stack direction="row" alignItems="center" spacing={3}>
-              <img
-                src={require("../../../assets/clear-apply.png")}
-                width="300"
-                height="100%"
-              />
-              <img
-                src={require("../../../assets/skill.png")}
-                width="300"
-                height="100%"
-              />
+              <img src={clearApplyImage} width="300" height="100%" />
+              <img src={skillImage} width="300" height="100%" />
             </Stack>
           </Stack>
           <Typography>
@@ -175,11 +168,7 @@ export default function UserGuide({ setUserGuideOpen }: UserGuideProps) {
               <BoldInLineText text="Consultants" /> section and click{" "}
               <PersonSearchIcon />
             </Typography>
-            <img
-              src={require("../../../assets/consultants-search.png")}
-              width="210"
-              height="100%"
-            />
+            <img src={consultantSearchImage} width="210" height="100%" />
           </Stack>
           <Stack spacing={1}>
             <Typography>
@@ -189,11 +178,7 @@ export default function UserGuide({ setUserGuideOpen }: UserGuideProps) {
               <BoldInLineText text="SHOW ALL" /> or{" "}
               <BoldInLineText text="HIDE ALL" /> buttons.
             </Typography>
-            <img
-              src={require("../../../assets/categories.png")}
-              width="300"
-              height="100%"
-            />
+            <img src={categoriesImage} width="300" height="100%" />
           </Stack>
           <Stack spacing={1}>
             <Typography>
@@ -201,11 +186,7 @@ export default function UserGuide({ setUserGuideOpen }: UserGuideProps) {
               applied search will have their full names displayed in the{" "}
               <BoldInLineText text="Consultants" /> section.
             </Typography>
-            <img
-              src={require("../../../assets/consultants-section.png")}
-              width="200"
-              height="100%"
-            />
+            <img src={consultantSectionImage} width="200" height="100%" />
           </Stack>
           <Stack spacing={1}>
             <Typography>
@@ -215,17 +196,9 @@ export default function UserGuide({ setUserGuideOpen }: UserGuideProps) {
             </Typography>
             <Stack direction="row" spacing={3}>
               <Box sx={{ border: "1px solid black", width: 200, height: 260 }}>
-                <img
-                  src={require("../../../assets/node-hover.png")}
-                  width="200"
-                  height="260"
-                />
+                <img src={nodeHoverImage} width="200" height="260" />
               </Box>
-              <img
-                src={require("../../../assets/consultants-hover.png")}
-                width="140"
-                height="300"
-              />
+              <img src={consultantHoverImage} width="140" height="300" />
               <Box sx={{ flexGrow: 1 }} />
             </Stack>
           </Stack>

@@ -12,6 +12,7 @@ import {
   nodeColor,
 } from "../utils/graph";
 import { getUniqueCategories } from "../../../utils/skillCategories";
+import zifoLogoImage from "../../../assets/zifo-logo.png";
 
 interface GraphVisProps {
   graphData: any;
@@ -57,7 +58,7 @@ export default function GraphVis({
       // Add Zifo logo at bottom right of screen
       svg
         .append("svg:image")
-        .attr("xlink:href", require("../../../assets/zifo-logo.png"))
+        .attr("xlink:href", zifoLogoImage)
         .attr("x", svgWidth - imgWidth - imgMargin)
         .attr("y", svgHeight - imgHeight - imgMargin)
         .attr("width", imgWidth)
