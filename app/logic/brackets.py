@@ -81,6 +81,9 @@ class OrStatusProcesser:
     def _end(self):
         return OrStatus(True, False, True)
 
+    def _start_end(self):
+        return OrStatus(True, True, True)
+
     def process(self, i: int, rules: list[Rule]) -> OrStatus:
         """
         Determine if current index is within, first element of, or last element of OR sequence.
@@ -122,6 +125,10 @@ class OrStatusProcesser:
                 # If neither the current nor next operators are OR then not part of OR sequence
                 if current_operator != "OR" and next_operator != "OR":
                     return self._not()
+
+                # if skill between two parentheses then it's start and end of OR sequence
+                if previous_parenthesis == "]" and next_parenthesis == "[":
+                    return self._start_end()
 
                 # If next operator is OR and it's end of bracket - if previous was OR then end of sequence
                 # Otherwise not OR
@@ -166,6 +173,11 @@ class OrStatusProcesser:
 
             # If it's the final skill, current operator is OR and not start of bracket then it's end of OR sequence
             elif current_operator == "OR":
+                previous_parenthesis = rules[i - 1].parenthesis
+
+                if previous_parenthesis == "]":
+                    return self._start_end()
+
                 if current_parenthesis != "[":
                     return self._end()
 
