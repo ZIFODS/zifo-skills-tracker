@@ -164,7 +164,7 @@ async def create_user_skill(
     result = conn.query(query, email=email, skills=skills)
     conn.close()
 
-    if not result:
+    if not result[0][0]:
         raise HTTPException(
             status_code=404, detail="Skill not found and could not be linked to user"
         )
