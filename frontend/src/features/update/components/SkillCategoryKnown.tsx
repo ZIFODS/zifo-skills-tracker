@@ -34,7 +34,7 @@ export function SkillCategoryKnown({
     <Paper
       elevation={4}
       sx={{
-        backgroundColor: "#c6c6c6",
+        backgroundColor: "#e5e5e5",
         opacity: isFetching ? 0.5 : 1,
         // height: "100%"
       }}

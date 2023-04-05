@@ -4,17 +4,12 @@ import { MainLayout } from "../components/Layout";
 import { Navigate } from "react-router-dom";
 import { UpdateRoutes } from "../features/update";
 import { GraphRoutes } from "../features/graph";
+import Loading from "../components/Loading/Loading";
 
 const App = () => {
   return (
     <MainLayout>
-      <Suspense
-        fallback={
-          <div className="h-full w-full flex items-center justify-center">
-            Loading...
-          </div>
-        }
-      >
+      <Suspense fallback={<Loading />}>
         <Outlet />
       </Suspense>
     </MainLayout>

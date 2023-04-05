@@ -102,6 +102,7 @@ class AzureAuthProvider:
             scopes=["User.Read"],
             state=state_csrf_token,
             redirect_uri=config.AZURE_REDIRECT_URI,
+            prompt="select_account",
         )
 
         return request_uri, state_csrf_token
