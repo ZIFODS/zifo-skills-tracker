@@ -1,0 +1,21 @@
+class Skills:
+    DATA_MANAGEMENT_SKILLS = {
+        "items": [{"name": "Business Intelligence Reporting", "category": "Data_Management", "type": "Skill"},
+            {"name": "CDISC Study Data Tabulation Model", "category": "Data_Management", "type": "Skill"},
+            {"name": "Data Analysis/Modelling", "category": "Data_Management", "type": "Skill"},
+            {"name": "Data Extraction & Wrangling", "category": "Data_Management", "type": "Skill"},
+            {"name": "Data Governance", "category": "Data_Management", "type": "Skill"},
+            {"name": "Data Integration", "category": "Data_Management", "type": "Skill"},
+            {"name": "Data Migration", "category": "Data_Management", "type": "Skill"},
+            {"name": "Data Pipelines", "category": "Data_Management", "type": "Skill"},
+            {"name": "Data Visualisation", "category": "Data_Management", "type": "Skill"},
+            {"name": "Design Patterns", "category": "Data_Management", "type": "Skill"},
+            {"name": "ETL & ELT Processing", "category": "Data_Management", "type": "Skill"},
+            {"name": "FAIR Data Principles", "category": "Data_Management", "type": "Skill"},
+            {"name": "Knowledge Graphs", "category": "Data_Management", "type": "Skill"},
+            {"name": "ML Ops", "category": "Data_Management", "type": "Skill"},
+            {"name": "Ontology Development & Management", "category": "Data_Management", "type": "Skill"},
+            {"name": "SCADA", "category": "Data_Management", "type": "Skill"},
+            {"name": "Schema Design", "category": "Data_Management", "type": "Skill"},
+            {"name": "Semantic Models & Enrichment", "category": "Data_Management", "type": "Skill"},
+            {"name": "Taxonomy Development & Management", "category": "Data_Management", "type": "Skill"}]}
