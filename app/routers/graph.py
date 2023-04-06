@@ -111,7 +111,6 @@ def process_skills_query(
             break
 
     for i, rule in enumerate(rules):
-
         skill_filter = " (c)-[:KNOWS]->(:Skill {name: '" + rule.name + "'})"
 
         if i == 0:
@@ -128,7 +127,7 @@ def process_skills_query(
 
         query += skill_filter
 
-        if rule.parenthesis == "]" or brackets_open:
+        if rule.parenthesis == "]" or (i == len(rules) - 1 and brackets_open):
             query += ")"
 
     # compile final results
@@ -137,7 +136,7 @@ def process_skills_query(
         query += compile_results_with_nodes()
 
     else:
-        query += " MATCH p=(c)-[:KNOWS]-(s: Skill)"
+        query += " MATCH p=(c)-[:KNOWS]-(:Skill)"
         # remove any hidden categories
         if hidden_categories:
             query += remove_skill_nodes_with_hidden_categories(hidden_categories)
