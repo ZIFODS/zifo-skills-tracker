@@ -5,7 +5,7 @@ if ! [ -x "$(command -v docker compose)" ]; then
   exit 1
 fi
 
-domains=(skills.zifo-tech.com:3000)
+domains=(skills.zifo-tech.com)
 rsa_key_size=4096
 data_path="./docker/data/certbot"
 email="" # Adding a valid address is strongly recommended
