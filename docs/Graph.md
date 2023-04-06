@@ -82,14 +82,14 @@ WHERE (c)-[:KNOWS]->(:Skill {name: "Java"})
 For the second rule, we need to get all Consultants that also know `Python`. Given the bracket definitions, we need to get all Consultants that know `Java` and `Python` before we combine that result with the Consultants that know `C++` for the third rule. To do this, we simply add the bracket to the Cypher query:
 
 ```
-MATCH (c:Consultant)-[:KNOWS]->(sa) WHERE sa.name = "Java"
+MATCH (c:Consultant)-[:KNOWS]->(:Skill)
 WHERE ( (c)-[:KNOWS]->(:Skill {name: "Java"}) AND (c)-[:KNOWS]->(:Skill {name: "Python"}) )
 ```
 
 We then simply add the third rule using an `OR` statement:
 
 ```
-MATCH (c:Consultant)-[:KNOWS]->(sa) WHERE sa.name = "Java"
+MATCH (c:Consultant)-[:KNOWS]->(:Skill)
 WHERE ( (c)-[:KNOWS]->(:Skill {name: "Java"}) AND (c)-[:KNOWS]->(:Skill {name: "Python"}) )
 OR (c)-[:KNOWS]->(:Skill {name: "C++"})
 ```
@@ -104,14 +104,14 @@ The way we do this is dependent on whether skill categories have been defined to
 The final query for our example would look like this:
 
 ```
-MATCH (c:Consultant)-[:KNOWS]->(sa) WHERE sa.name = "Java"
+MATCH (c:Consultant)-[:KNOWS]->(:Skill)
 WHERE ( (c)-[:KNOWS]->(:Skill {name: "Java"}) AND (c)-[:KNOWS]->(:Skill {name: "Python"}) )
 OR (c)-[:KNOWS]->(:Skill {name: "C++"})
-MATCH p=(c)-[:KNOWS]->(s:Skill)
-UNWIND nodes(pg) as ng UNWIND relationships(pg) as rg 
-with collect( distinct {id: ID(ng), name: ng.name, type: labels(ng)[0], email: ng.email, category: ng.category}) as nzz, 
-collect( distinct {id: ID(rg), source: ID(startnode(rg)), target: ID(endnode(rg))}) as rzz 
-RETURN {nodes: nzz, links: rzz}
+MATCH p=(c)-[:KNOWS]->(:Skill)
+UNWIND nodes(p) as n UNWIND relationships(p) as r 
+with collect( distinct {id: ID(n), name: n.name, type: labels(n)[0], email: n.email, category: n.category}) as nz, 
+collect( distinct {id: ID(r), source: ID(startnode(r)), taret: ID(endnode(r))}) as rz 
+RETURN {nodes: nz, links: rz}
 ```
 
 The return value will look something like this:
@@ -151,10 +151,10 @@ If specific skill categories, but not all, have been selected to be hidden, we u
 ...
 MATCH p=(c)-[:KNOWS]->(s:Skill)
 WHERE NOT s.category IN ["Programming_Languages", "Data_Management"]
-UNWIND nodes(pg) as ng UNWIND relationships(pg) as rg 
-with collect( distinct {id: ID(ng), name: ng.name, type: labels(ng)[0], email: ng.email, category: ng.category}) as nzz, 
-collect( distinct {id: ID(rg), source: ID(startnode(rg)), target: ID(endnode(rg))}) as rzz 
-RETURN {nodes: nzz, links: rzz}
+UNWIND nodes(p) as n UNWIND relationships(p) as r 
+with collect( distinct {id: ID(n), name: n.name, type: labels(n)[0], email: n.email, category: n.category}) as nz, 
+collect( distinct {id: ID(r), source: ID(startnode(r)), taret: ID(endnode(r))}) as rz 
+RETURN {nodes: nz, links: rz}
 ```
 
 If all skill categories have been selected to be hidden from the final results, we simply take the filtered Consultant nodes and return them, without defining that they should have any relationships: 
@@ -162,9 +162,9 @@ If all skill categories have been selected to be hidden from the final results, 
 ```
 ...
 MATCH p=(c)
-UNWIND nodes(pg) as ng
-with collect( distinct {id: ID(ng), name: ng.name, type: labels(ng)[0], email: ng.email, category: ng.category}) as nzz
-RETURN {nodes: nzz, links: []}
+UNWIND nodes(p) as n
+with collect( distinct {id: ID(n), name: n.name, type: labels(n)[0], email: n.email, category: n.category}) as nz
+RETURN {nodes: nz, links: []}
 ```
 
 ## Query scenarios
@@ -184,13 +184,13 @@ Some other rule list scenarios and their associated Cypher queries are shown bel
 ```
 
 ```
-MATCH (c:Consultant)-[:KNOWS]->(sa) WHERE sa.name = "Java"
+MATCH (c:Consultant)-[:KNOWS]->(:Skill)
 WHERE (c)-[:KNOWS]->(:Skill {name: "Java"})
-MATCH p=(c)-[:KNOWS]->(s:Skill)
-UNWIND nodes(pg) as ng UNWIND relationships(pg) as rg 
-with collect( distinct {id: ID(ng), name: ng.name, type: labels(ng)[0], email: ng.email, category: ng.category}) as nzz, 
-collect( distinct {id: ID(rg), source: ID(startnode(rg)), target: ID(endnode(rg))}) as rzz 
-RETURN {nodes: nzz, links: rzz}
+MATCH p=(c)-[:KNOWS]->(:Skill)
+UNWIND nodes(p) as n UNWIND relationships(p) as r 
+with collect( distinct {id: ID(n), name: n.name, type: labels(n)[0], email: n.email, category: n.category}) as nz, 
+collect( distinct {id: ID(r), source: ID(startnode(r)), taret: ID(endnode(r))}) as rz 
+RETURN {nodes: nz, links: rz}
 ```
 
 ### Scenario 2
@@ -211,13 +211,13 @@ RETURN {nodes: nzz, links: rzz}
 ```
 
 ```
-MATCH (c:Consultant)-[:KNOWS]->(sa) WHERE sa.name = "Java"
+MATCH (c:Consultant)-[:KNOWS]->(:Skill)
 WHERE (c)-[:KNOWS]->(:Skill {name: "Java"}) AND (c)-[:KNOWS]->(:Skill {name: "Python"})
-MATCH p=(c)-[:KNOWS]->(s:Skill)
-UNWIND nodes(pg) as ng UNWIND relationships(pg) as rg 
-with collect( distinct {id: ID(ng), name: ng.name, type: labels(ng)[0], email: ng.email, category: ng.category}) as nzz, 
-collect( distinct {id: ID(rg), source: ID(startnode(rg)), target: ID(endnode(rg))}) as rzz 
-RETURN {nodes: nzz, links: rzz}
+MATCH p=(c)-[:KNOWS]->(:Skill)
+UNWIND nodes(p) as n UNWIND relationships(p) as r 
+with collect( distinct {id: ID(n), name: n.name, type: labels(n)[0], email: n.email, category: n.category}) as nz, 
+collect( distinct {id: ID(r), source: ID(startnode(r)), taret: ID(endnode(r))}) as rz 
+RETURN {nodes: nz, links: rz}
 ```
 
 ### Scenario 3
@@ -243,13 +243,13 @@ RETURN {nodes: nzz, links: rzz}
 ```
 
 ```
-MATCH (c:Consultant)-[:KNOWS]->(sa) WHERE sa.name = "Java"
+MATCH (c:Consultant)-[:KNOWS]->(:Skill)
 WHERE (c)-[:KNOWS]->(:Skill {name: "Java"}) OR (c)-[:KNOWS]->(:Skill {name: "Python"}) OR (c)-[:KNOWS]->(:Skill {name: "C++"})
-MATCH p=(c)-[:KNOWS]->(s:Skill)
-UNWIND nodes(pg) as ng UNWIND relationships(pg) as rg 
-with collect( distinct {id: ID(ng), name: ng.name, type: labels(ng)[0], email: ng.email, category: ng.category}) as nzz, 
-collect( distinct {id: ID(rg), source: ID(startnode(rg)), target: ID(endnode(rg))}) as rzz 
-RETURN {nodes: nzz, links: rzz}
+MATCH p=(c)-[:KNOWS]->(:Skill)
+UNWIND nodes(p) as n UNWIND relationships(p) as r 
+with collect( distinct {id: ID(n), name: n.name, type: labels(n)[0], email: n.email, category: n.category}) as nz, 
+collect( distinct {id: ID(r), source: ID(startnode(r)), taret: ID(endnode(r))}) as rz 
+RETURN {nodes: nz, links: rz}
 ```
 
 ### Scenario 4
@@ -275,13 +275,13 @@ RETURN {nodes: nzz, links: rzz}
 ```
 
 ```
-MATCH (c:Consultant)-[:KNOWS]->(sa) WHERE sa.name = "Java"
+MATCH (c:Consultant)-[:KNOWS]->(:Skill)
 WHERE (c)-[:KNOWS]->(:Skill {name: "Java"}) AND (c)-[:KNOWS]->(:Skill {name: "Python"}) OR (c)-[:KNOWS]->(:Skill {name: "C++"})
-MATCH p=(c)-[:KNOWS]->(s:Skill)
-UNWIND nodes(pg) as ng UNWIND relationships(pg) as rg 
-with collect( distinct {id: ID(ng), name: ng.name, type: labels(ng)[0], email: ng.email, category: ng.category}) as nzz, 
-collect( distinct {id: ID(rg), source: ID(startnode(rg)), target: ID(endnode(rg))}) as rzz 
-RETURN {nodes: nzz, links: rzz}
+MATCH p=(c)-[:KNOWS]->(:Skill)
+UNWIND nodes(p) as n UNWIND relationships(p) as r 
+with collect( distinct {id: ID(n), name: n.name, type: labels(n)[0], email: n.email, category: n.category}) as nz, 
+collect( distinct {id: ID(r), source: ID(startnode(r)), taret: ID(endnode(r))}) as rz 
+RETURN {nodes: nz, links: rz}
 ```
 
 ### Scenario 5
@@ -307,14 +307,14 @@ RETURN {nodes: nzz, links: rzz}
 ```
 
 ```
-MATCH (c:Consultant)-[:KNOWS]->(sa) WHERE sa.name = "Java"
+MATCH (c:Consultant)-[:KNOWS]->(:Skill)
 WHERE ( (c)-[:KNOWS]->(:Skill {name: "Java"}) AND (c)-[:KNOWS]->(:Skill {name: "Python"}) ) 
 OR (c)-[:KNOWS]->(:Skill {name: "C++"})
-MATCH p=(c)-[:KNOWS]->(s:Skill)
-UNWIND nodes(pg) as ng UNWIND relationships(pg) as rg 
-with collect( distinct {id: ID(ng), name: ng.name, type: labels(ng)[0], email: ng.email, category: ng.category}) as nzz, 
-collect( distinct {id: ID(rg), source: ID(startnode(rg)), target: ID(endnode(rg))}) as rzz 
-RETURN {nodes: nzz, links: rzz}
+MATCH p=(c)-[:KNOWS]->(:Skill)
+UNWIND nodes(p) as n UNWIND relationships(p) as r 
+with collect( distinct {id: ID(n), name: n.name, type: labels(n)[0], email: n.email, category: n.category}) as nz, 
+collect( distinct {id: ID(r), source: ID(startnode(r)), taret: ID(endnode(r))}) as rz 
+RETURN {nodes: nz, links: rz}
 ```
 
 ### Scenario 6
@@ -340,14 +340,14 @@ RETURN {nodes: nzz, links: rzz}
 ```
 
 ```
-MATCH (c:Consultant)-[:KNOWS]->(sa) WHERE sa.name = "Java"
+MATCH (c:Consultant)-[:KNOWS]->(:Skill)
 WHERE (c)-[:KNOWS]->(:Skill {name: "Java"})
 AND ( (c)-[:KNOWS]->(:Skill {name: "Python"}) OR (c)-[:KNOWS]->(:Skill {name: "C++"}) )
-MATCH p=(c)-[:KNOWS]->(s:Skill)
-UNWIND nodes(pg) as ng UNWIND relationships(pg) as rg 
-with collect( distinct {id: ID(ng), name: ng.name, type: labels(ng)[0], email: ng.email, category: ng.category}) as nzz, 
-collect( distinct {id: ID(rg), source: ID(startnode(rg)), target: ID(endnode(rg))}) as rzz 
-RETURN {nodes: nzz, links: rzz}
+MATCH p=(c)-[:KNOWS]->(:Skill)
+UNWIND nodes(p) as n UNWIND relationships(p) as r 
+with collect( distinct {id: ID(n), name: n.name, type: labels(n)[0], email: n.email, category: n.category}) as nz, 
+collect( distinct {id: ID(r), source: ID(startnode(r)), taret: ID(endnode(r))}) as rz 
+RETURN {nodes: nz, links: rz}
 ```
 
 ### Scenario 7
@@ -378,17 +378,17 @@ RETURN {nodes: nzz, links: rzz}
 ```
 
 ```
-MATCH (c:Consultant)-[:KNOWS]->(sa) WHERE sa.name = "Java"
+MATCH (c:Consultant)-[:KNOWS]->(:Skill)
 WHERE (c)-[:KNOWS]->(:Skill {name: "Java"})
 AND ( (c)-[:KNOWS]->(:Skill {name: "Python"}) OR (c)-[:KNOWS]->(:Skill {name: "C++"}) AND (c)-[:KNOWS]->(:Skill {name: "SQL"}) )
-MATCH p=(c)-[:KNOWS]->(s:Skill)
-UNWIND nodes(pg) as ng UNWIND relationships(pg) as rg 
-with collect( distinct {id: ID(ng), name: ng.name, type: labels(ng)[0], email: ng.email, category: ng.category}) as nzz, 
-collect( distinct {id: ID(rg), source: ID(startnode(rg)), target: ID(endnode(rg))}) as rzz 
-RETURN {nodes: nzz, links: rzz}
+MATCH p=(c)-[:KNOWS]->(:Skill)
+UNWIND nodes(p) as n UNWIND relationships(p) as r 
+with collect( distinct {id: ID(n), name: n.name, type: labels(n)[0], email: n.email, category: n.category}) as nz, 
+collect( distinct {id: ID(r), source: ID(startnode(r)), taret: ID(endnode(r))}) as rz 
+RETURN {nodes: nz, links: rz}
 ```
 
-### Scenario 9
+### Scenario 8
 
 ```
 [
@@ -421,13 +421,13 @@ RETURN {nodes: nzz, links: rzz}
 ```
 
 ```
-MATCH (c:Consultant)-[:KNOWS]->(sa) WHERE sa.name = "Java"
+MATCH (c:Consultant)-[:KNOWS]->(:Skill)
 WHERE (c)-[:KNOWS]->(:Skill {name: "Java"})
 OR ( (c)-[:KNOWS]->(:Skill {name: "Python"}) AND (c)-[:KNOWS]->(:Skill {name: "C++"}) )
 OR ( (c)-[:KNOWS]->(:Skill {name: "SQL"}) AND (c)-[:KNOWS]->(:Skill {name: "JavaScript"}) )
-MATCH p=(c)-[:KNOWS]->(s:Skill)
-UNWIND nodes(pg) as ng UNWIND relationships(pg) as rg 
-with collect( distinct {id: ID(ng), name: ng.name, type: labels(ng)[0], email: ng.email, category: ng.category}) as nzz, 
-collect( distinct {id: ID(rg), source: ID(startnode(rg)), target: ID(endnode(rg))}) as rzz 
-RETURN {nodes: nzz, links: rzz}
+MATCH p=(c)-[:KNOWS]->(:Skill)
+UNWIND nodes(p) as n UNWIND relationships(p) as r 
+with collect( distinct {id: ID(n), name: n.name, type: labels(n)[0], email: n.email, category: n.category}) as nz, 
+collect( distinct {id: ID(r), source: ID(startnode(r)), taret: ID(endnode(r))}) as rz 
+RETURN {nodes: nz, links: rz}
 ```
