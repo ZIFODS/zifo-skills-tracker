@@ -136,7 +136,7 @@ def process_skills_query(
         query += compile_results_with_nodes()
 
     else:
-        query += " MATCH p=(c)-[:KNOWS]-(:Skill)"
+        query += " MATCH p=(c)-[:KNOWS]-(s:Skill)"
         # remove any hidden categories
         if hidden_categories:
             query += remove_skill_nodes_with_hidden_categories(hidden_categories)
