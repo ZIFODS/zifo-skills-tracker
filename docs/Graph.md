@@ -203,7 +203,7 @@ RETURN {nodes: nz, links: rz}
         parenthesis: ""
     },
     {
-        name: "Python",
+        name: "ELOG",
         operator: "AND",
         parenthesis: ""
     }
@@ -212,7 +212,7 @@ RETURN {nodes: nz, links: rz}
 
 ```
 MATCH (c:Consultant)-[:KNOWS]->(:Skill)
-WHERE (c)-[:KNOWS]->(:Skill {name: "Java"}) AND (c)-[:KNOWS]->(:Skill {name: "Python"})
+WHERE (c)-[:KNOWS]->(:Skill {name: "Java"}) AND (c)-[:KNOWS]->(:Skill {name: "ELOG"})
 MATCH p=(c)-[:KNOWS]->(:Skill)
 UNWIND nodes(p) as n UNWIND relationships(p) as r 
 with collect( distinct {id: ID(n), name: n.name, type: labels(n)[0], email: n.email, category: n.category}) as nz, 
@@ -318,6 +318,7 @@ RETURN {nodes: nz, links: rz}
 ```
 
 ### Scenario 6
+Note: Closing parenthesis can be omitted in the UI and JSON, it is automatically added after the last item in the cypher query.
 
 ```
 [
@@ -327,14 +328,14 @@ RETURN {nodes: nz, links: rz}
         parenthesis: ""
     },
     {
-        name: "Python",
+        name: "XML",
         operator: "AND",
         parenthesis: "["
     },
     {
-        name: "C++",
+        name: "ELOG",
         operator: "OR",
-        parenthesis: "]"
+        parenthesis: ""
     }
 ]
 ```
@@ -342,7 +343,7 @@ RETURN {nodes: nz, links: rz}
 ```
 MATCH (c:Consultant)-[:KNOWS]->(:Skill)
 WHERE (c)-[:KNOWS]->(:Skill {name: "Java"})
-AND ( (c)-[:KNOWS]->(:Skill {name: "Python"}) OR (c)-[:KNOWS]->(:Skill {name: "C++"}) )
+AND ( (c)-[:KNOWS]->(:Skill {name: "XML"}) OR (c)-[:KNOWS]->(:Skill {name: "ELOG"}) )
 MATCH p=(c)-[:KNOWS]->(:Skill)
 UNWIND nodes(p) as n UNWIND relationships(p) as r 
 with collect( distinct {id: ID(n), name: n.name, type: labels(n)[0], email: n.email, category: n.category}) as nz, 
@@ -360,13 +361,13 @@ RETURN {nodes: nz, links: rz}
         parenthesis: ""
     },
     {
-        name: "Python",
+        name: "XML",
         operator: "AND",
         parenthesis: "["
     },
     {
-        name: "C++",
-        operator: "AND",
+        name: "ELOG",
+        operator: "OR",
         parenthesis: ""
     },
     {
@@ -380,7 +381,7 @@ RETURN {nodes: nz, links: rz}
 ```
 MATCH (c:Consultant)-[:KNOWS]->(:Skill)
 WHERE (c)-[:KNOWS]->(:Skill {name: "Java"})
-AND ( (c)-[:KNOWS]->(:Skill {name: "Python"}) OR (c)-[:KNOWS]->(:Skill {name: "C++"}) AND (c)-[:KNOWS]->(:Skill {name: "SQL"}) )
+AND ( (c)-[:KNOWS]->(:Skill {name: "XML"}) OR (c)-[:KNOWS]->(:Skill {name: "ELOG"}) AND (c)-[:KNOWS]->(:Skill {name: "SQL"}) )
 MATCH p=(c)-[:KNOWS]->(:Skill)
 UNWIND nodes(p) as n UNWIND relationships(p) as r 
 with collect( distinct {id: ID(n), name: n.name, type: labels(n)[0], email: n.email, category: n.category}) as nz, 
@@ -398,12 +399,12 @@ RETURN {nodes: nz, links: rz}
         parenthesis: ""
     },
     {
-        name: "Python",
+        name: "SQL",
         operator: "OR",
         parenthesis: "["
     },
     {
-        name: "C++",
+        name: "Perl",
         operator: "AND",
         parenthesis: "]"
     },
@@ -413,7 +414,7 @@ RETURN {nodes: nz, links: rz}
         parenthesis: "["
     },
     {
-        name: "JavaScript",
+        name: "Assembler",
         operator: "AND",
         parenthesis: "]"
     }
@@ -423,8 +424,8 @@ RETURN {nodes: nz, links: rz}
 ```
 MATCH (c:Consultant)-[:KNOWS]->(:Skill)
 WHERE (c)-[:KNOWS]->(:Skill {name: "Java"})
-OR ( (c)-[:KNOWS]->(:Skill {name: "Python"}) AND (c)-[:KNOWS]->(:Skill {name: "C++"}) )
-OR ( (c)-[:KNOWS]->(:Skill {name: "SQL"}) AND (c)-[:KNOWS]->(:Skill {name: "JavaScript"}) )
+OR ( (c)-[:KNOWS]->(:Skill {name: "SQL"}) AND (c)-[:KNOWS]->(:Skill {name: "Perl"}) )
+OR ( (c)-[:KNOWS]->(:Skill {name: "SQL"}) AND (c)-[:KNOWS]->(:Skill {name: "Assembler"}) )
 MATCH p=(c)-[:KNOWS]->(:Skill)
 UNWIND nodes(p) as n UNWIND relationships(p) as r 
 with collect( distinct {id: ID(n), name: n.name, type: labels(n)[0], email: n.email, category: n.category}) as nz, 
