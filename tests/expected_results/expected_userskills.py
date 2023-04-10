@@ -1,4 +1,9 @@
 class UserSkills:
+    unknown_skill = [{"name": "knitting", "category": "Programming_languages"}]
+    trained_skill = [{"name": "C++", "category": "Programming_languages"}]
+    untrained_skills = [{"name": "CDISC Study Data Tabulation Model", "category": "Data_Management"},
+                        {"name": "Dutch", "category": "Languages"}]
+
     ALL_SKILLS = {'items': [{'name': 'C++', 'category': 'Programming_languages', 'type': 'Skill'},
                             {'name': '21 CFR Part 58 (GLP)', 'category': 'Regulation', 'type': 'Skill'},
                             {'name': 'Azure-DevOps', 'category': 'Products_And_Applications', 'type': 'Skill'},

@@ -1,1568 +1,1158 @@
+from tests.expected_results.expected_categories import CATEGORIES
+
+
 class Graph:
-    DUFFY = {
-        "nodes": [
-            {
-                "id": 144,
-                "name": "Duffy",
-                "type": "Consultant",
-                "category": None,
-                "email": "duffy@gmail.com"
-            },
-            {
-                "id": 146,
-                "name": "ITIL Methodology",
-                "type": "Skill",
-                "category": "Methodology",
-                "email": None
-            },
-            {
-                "id": 147,
-                "name": "QSAR",
-                "type": "Skill",
-                "category": "R_And_D_Processes",
-                "email": None
-            },
-            {
-                "id": 11,
-                "name": "HP ALM",
-                "type": "Skill",
-                "category": "Products_And_Applications",
-                "email": None
-            },
-            {
-                "id": 72,
-                "name": "Ontology Development & Management",
-                "type": "Skill",
-                "category": "Data_Management",
-                "email": None
-            },
-            {
-                "id": 14,
-                "name": "GraphDB",
-                "type": "Skill",
-                "category": "Products_And_Applications",
-                "email": None
-            },
-            {
-                "id": 17,
-                "name": "C++",
-                "type": "Skill",
-                "category": "Programming_languages",
-                "email": None
-            },
-            {
-                "id": 92,
-                "name": "DataOps",
-                "type": "Skill",
-                "category": "Service",
-                "email": None
-            },
-            {
-                "id": 83,
-                "name": "Epigenetics",
-                "type": "Skill",
-                "category": "R_And_D_Processes",
-                "email": None
-            },
-            {
-                "id": 140,
-                "name": "Sharepoint",
-                "type": "Skill",
-                "category": "Products_And_Applications",
-                "email": None
-            },
-            {
-                "id": 145,
-                "name": "Manufacturing QC",
-                "type": "Skill",
-                "category": "Service",
-                "email": None
-            },
-            {
-                "id": 150,
-                "name": "Business Intelligence Reporting",
-                "type": "Skill",
-                "category": "Data_Management",
-                "email": None
-            },
-            {
-                "id": 148,
-                "name": "Rshiny",
-                "type": "Skill",
-                "category": "Products_And_Applications",
-                "email": None
-            },
-            {
-                "id": 88,
-                "name": "XML",
-                "type": "Skill",
-                "category": "Programming_languages",
-                "email": None
-            },
-            {
-                "id": 34,
-                "name": "Data Warehousing",
-                "type": "Skill",
-                "category": "Infrastructure_Technologies",
-                "email": None
-            },
-            {
-                "id": 84,
-                "name": "HIPAA",
-                "type": "Skill",
-                "category": "Regulation",
-                "email": None
-            },
-            {
-                "id": 149,
-                "name": "Data Pipelines",
-                "type": "Skill",
-                "category": "Data_Management",
-                "email": None
-            },
-            {
-                "id": 106,
-                "name": "Next Generation Sequencing (NGS)",
-                "type": "Skill",
-                "category": "R_And_D_Processes",
-                "email": None
-            },
-            {
-                "id": 76,
-                "name": "Configuration Management",
-                "type": "Skill",
-                "category": "Infrastructure_Technologies",
-                "email": None
-            },
-            {
-                "id": 151,
-                "name": "GCP Cloud",
-                "type": "Skill",
-                "category": "Infrastructure_Technologies",
-                "email": None
-            }
-        ],
-        "links": [
-            {
-                "id": 195,
-                "source": 144,
-                "target": 146
-            },
-            {
-                "id": 196,
-                "source": 144,
-                "target": 147
-            },
-            {
-                "id": 201,
-                "source": 144,
-                "target": 11
-            },
-            {
-                "id": 204,
-                "source": 144,
-                "target": 72
-            },
-            {
-                "id": 199,
-                "source": 144,
-                "target": 14
-            },
-            {
-                "id": 208,
-                "source": 144,
-                "target": 17
-            },
-            {
-                "id": 193,
-                "source": 144,
-                "target": 92
-            },
-            {
-                "id": 197,
-                "source": 144,
-                "target": 83
-            },
-            {
-                "id": 202,
-                "source": 144,
-                "target": 140
-            },
-            {
-                "id": 194,
-                "source": 144,
-                "target": 145
-            },
-            {
-                "id": 206,
-                "source": 144,
-                "target": 150
-            },
-            {
-                "id": 200,
-                "source": 144,
-                "target": 148
-            },
-            {
-                "id": 207,
-                "source": 144,
-                "target": 88
-            },
-            {
-                "id": 209,
-                "source": 144,
-                "target": 34
-            },
-            {
-                "id": 203,
-                "source": 144,
-                "target": 84
-            },
-            {
-                "id": 205,
-                "source": 144,
-                "target": 149
-            },
-            {
-                "id": 198,
-                "source": 144,
-                "target": 106
-            },
-            {
-                "id": 211,
-                "source": 144,
-                "target": 76
-            },
-            {
-                "id": 210,
-                "source": 144,
-                "target": 151
-            }
-        ]
-    }
+    existing_consultant = "Duffy"
+
+    all_hidden_categories = CATEGORIES["items"]
+    hidden_categories = [all_hidden_categories[3], all_hidden_categories[7]]
+
+    query_path = ""
+    for category in hidden_categories:
+        query_path += f"&hidden_categories={category}"
+
+    query_path_all = ""
+    for category in all_hidden_categories:
+        query_path_all += f"&hidden_categories={category}"
+
+    existing_skill_1 = "CDISC Study Data Tabulation Model"
+    existing_skill_2 = "FAIR Data Principles"
+    existing_skill_3 = "Taxonomy Development & Management"
+
+    unknown_consultant = "TEST GUY"
+    unknown_email = "test-guy@test.com"
+    expected_consultant_json = {"name": "Duffy", "email": "duffy@gmail.com", "type": "Consultant"}
+    expected_new_consultant_json = {"name": unknown_consultant, "email": unknown_email, "type": "Consultant"}
+
+    SCENARIOS_INPUT = [[{"name": "Java", "operator": "", "parenthesis": ""}],
+                       [{"name": "Java", "operator": "", "parenthesis": ""},
+                        {"name": "ELOG", "operator": "AND", "parenthesis": ""}],
+                       [{"name": "Java", "operator": "", "parenthesis": ""},
+                        {"name": "Python", "operator": "OR", "parenthesis": ""},
+                        {"name": "C++", "operator": "OR", "parenthesis": ""}],
+                       [{"name": "Java", "operator": "", "parenthesis": ""},
+                        {"name": "Python", "operator": "AND", "parenthesis": ""},
+                        {"name": "C++", "operator": "OR", "parenthesis": ""}],
+                       [{"name": "Java", "operator": "", "parenthesis": "["},
+                        {"name": "Python", "operator": "AND", "parenthesis": "]"},
+                        {"name": "C++", "operator": "OR", "parenthesis": ""}],
+                       [{"name": "Java", "operator": "", "parenthesis": ""},
+                        {"name": "XML", "operator": "AND", "parenthesis": "["},
+                        {"name": "ELOG", "operator": "OR", "parenthesis": ""}],
+                       [{"name": "Java", "operator": "", "parenthesis": ""},
+                        {"name": "XML", "operator": "AND", "parenthesis": "["},
+                        {"name": "ELOG", "operator": "OR", "parenthesis": ""},
+                        {"name": "SQL", "operator": "AND", "parenthesis": "]"}],
+                       [{"name": "Java", "operator": "", "parenthesis": ""},
+                        {"name": "SQL", "operator": "OR", "parenthesis": "["},
+                        {"name": "Perl", "operator": "AND", "parenthesis": "]"},
+                        {"name": "SQL", "operator": "OR", "parenthesis": "["},
+                        {"name": "Assembler", "operator": "AND", "parenthesis": "]"}]]
+
+    DUFFY = {"nodes": [{"id": 144, "name": "Duffy", "type": "Consultant", "category": None, "email": "duffy@gmail.com"},
+                       {"id": 146, "name": "ITIL Methodology", "type": "Skill", "category": "Methodology",
+                        "email": None},
+                       {"id": 147, "name": "QSAR", "type": "Skill", "category": "R_And_D_Processes", "email": None},
+                       {"id": 11, "name": "HP ALM", "type": "Skill", "category": "Products_And_Applications",
+                        "email": None}, {"id": 72, "name": "Ontology Development & Management", "type": "Skill",
+                                         "category": "Data_Management", "email": None},
+                       {"id": 14, "name": "GraphDB", "type": "Skill", "category": "Products_And_Applications",
+                        "email": None},
+                       {"id": 17, "name": "C++", "type": "Skill", "category": "Programming_languages", "email": None},
+                       {"id": 92, "name": "DataOps", "type": "Skill", "category": "Service", "email": None},
+                       {"id": 83, "name": "Epigenetics", "type": "Skill", "category": "R_And_D_Processes",
+                        "email": None},
+                       {"id": 140, "name": "Sharepoint", "type": "Skill", "category": "Products_And_Applications",
+                        "email": None},
+                       {"id": 145, "name": "Manufacturing QC", "type": "Skill", "category": "Service", "email": None},
+                       {"id": 150, "name": "Business Intelligence Reporting", "type": "Skill",
+                        "category": "Data_Management", "email": None},
+                       {"id": 148, "name": "Rshiny", "type": "Skill", "category": "Products_And_Applications",
+                        "email": None},
+                       {"id": 88, "name": "XML", "type": "Skill", "category": "Programming_languages", "email": None},
+                       {"id": 34, "name": "Data Warehousing", "type": "Skill",
+                        "category": "Infrastructure_Technologies", "email": None},
+                       {"id": 84, "name": "HIPAA", "type": "Skill", "category": "Regulation", "email": None},
+                       {"id": 149, "name": "Data Pipelines", "type": "Skill", "category": "Data_Management",
+                        "email": None}, {"id": 106, "name": "Next Generation Sequencing (NGS)", "type": "Skill",
+                                         "category": "R_And_D_Processes", "email": None},
+                       {"id": 76, "name": "Configuration Management", "type": "Skill",
+                        "category": "Infrastructure_Technologies", "email": None},
+                       {"id": 151, "name": "GCP Cloud", "type": "Skill", "category": "Infrastructure_Technologies",
+                        "email": None}],
+             "links": [{"id": 195, "source": 144, "target": 146}, {"id": 196, "source": 144, "target": 147},
+                       {"id": 201, "source": 144, "target": 11}, {"id": 204, "source": 144, "target": 72},
+                       {"id": 199, "source": 144, "target": 14}, {"id": 208, "source": 144, "target": 17},
+                       {"id": 193, "source": 144, "target": 92}, {"id": 197, "source": 144, "target": 83},
+                       {"id": 202, "source": 144, "target": 140}, {"id": 194, "source": 144, "target": 145},
+                       {"id": 206, "source": 144, "target": 150}, {"id": 200, "source": 144, "target": 148},
+                       {"id": 207, "source": 144, "target": 88}, {"id": 209, "source": 144, "target": 34},
+                       {"id": 203, "source": 144, "target": 84}, {"id": 205, "source": 144, "target": 149},
+                       {"id": 198, "source": 144, "target": 106}, {"id": 211, "source": 144, "target": 76},
+                       {"id": 210, "source": 144, "target": 151}]}
 
     DUFFY_HIDDEN_CATEGORIES = {
-        "nodes": [
-            {
-                "id": 144,
-                "name": "Duffy",
-                "type": "Consultant",
-                "category": None,
-                "email": "duffy@gmail.com"
-            },
-            {
-                "id": 146,
-                "name": "ITIL Methodology",
-                "type": "Skill",
-                "category": "Methodology",
-                "email": None
-            },
-            {
-                "id": 147,
-                "name": "QSAR",
-                "type": "Skill",
-                "category": "R_And_D_Processes",
-                "email": None
-            },
-            {
-                "id": 72,
-                "name": "Ontology Development & Management",
-                "type": "Skill",
-                "category": "Data_Management",
-                "email": None
-            },
-            {
-                "id": 17,
-                "name": "C++",
-                "type": "Skill",
-                "category": "Programming_languages",
-                "email": None
-            },
-            {
-                "id": 92,
-                "name": "DataOps",
-                "type": "Skill",
-                "category": "Service",
-                "email": None
-            },
-            {
-                "id": 83,
-                "name": "Epigenetics",
-                "type": "Skill",
-                "category": "R_And_D_Processes",
-                "email": None
-            },
-            {
-                "id": 145,
-                "name": "Manufacturing QC",
-                "type": "Skill",
-                "category": "Service",
-                "email": None
-            },
-            {
-                "id": 150,
-                "name": "Business Intelligence Reporting",
-                "type": "Skill",
-                "category": "Data_Management",
-                "email": None
-            },
-            {
-                "id": 88,
-                "name": "XML",
-                "type": "Skill",
-                "category": "Programming_languages",
-                "email": None
-            },
-            {
-                "id": 34,
-                "name": "Data Warehousing",
-                "type": "Skill",
-                "category": "Infrastructure_Technologies",
-                "email": None
-            },
-            {
-                "id": 84,
-                "name": "HIPAA",
-                "type": "Skill",
-                "category": "Regulation",
-                "email": None
-            },
-            {
-                "id": 149,
-                "name": "Data Pipelines",
-                "type": "Skill",
-                "category": "Data_Management",
-                "email": None
-            },
-            {
-                "id": 106,
-                "name": "Next Generation Sequencing (NGS)",
-                "type": "Skill",
-                "category": "R_And_D_Processes",
-                "email": None
-            },
-            {
-                "id": 76,
-                "name": "Configuration Management",
-                "type": "Skill",
-                "category": "Infrastructure_Technologies",
-                "email": None
-            },
-            {
-                "id": 151,
-                "name": "GCP Cloud",
-                "type": "Skill",
-                "category": "Infrastructure_Technologies",
-                "email": None
-            }
-        ],
-        "links": [
-            {
-                "id": 195,
-                "source": 144,
-                "target": 146
-            },
-            {
-                "id": 196,
-                "source": 144,
-                "target": 147
-            },
-            {
-                "id": 204,
-                "source": 144,
-                "target": 72
-            },
-            {
-                "id": 208,
-                "source": 144,
-                "target": 17
-            },
-            {
-                "id": 193,
-                "source": 144,
-                "target": 92
-            },
-            {
-                "id": 197,
-                "source": 144,
-                "target": 83
-            },
-            {
-                "id": 194,
-                "source": 144,
-                "target": 145
-            },
-            {
-                "id": 206,
-                "source": 144,
-                "target": 150
-            },
-            {
-                "id": 207,
-                "source": 144,
-                "target": 88
-            },
-            {
-                "id": 209,
-                "source": 144,
-                "target": 34
-            },
-            {
-                "id": 203,
-                "source": 144,
-                "target": 84
-            },
-            {
-                "id": 205,
-                "source": 144,
-                "target": 149
-            },
-            {
-                "id": 198,
-                "source": 144,
-                "target": 106
-            },
-            {
-                "id": 211,
-                "source": 144,
-                "target": 76
-            },
-            {
-                "id": 210,
-                "source": 144,
-                "target": 151
-            }
-        ]
-    }
+        "nodes": [{"id": 144, "name": "Duffy", "type": "Consultant", "category": None, "email": "duffy@gmail.com"},
+                  {"id": 11, "name": "HP ALM", "type": "Skill", "category": "Products_And_Applications", "email": None},
+                  {"id": 72, "name": "Ontology Development & Management", "type": "Skill",
+                   "category": "Data_Management", "email": None},
+                  {"id": 14, "name": "GraphDB", "type": "Skill", "category": "Products_And_Applications",
+                   "email": None},
+                  {"id": 17, "name": "C++", "type": "Skill", "category": "Programming_languages", "email": None},
+                  {"id": 92, "name": "DataOps", "type": "Skill", "category": "Service", "email": None},
+                  {"id": 140, "name": "Sharepoint", "type": "Skill", "category": "Products_And_Applications",
+                   "email": None},
+                  {"id": 145, "name": "Manufacturing QC", "type": "Skill", "category": "Service", "email": None},
+                  {"id": 150, "name": "Business Intelligence Reporting", "type": "Skill", "category": "Data_Management",
+                   "email": None},
+                  {"id": 148, "name": "Rshiny", "type": "Skill", "category": "Products_And_Applications",
+                   "email": None},
+                  {"id": 88, "name": "XML", "type": "Skill", "category": "Programming_languages", "email": None},
+                  {"id": 34, "name": "Data Warehousing", "type": "Skill", "category": "Infrastructure_Technologies",
+                   "email": None},
+                  {"id": 84, "name": "HIPAA", "type": "Skill", "category": "Regulation", "email": None},
+                  {"id": 149, "name": "Data Pipelines", "type": "Skill", "category": "Data_Management", "email": None},
+                  {"id": 76, "name": "Configuration Management", "type": "Skill",
+                   "category": "Infrastructure_Technologies", "email": None},
+                  {"id": 151, "name": "GCP Cloud", "type": "Skill", "category": "Infrastructure_Technologies",
+                   "email": None}],
+        "links": [{"id": 201, "source": 144, "target": 11}, {"id": 204, "source": 144, "target": 72},
+                  {"id": 199, "source": 144, "target": 14}, {"id": 208, "source": 144, "target": 17},
+                  {"id": 193, "source": 144, "target": 92}, {"id": 202, "source": 144, "target": 140},
+                  {"id": 194, "source": 144, "target": 145}, {"id": 206, "source": 144, "target": 150},
+                  {"id": 200, "source": 144, "target": 148}, {"id": 207, "source": 144, "target": 88},
+                  {"id": 209, "source": 144, "target": 34}, {"id": 203, "source": 144, "target": 84},
+                  {"id": 205, "source": 144, "target": 149}, {"id": 211, "source": 144, "target": 76},
+                  {"id": 210, "source": 144, "target": 151}]}
+    DUFFY_ALL_HIDDEN = {
+        "nodes": [{"id": 144, "name": "Duffy", "type": "Consultant", "category": None, "email": "duffy@gmail.com"}],
+        "links": []}
 
-    SINGLE_SKILL = {
-        "nodes": [
-            {
-                "id": 211,
-                "name": "Derek Brockway",
-                "type": "Consultant",
-                "category": None,
-                "email": "derek_brockway@gmail.com"
-            },
-            {
-                "id": 194,
-                "name": "CDISC Study Data Tabulation Model",
-                "type": "Skill",
-                "category": "Data_Management",
-                "email": None
-            },
-            {
-                "id": 70,
-                "name": "SEND - CDISC Non-Clinical",
-                "type": "Skill",
-                "category": "Regulation",
-                "email": None
-            },
-            {
-                "id": 161,
-                "name": "Asp .NET",
-                "type": "Skill",
-                "category": "Programming_languages",
-                "email": None
-            },
-            {
-                "id": 187,
-                "name": "Fortran",
-                "type": "Skill",
-                "category": "Programming_languages",
-                "email": None
-            },
-            {
-                "id": 132,
-                "name": "F#",
-                "type": "Skill",
-                "category": "Programming_languages",
-                "email": None
-            },
-            {
-                "id": 131,
-                "name": "VBA",
-                "type": "Skill",
-                "category": "Programming_languages",
-                "email": None
-            },
-            {
-                "id": 111,
-                "name": "Data Migration",
-                "type": "Skill",
-                "category": "Data_Management",
-                "email": None
-            },
-            {
-                "id": 213,
-                "name": "Data Visualisation",
-                "type": "Skill",
-                "category": "Data_Management",
-                "email": None
-            },
-            {
-                "id": 212,
-                "name": "Genedata Screener",
-                "type": "Skill",
-                "category": "Scientific_Products_And_Applications",
-                "email": None
-            },
-            {
-                "id": 57,
-                "name": "21 CFR Part 820 (QSR)",
-                "type": "Skill",
-                "category": "Regulation",
-                "email": None
-            },
-            {
-                "id": 123,
-                "name": "Microsoft SQL Server",
-                "type": "Skill",
-                "category": "Infrastructure_Technologies",
-                "email": None
-            },
-            {
-                "id": 52,
-                "name": "MySQL",
-                "type": "Skill",
-                "category": "Infrastructure_Technologies",
-                "email": None
-            },
-            {
-                "id": 142,
-                "name": "PowerShell",
-                "type": "Skill",
-                "category": "Programming_languages",
-                "email": None
-            },
-            {
-                "id": 64,
-                "name": "Unix",
-                "type": "Skill",
-                "category": "Infrastructure_Technologies",
-                "email": None
-            },
-            {
-                "id": 242,
-                "name": "Ellie Goulding",
-                "type": "Consultant",
-                "category": None,
-                "email": "ellie_goulding@gmail.com"
-            },
-            {
-                "id": 245,
-                "name": "Spotfire",
-                "type": "Skill",
-                "category": "Scientific_Products_And_Applications",
-                "email": None
-            },
-            {
-                "id": 145,
-                "name": "Manufacturing QC",
-                "type": "Skill",
-                "category": "Service",
-                "email": None
-            },
-            {
-                "id": 206,
-                "name": "Semantic Models & Enrichment",
-                "type": "Skill",
-                "category": "Data_Management",
-                "email": None
-            },
-            {
-                "id": 184,
-                "name": "Russian",
-                "type": "Skill",
-                "category": "Languages",
-                "email": None
-            },
-            {
-                "id": 49,
-                "name": "Arabic",
-                "type": "Skill",
-                "category": "Languages",
-                "email": None
-            },
-            {
-                "id": 29,
-                "name": "French",
-                "type": "Skill",
-                "category": "Languages",
-                "email": None
-            },
-            {
-                "id": 100,
-                "name": "SSO & Identity Management",
-                "type": "Skill",
-                "category": "Infrastructure_Technologies",
-                "email": None
-            },
-            {
-                "id": 243,
-                "name": "Product Lifecycle Management",
-                "type": "Skill",
-                "category": "Service",
-                "email": None
-            },
-            {
-                "id": 61,
-                "name": "Chinese",
-                "type": "Skill",
-                "category": "Languages",
-                "email": None
-            },
-            {
-                "id": 246,
-                "name": "Design Patterns",
-                "type": "Skill",
-                "category": "Data_Management",
-                "email": None
-            },
-            {
-                "id": 169,
-                "name": "Knowledge Graphs",
-                "type": "Skill",
-                "category": "Data_Management",
-                "email": None
-            },
-            {
-                "id": 167,
-                "name": "Zoho Analytics",
-                "type": "Skill",
-                "category": "Products_And_Applications",
-                "email": None
-            },
-            {
-                "id": 98,
-                "name": "REACT",
-                "type": "Skill",
-                "category": "Miscellaneous",
-                "email": None
-            },
-            {
-                "id": 168,
-                "name": "Taxonomy Development & Management",
-                "type": "Skill",
-                "category": "Data_Management",
-                "email": None
-            },
-            {
-                "id": 244,
-                "name": "Software Design & Architecture",
-                "type": "Skill",
-                "category": "Service",
-                "email": None
-            },
-            {
-                "id": 27,
-                "name": "Dutch",
-                "type": "Skill",
-                "category": "Languages",
-                "email": None
-            },
-            {
-                "id": 91,
-                "name": "Strategic Consulting",
-                "type": "Skill",
-                "category": "Service",
-                "email": None
-            },
-            {
-                "id": 88,
-                "name": "XML",
-                "type": "Skill",
-                "category": "Programming_languages",
-                "email": None
-            },
-            {
-                "id": 188,
-                "name": "Richard Burton",
-                "type": "Consultant",
-                "category": None,
-                "email": "richard_burton@gmail.com"
-            },
-            {
-                "id": 33,
-                "name": "REST API's",
-                "type": "Skill",
-                "category": "Infrastructure_Technologies",
-                "email": None
-            },
-            {
-                "id": 193,
-                "name": "Process Development",
-                "type": "Skill",
-                "category": "R_And_D_Processes",
-                "email": None
-            },
-            {
-                "id": 31,
-                "name": "JSP",
-                "type": "Skill",
-                "category": "Programming_languages",
-                "email": None
-            },
-            {
-                "id": 32,
-                "name": "DB2",
-                "type": "Skill",
-                "category": "Infrastructure_Technologies",
-                "email": None
-            },
-            {
-                "id": 189,
-                "name": "Training",
-                "type": "Skill",
-                "category": "Service",
-                "email": None
-            },
-            {
-                "id": 99,
-                "name": "Django",
-                "type": "Skill",
-                "category": "Miscellaneous",
-                "email": None
-            },
-            {
-                "id": 192,
-                "name": "PMI / PMP (PMBOK)",
-                "type": "Skill",
-                "category": "Methodology",
-                "email": None
-            },
-            {
-                "id": 115,
-                "name": "Pharmacology & DMPK",
-                "type": "Skill",
-                "category": "Service",
-                "email": None
-            },
-            {
-                "id": 191,
-                "name": "BPMN - Business Process Modelling Notation",
-                "type": "Skill",
-                "category": "Methodology",
-                "email": None
-            },
-            {
-                "id": 141,
-                "name": "PostgresSQL",
-                "type": "Skill",
-                "category": "Programming_languages",
-                "email": None
-            },
-            {
-                "id": 86,
-                "name": "21 CFR Part 11 (ERES)",
-                "type": "Skill",
-                "category": "Regulation",
-                "email": None
-            },
-            {
-                "id": 190,
-                "name": "Regulatory Submission",
-                "type": "Skill",
-                "category": "Service",
-                "email": None
-            },
-            {
-                "id": 124,
-                "name": "GitHub",
-                "type": "Skill",
-                "category": "Infrastructure_Technologies",
-                "email": None
-            },
-            {
-                "id": 309,
-                "name": "Rob Howley",
-                "type": "Consultant",
-                "category": None,
-                "email": "rob_howley@gmail.com"
-            },
-            {
-                "id": 22,
-                "name": "Scaled Agile Framework (Safe)",
-                "type": "Skill",
-                "category": "Methodology",
-                "email": None
-            },
-            {
-                "id": 47,
-                "name": "Atlassian JIRA",
-                "type": "Skill",
-                "category": "Products_And_Applications",
-                "email": None
-            },
-            {
-                "id": 56,
-                "name": "Microservices",
-                "type": "Skill",
-                "category": "R_And_D_Processes",
-                "email": None
-            },
-            {
-                "id": 45,
-                "name": "Oracle BI",
-                "type": "Skill",
-                "category": "Products_And_Applications",
-                "email": None
-            },
-            {
-                "id": 281,
-                "name": "Data Extraction & Wrangling",
-                "type": "Skill",
-                "category": "Data_Management",
-                "email": None
-            },
-            {
-                "id": 296,
-                "name": "Bioanalysis",
-                "type": "Skill",
-                "category": "R_And_D_Processes",
-                "email": None
-            },
-            {
-                "id": 117,
-                "name": "Scrum@Scale (SaS)",
-                "type": "Skill",
-                "category": "Methodology",
-                "email": None
-            },
-            {
-                "id": 155,
-                "name": "Service Now",
-                "type": "Skill",
-                "category": "Products_And_Applications",
-                "email": None
-            },
-            {
-                "id": 149,
-                "name": "Data Pipelines",
-                "type": "Skill",
-                "category": "Data_Management",
-                "email": None
-            },
-            {
-                "id": 12,
-                "name": "Slack",
-                "type": "Skill",
-                "category": "Products_And_Applications",
-                "email": None
-            },
-            {
-                "id": 237,
-                "name": "Kanban Methodology",
-                "type": "Skill",
-                "category": "Methodology",
-                "email": None
-            },
-            {
-                "id": 37,
-                "name": "Statistics Review",
-                "type": "Skill",
-                "category": "Service",
-                "email": None
-            },
-            {
-                "id": 14,
-                "name": "GraphDB",
-                "type": "Skill",
-                "category": "Products_And_Applications",
-                "email": None
-            },
-            {
-                "id": 59,
-                "name": "ETL & ELT Processing",
-                "type": "Skill",
-                "category": "Data_Management",
-                "email": None
-            },
-            {
-                "id": 51,
-                "name": "JQuery",
-                "type": "Skill",
-                "category": "Miscellaneous",
-                "email": None
-            },
-            {
-                "id": 214,
-                "name": "Nerys Hughes",
-                "type": "Consultant",
-                "category": None,
-                "email": "nerys_hughes@gmail.com"
-            },
-            {
-                "id": 110,
-                "name": "ISO 14001 - Environmental management",
-                "type": "Skill",
-                "category": "Regulation",
-                "email": None
-            },
-            {
-                "id": 186,
-                "name": "C#",
-                "type": "Skill",
-                "category": "Programming_languages",
-                "email": None
-            },
-            {
-                "id": 216,
-                "name": "C",
-                "type": "Skill",
-                "category": "Programming_languages",
-                "email": None
-            },
-            {
-                "id": 16,
-                "name": "21 CFR Part 58 (GLP)",
-                "type": "Skill",
-                "category": "Regulation",
-                "email": None
-            },
-            {
-                "id": 17,
-                "name": "C++",
-                "type": "Skill",
-                "category": "Programming_languages",
-                "email": None
-            },
-            {
-                "id": 106,
-                "name": "Next Generation Sequencing (NGS)",
-                "type": "Skill",
-                "category": "R_And_D_Processes",
-                "email": None
-            },
-            {
-                "id": 140,
-                "name": "Sharepoint",
-                "type": "Skill",
-                "category": "Products_And_Applications",
-                "email": None
-            },
-            {
-                "id": 72,
-                "name": "Ontology Development & Management",
-                "type": "Skill",
-                "category": "Data_Management",
-                "email": None
-            },
-            {
-                "id": 81,
-                "name": "L7 Informatics",
-                "type": "Skill",
-                "category": "Scientific_Products_And_Applications",
-                "email": None
-            },
-            {
-                "id": 215,
-                "name": "Genetic Engineering",
-                "type": "Skill",
-                "category": "R_And_D_Processes",
-                "email": None
-            },
-            {
-                "id": 85,
-                "name": "ISO 9001 - Quality Management",
-                "type": "Skill",
-                "category": "Regulation",
-                "email": None
-            },
-            {
-                "id": 271,
-                "name": "Owain Yeoman",
-                "type": "Consultant",
-                "category": None,
-                "email": "owain_yeoman@gmail.com"
-            },
-            {
-                "id": 121,
-                "name": "ISO 13485 - Medical Devices",
-                "type": "Skill",
-                "category": "Regulation",
-                "email": None
-            },
-            {
-                "id": 43,
-                "name": "Screening",
-                "type": "Skill",
-                "category": "R_And_D_Processes",
-                "email": None
-            },
-            {
-                "id": 75,
-                "name": "R Studio",
-                "type": "Skill",
-                "category": "Miscellaneous",
-                "email": None
-            },
-            {
-                "id": 261,
-                "name": "Tamil",
-                "type": "Skill",
-                "category": "Languages",
-                "email": None
-            },
-            {
-                "id": 97,
-                "name": "Bootstrap",
-                "type": "Skill",
-                "category": "Miscellaneous",
-                "email": None
-            },
-            {
-                "id": 272,
-                "name": "Method Development",
-                "type": "Skill",
-                "category": "R_And_D_Processes",
-                "email": None
-            },
-            {
-                "id": 202,
-                "name": "GAMP",
-                "type": "Skill",
-                "category": "Regulation",
-                "email": None
-            },
-            {
-                "id": 104,
-                "name": "Disciplined Agile (DA)",
-                "type": "Skill",
-                "category": "Methodology",
-                "email": None
-            }
-        ],
-        "links": [
-            {
-                "id": 381,
-                "source": 211,
-                "target": 194
-            },
-            {
-                "id": 377,
-                "source": 211,
-                "target": 70
-            },
-            {
-                "id": 382,
-                "source": 211,
-                "target": 161
-            },
-            {
-                "id": 383,
-                "source": 211,
-                "target": 187
-            },
-            {
-                "id": 384,
-                "source": 211,
-                "target": 132
-            },
-            {
-                "id": 386,
-                "source": 211,
-                "target": 131
-            },
-            {
-                "id": 380,
-                "source": 211,
-                "target": 111
-            },
-            {
-                "id": 379,
-                "source": 211,
-                "target": 213
-            },
-            {
-                "id": 376,
-                "source": 211,
-                "target": 212
-            },
-            {
-                "id": 378,
-                "source": 211,
-                "target": 57
-            },
-            {
-                "id": 388,
-                "source": 211,
-                "target": 123
-            },
-            {
-                "id": 389,
-                "source": 211,
-                "target": 52
-            },
-            {
-                "id": 385,
-                "source": 211,
-                "target": 142
-            },
-            {
-                "id": 387,
-                "source": 211,
-                "target": 64
-            },
-            {
-                "id": 496,
-                "source": 242,
-                "target": 245
-            },
-            {
-                "id": 492,
-                "source": 242,
-                "target": 145
-            },
-            {
-                "id": 502,
-                "source": 242,
-                "target": 206
-            },
-            {
-                "id": 504,
-                "source": 242,
-                "target": 184
-            },
-            {
-                "id": 499,
-                "source": 242,
-                "target": 194
-            },
-            {
-                "id": 505,
-                "source": 242,
-                "target": 49
-            },
-            {
-                "id": 503,
-                "source": 242,
-                "target": 29
-            },
-            {
-                "id": 510,
-                "source": 242,
-                "target": 100
-            },
-            {
-                "id": 493,
-                "source": 242,
-                "target": 243
-            },
-            {
-                "id": 507,
-                "source": 242,
-                "target": 61
-            },
-            {
-                "id": 500,
-                "source": 242,
-                "target": 246
-            },
-            {
-                "id": 501,
-                "source": 242,
-                "target": 169
-            },
-            {
-                "id": 497,
-                "source": 242,
-                "target": 167
-            },
-            {
-                "id": 509,
-                "source": 242,
-                "target": 98
-            },
-            {
-                "id": 498,
-                "source": 242,
-                "target": 168
-            },
-            {
-                "id": 495,
-                "source": 242,
-                "target": 244
-            },
-            {
-                "id": 506,
-                "source": 242,
-                "target": 27
-            },
-            {
-                "id": 494,
-                "source": 242,
-                "target": 91
-            },
-            {
-                "id": 508,
-                "source": 242,
-                "target": 88
-            },
-            {
-                "id": 312,
-                "source": 188,
-                "target": 29
-            },
-            {
-                "id": 313,
-                "source": 188,
-                "target": 61
-            },
-            {
-                "id": 318,
-                "source": 188,
-                "target": 33
-            },
-            {
-                "id": 309,
-                "source": 188,
-                "target": 193
-            },
-            {
-                "id": 315,
-                "source": 188,
-                "target": 31
-            },
-            {
-                "id": 311,
-                "source": 188,
-                "target": 194
-            },
-            {
-                "id": 319,
-                "source": 188,
-                "target": 32
-            },
-            {
-                "id": 304,
-                "source": 188,
-                "target": 189
-            },
-            {
-                "id": 317,
-                "source": 188,
-                "target": 99
-            },
-            {
-                "id": 308,
-                "source": 188,
-                "target": 192
-            },
-            {
-                "id": 305,
-                "source": 188,
-                "target": 115
-            },
-            {
-                "id": 314,
-                "source": 188,
-                "target": 49
-            },
-            {
-                "id": 307,
-                "source": 188,
-                "target": 191
-            },
-            {
-                "id": 316,
-                "source": 188,
-                "target": 141
-            },
-            {
-                "id": 310,
-                "source": 188,
-                "target": 86
-            },
-            {
-                "id": 306,
-                "source": 188,
-                "target": 190
-            },
-            {
-                "id": 320,
-                "source": 188,
-                "target": 124
-            },
-            {
-                "id": 893,
-                "source": 309,
-                "target": 22
-            },
-            {
-                "id": 899,
-                "source": 309,
-                "target": 47
-            },
-            {
-                "id": 894,
-                "source": 309,
-                "target": 56
-            },
-            {
-                "id": 900,
-                "source": 309,
-                "target": 45
-            },
-            {
-                "id": 902,
-                "source": 309,
-                "target": 281
-            },
-            {
-                "id": 895,
-                "source": 309,
-                "target": 296
-            },
-            {
-                "id": 891,
-                "source": 309,
-                "target": 117
-            },
-            {
-                "id": 896,
-                "source": 309,
-                "target": 155
-            },
-            {
-                "id": 905,
-                "source": 309,
-                "target": 194
-            },
-            {
-                "id": 901,
-                "source": 309,
-                "target": 149
-            },
-            {
-                "id": 898,
-                "source": 309,
-                "target": 12
-            },
-            {
-                "id": 892,
-                "source": 309,
-                "target": 237
-            },
-            {
-                "id": 890,
-                "source": 309,
-                "target": 37
-            },
-            {
-                "id": 897,
-                "source": 309,
-                "target": 14
-            },
-            {
-                "id": 903,
-                "source": 309,
-                "target": 59
-            },
-            {
-                "id": 906,
-                "source": 309,
-                "target": 51
-            },
-            {
-                "id": 904,
-                "source": 309,
-                "target": 169
-            },
-            {
-                "id": 907,
-                "source": 309,
-                "target": 99
-            },
-            {
-                "id": 399,
-                "source": 214,
-                "target": 110
-            },
-            {
-                "id": 406,
-                "source": 214,
-                "target": 186
-            },
-            {
-                "id": 391,
-                "source": 214,
-                "target": 193
-            },
-            {
-                "id": 408,
-                "source": 214,
-                "target": 216
-            },
-            {
-                "id": 401,
-                "source": 214,
-                "target": 149
-            },
-            {
-                "id": 405,
-                "source": 214,
-                "target": 29
-            },
-            {
-                "id": 395,
-                "source": 214,
-                "target": 155
-            },
-            {
-                "id": 404,
-                "source": 214,
-                "target": 194
-            },
-            {
-                "id": 394,
-                "source": 214,
-                "target": 12
-            },
-            {
-                "id": 400,
-                "source": 214,
-                "target": 16
-            },
-            {
-                "id": 407,
-                "source": 214,
-                "target": 17
-            },
-            {
-                "id": 392,
-                "source": 214,
-                "target": 106
-            },
-            {
-                "id": 403,
-                "source": 214,
-                "target": 168
-            },
-            {
-                "id": 396,
-                "source": 214,
-                "target": 140
-            },
-            {
-                "id": 402,
-                "source": 214,
-                "target": 72
-            },
-            {
-                "id": 390,
-                "source": 214,
-                "target": 81
-            },
-            {
-                "id": 393,
-                "source": 214,
-                "target": 215
-            },
-            {
-                "id": 398,
-                "source": 214,
-                "target": 57
-            },
-            {
-                "id": 397,
-                "source": 214,
-                "target": 85
-            },
-            {
-                "id": 647,
-                "source": 271,
-                "target": 121
-            },
-            {
-                "id": 649,
-                "source": 271,
-                "target": 70
-            },
-            {
-                "id": 642,
-                "source": 271,
-                "target": 43
-            },
-            {
-                "id": 643,
-                "source": 271,
-                "target": 14
-            },
-            {
-                "id": 656,
-                "source": 271,
-                "target": 98
-            },
-            {
-                "id": 652,
-                "source": 271,
-                "target": 111
-            },
-            {
-                "id": 651,
-                "source": 271,
-                "target": 59
-            },
-            {
-                "id": 644,
-                "source": 271,
-                "target": 155
-            },
-            {
-                "id": 650,
-                "source": 271,
-                "target": 194
-            },
-            {
-                "id": 658,
-                "source": 271,
-                "target": 75
-            },
-            {
-                "id": 654,
-                "source": 271,
-                "target": 51
-            },
-            {
-                "id": 653,
-                "source": 271,
-                "target": 261
-            },
-            {
-                "id": 645,
-                "source": 271,
-                "target": 167
-            },
-            {
-                "id": 657,
-                "source": 271,
-                "target": 99
-            },
-            {
-                "id": 655,
-                "source": 271,
-                "target": 97
-            },
-            {
-                "id": 641,
-                "source": 271,
-                "target": 272
-            },
-            {
-                "id": 648,
-                "source": 271,
-                "target": 202
-            },
-            {
-                "id": 646,
-                "source": 271,
-                "target": 45
-            },
-            {
-                "id": 640,
-                "source": 271,
-                "target": 104
-            }
-        ]
-    }
+    SKILL_ALL_HIDDEN = {"nodes": [
+        {"id": 77, "name": "Matthew Rhys", "type": "Consultant", "category": None, "email": "matthew_rhys@gmail.com"},
+        {"id": 310, "name": "Bryn Parry-Jones", "type": "Consultant", "category": None,
+         "email": "bryn_parry-jones@gmail.com"}], "links": []}
+
+    SKILL_HIDDEN_CATEGORIES = {"nodes": [
+        {"id": 77, "name": "Matthew Rhys", "type": "Consultant", "category": None, "email": "matthew_rhys@gmail.com"},
+        {"id": 26, "name": "Data Governance", "type": "Skill", "category": "Data_Management", "email": None},
+        {"id": 48, "name": "ANSI/ISA-95 - Enterprise-Control Systems", "type": "Skill", "category": "Regulation",
+            "email": None}, {"id": 60, "name": "ML Ops", "type": "Skill", "category": "Data_Management", "email": None},
+        {"id": 63, "name": "Snowflake", "type": "Skill", "category": "Infrastructure_Technologies", "email": None},
+        {"id": 76, "name": "Configuration Management", "type": "Skill", "category": "Infrastructure_Technologies",
+            "email": None},
+        {"id": 78, "name": "Pillar Science", "type": "Skill", "category": "Scientific_Products_And_Applications",
+            "email": None},
+        {"id": 79, "name": "MoSaIC", "type": "Skill", "category": "Scientific_Products_And_Applications",
+            "email": None},
+        {"id": 80, "name": "STARLIMS", "type": "Skill", "category": "Scientific_Products_And_Applications",
+            "email": None},
+        {"id": 81, "name": "L7 Informatics", "type": "Skill", "category": "Scientific_Products_And_Applications",
+            "email": None},
+        {"id": 82, "name": "LabGuru LIMS", "type": "Skill", "category": "Scientific_Products_And_Applications",
+            "email": None}, {"id": 84, "name": "HIPAA", "type": "Skill", "category": "Regulation", "email": None},
+        {"id": 85, "name": "ISO 9001 - Quality Management", "type": "Skill", "category": "Regulation", "email": None},
+        {"id": 86, "name": "21 CFR Part 11 (ERES)", "type": "Skill", "category": "Regulation", "email": None},
+        {"id": 87, "name": "Data Analysis/Modelling", "type": "Skill", "category": "Data_Management", "email": None},
+        {"id": 88, "name": "XML", "type": "Skill", "category": "Programming_languages", "email": None},
+        {"id": 89, "name": "Java", "type": "Skill", "category": "Programming_languages", "email": None},
+        {"id": 310, "name": "Bryn Parry-Jones", "type": "Consultant", "category": None,
+            "email": "bryn_parry-jones@gmail.com"},
+        {"id": 13, "name": "Remedy", "type": "Skill", "category": "Products_And_Applications", "email": None},
+        {"id": 32, "name": "DB2", "type": "Skill", "category": "Infrastructure_Technologies", "email": None},
+        {"id": 34, "name": "Data Warehousing", "type": "Skill", "category": "Infrastructure_Technologies",
+            "email": None},
+        {"id": 46, "name": "Trello", "type": "Skill", "category": "Products_And_Applications", "email": None},
+        {"id": 47, "name": "Atlassian JIRA", "type": "Skill", "category": "Products_And_Applications", "email": None},
+        {"id": 72, "name": "Ontology Development & Management", "type": "Skill", "category": "Data_Management",
+            "email": None},
+        {"id": 115, "name": "Pharmacology & DMPK", "type": "Skill", "category": "Service", "email": None},
+        {"id": 120, "name": "SAS Business Intelligence", "type": "Skill", "category": "Products_And_Applications",
+            "email": None},
+        {"id": 151, "name": "GCP Cloud", "type": "Skill", "category": "Infrastructure_Technologies", "email": None},
+        {"id": 226, "name": "Machine Learning & AI", "type": "Skill", "category": "Service", "email": None},
+        {"id": 236, "name": "Robotic Process Automation & Workflow Orchastration", "type": "Skill",
+            "category": "Service", "email": None},
+        {"id": 243, "name": "Product Lifecycle Management", "type": "Skill", "category": "Service", "email": None},
+        {"id": 268, "name": "Cheminformatics", "type": "Skill", "category": "Service", "email": None},
+        {"id": 311, "name": "ELOG", "type": "Skill", "category": "Scientific_Products_And_Applications", "email": None},
+        {"id": 312, "name": "Qlik", "type": "Skill", "category": "Scientific_Products_And_Applications",
+            "email": None}], "links": [{"id": 97, "source": 77, "target": 26}, {"id": 93, "source": 77, "target": 48},
+        {"id": 99, "source": 77, "target": 60}, {"id": 103, "source": 77, "target": 63},
+        {"id": 102, "source": 77, "target": 76}, {"id": 87, "source": 77, "target": 78},
+        {"id": 88, "source": 77, "target": 79}, {"id": 89, "source": 77, "target": 80},
+        {"id": 90, "source": 77, "target": 81}, {"id": 91, "source": 77, "target": 82},
+        {"id": 94, "source": 77, "target": 84}, {"id": 95, "source": 77, "target": 85},
+        {"id": 96, "source": 77, "target": 86}, {"id": 98, "source": 77, "target": 87},
+        {"id": 100, "source": 77, "target": 88}, {"id": 101, "source": 77, "target": 89},
+        {"id": 919, "source": 310, "target": 13}, {"id": 924, "source": 310, "target": 32},
+        {"id": 927, "source": 310, "target": 34}, {"id": 920, "source": 310, "target": 46},
+        {"id": 921, "source": 310, "target": 47}, {"id": 922, "source": 310, "target": 72},
+        {"id": 925, "source": 310, "target": 76}, {"id": 923, "source": 310, "target": 89},
+        {"id": 911, "source": 310, "target": 115}, {"id": 918, "source": 310, "target": 120},
+        {"id": 926, "source": 310, "target": 151}, {"id": 908, "source": 310, "target": 226},
+        {"id": 909, "source": 310, "target": 236}, {"id": 910, "source": 310, "target": 243},
+        {"id": 912, "source": 310, "target": 268}, {"id": 914, "source": 310, "target": 311},
+        {"id": 915, "source": 310, "target": 312}]}
+
+    SCENARIO1 = {"nodes": [
+        {"id": 77, "name": "Matthew Rhys", "type": "Consultant", "category": None, "email": "matthew_rhys@gmail.com"},
+        {"id": 87, "name": "Data Analysis/Modelling", "type": "Skill", "category": "Data_Management", "email": None},
+        {"id": 76, "name": "Configuration Management", "type": "Skill", "category": "Infrastructure_Technologies",
+         "email": None},
+        {"id": 85, "name": "ISO 9001 - Quality Management", "type": "Skill", "category": "Regulation", "email": None},
+        {"id": 80, "name": "STARLIMS", "type": "Skill", "category": "Scientific_Products_And_Applications",
+         "email": None}, {"id": 60, "name": "ML Ops", "type": "Skill", "category": "Data_Management", "email": None},
+        {"id": 79, "name": "MoSaIC", "type": "Skill", "category": "Scientific_Products_And_Applications",
+         "email": None},
+        {"id": 86, "name": "21 CFR Part 11 (ERES)", "type": "Skill", "category": "Regulation", "email": None},
+        {"id": 88, "name": "XML", "type": "Skill", "category": "Programming_languages", "email": None},
+        {"id": 26, "name": "Data Governance", "type": "Skill", "category": "Data_Management", "email": None},
+        {"id": 19, "name": "PROCI - ADKAR", "type": "Skill", "category": "Methodology", "email": None},
+        {"id": 89, "name": "Java", "type": "Skill", "category": "Programming_languages", "email": None},
+        {"id": 81, "name": "L7 Informatics", "type": "Skill", "category": "Scientific_Products_And_Applications",
+         "email": None},
+        {"id": 83, "name": "Epigenetics", "type": "Skill", "category": "R_And_D_Processes", "email": None},
+        {"id": 78, "name": "Pillar Science", "type": "Skill", "category": "Scientific_Products_And_Applications",
+         "email": None},
+        {"id": 82, "name": "LabGuru LIMS", "type": "Skill", "category": "Scientific_Products_And_Applications",
+         "email": None}, {"id": 84, "name": "HIPAA", "type": "Skill", "category": "Regulation", "email": None},
+        {"id": 48, "name": "ANSI/ISA-95 - Enterprise-Control Systems", "type": "Skill", "category": "Regulation",
+         "email": None},
+        {"id": 63, "name": "Snowflake", "type": "Skill", "category": "Infrastructure_Technologies", "email": None},
+        {"id": 310, "name": "Bryn Parry-Jones", "type": "Consultant", "category": None,
+         "email": "bryn_parry-jones@gmail.com"},
+        {"id": 236, "name": "Robotic Process Automation & Workflow Orchastration", "type": "Skill",
+         "category": "Service", "email": None},
+        {"id": 311, "name": "ELOG", "type": "Skill", "category": "Scientific_Products_And_Applications", "email": None},
+        {"id": 243, "name": "Product Lifecycle Management", "type": "Skill", "category": "Service", "email": None},
+        {"id": 32, "name": "DB2", "type": "Skill", "category": "Infrastructure_Technologies", "email": None},
+        {"id": 201, "name": "Large molecule registration", "type": "Skill", "category": "R_And_D_Processes",
+         "email": None},
+        {"id": 226, "name": "Machine Learning & AI", "type": "Skill", "category": "Service", "email": None},
+        {"id": 120, "name": "SAS Business Intelligence", "type": "Skill", "category": "Products_And_Applications",
+         "email": None}, {"id": 147, "name": "QSAR", "type": "Skill", "category": "R_And_D_Processes", "email": None},
+        {"id": 34, "name": "Data Warehousing", "type": "Skill", "category": "Infrastructure_Technologies",
+         "email": None},
+        {"id": 13, "name": "Remedy", "type": "Skill", "category": "Products_And_Applications", "email": None},
+        {"id": 115, "name": "Pharmacology & DMPK", "type": "Skill", "category": "Service", "email": None},
+        {"id": 72, "name": "Ontology Development & Management", "type": "Skill", "category": "Data_Management",
+         "email": None},
+        {"id": 47, "name": "Atlassian JIRA", "type": "Skill", "category": "Products_And_Applications", "email": None},
+        {"id": 268, "name": "Cheminformatics", "type": "Skill", "category": "Service", "email": None},
+        {"id": 312, "name": "Qlik", "type": "Skill", "category": "Scientific_Products_And_Applications", "email": None},
+        {"id": 46, "name": "Trello", "type": "Skill", "category": "Products_And_Applications", "email": None},
+        {"id": 151, "name": "GCP Cloud", "type": "Skill", "category": "Infrastructure_Technologies", "email": None},
+        {"id": 159, "name": "Rational Unified Process (RUP)", "type": "Skill", "category": "Methodology",
+         "email": None}], "links": [{"id": 98, "source": 77, "target": 87}, {"id": 102, "source": 77, "target": 76},
+                                    {"id": 95, "source": 77, "target": 85}, {"id": 89, "source": 77, "target": 80},
+                                    {"id": 99, "source": 77, "target": 60}, {"id": 88, "source": 77, "target": 79},
+                                    {"id": 96, "source": 77, "target": 86}, {"id": 100, "source": 77, "target": 88},
+                                    {"id": 97, "source": 77, "target": 26}, {"id": 86, "source": 77, "target": 19},
+                                    {"id": 101, "source": 77, "target": 89}, {"id": 90, "source": 77, "target": 81},
+                                    {"id": 92, "source": 77, "target": 83}, {"id": 87, "source": 77, "target": 78},
+                                    {"id": 91, "source": 77, "target": 82}, {"id": 94, "source": 77, "target": 84},
+                                    {"id": 93, "source": 77, "target": 48}, {"id": 103, "source": 77, "target": 63},
+                                    {"id": 909, "source": 310, "target": 236},
+                                    {"id": 914, "source": 310, "target": 311},
+                                    {"id": 910, "source": 310, "target": 243}, {"id": 924, "source": 310, "target": 32},
+                                    {"id": 917, "source": 310, "target": 201},
+                                    {"id": 908, "source": 310, "target": 226},
+                                    {"id": 918, "source": 310, "target": 120}, {"id": 923, "source": 310, "target": 89},
+                                    {"id": 916, "source": 310, "target": 147}, {"id": 927, "source": 310, "target": 34},
+                                    {"id": 919, "source": 310, "target": 13}, {"id": 925, "source": 310, "target": 76},
+                                    {"id": 911, "source": 310, "target": 115}, {"id": 922, "source": 310, "target": 72},
+                                    {"id": 921, "source": 310, "target": 47}, {"id": 912, "source": 310, "target": 268},
+                                    {"id": 915, "source": 310, "target": 312}, {"id": 920, "source": 310, "target": 46},
+                                    {"id": 926, "source": 310, "target": 151},
+                                    {"id": 913, "source": 310, "target": 159}]}
+
+    SCENARIO2 = {"nodes": [{"id": 310, "name": "Bryn Parry-Jones", "type": "Consultant", "category": None,
+                            "email": "bryn_parry-jones@gmail.com"},
+                           {"id": 236, "name": "Robotic Process Automation & Workflow Orchastration", "type": "Skill",
+                            "category": "Service", "email": None}, {"id": 311, "name": "ELOG", "type": "Skill",
+                                                                    "category": "Scientific_Products_And_Applications",
+                                                                    "email": None},
+                           {"id": 243, "name": "Product Lifecycle Management", "type": "Skill", "category": "Service",
+                            "email": None},
+                           {"id": 32, "name": "DB2", "type": "Skill", "category": "Infrastructure_Technologies",
+                            "email": None}, {"id": 201, "name": "Large molecule registration", "type": "Skill",
+                                             "category": "R_And_D_Processes", "email": None},
+                           {"id": 226, "name": "Machine Learning & AI", "type": "Skill", "category": "Service",
+                            "email": None}, {"id": 120, "name": "SAS Business Intelligence", "type": "Skill",
+                                             "category": "Products_And_Applications", "email": None},
+                           {"id": 89, "name": "Java", "type": "Skill", "category": "Programming_languages",
+                            "email": None},
+                           {"id": 147, "name": "QSAR", "type": "Skill", "category": "R_And_D_Processes", "email": None},
+                           {"id": 34, "name": "Data Warehousing", "type": "Skill",
+                            "category": "Infrastructure_Technologies", "email": None},
+                           {"id": 13, "name": "Remedy", "type": "Skill", "category": "Products_And_Applications",
+                            "email": None}, {"id": 76, "name": "Configuration Management", "type": "Skill",
+                                             "category": "Infrastructure_Technologies", "email": None},
+                           {"id": 115, "name": "Pharmacology & DMPK", "type": "Skill", "category": "Service",
+                            "email": None}, {"id": 72, "name": "Ontology Development & Management", "type": "Skill",
+                                             "category": "Data_Management", "email": None},
+                           {"id": 47, "name": "Atlassian JIRA", "type": "Skill",
+                            "category": "Products_And_Applications", "email": None},
+                           {"id": 268, "name": "Cheminformatics", "type": "Skill", "category": "Service",
+                            "email": None}, {"id": 312, "name": "Qlik", "type": "Skill",
+                                             "category": "Scientific_Products_And_Applications", "email": None},
+                           {"id": 46, "name": "Trello", "type": "Skill", "category": "Products_And_Applications",
+                            "email": None},
+                           {"id": 151, "name": "GCP Cloud", "type": "Skill", "category": "Infrastructure_Technologies",
+                            "email": None}, {"id": 159, "name": "Rational Unified Process (RUP)", "type": "Skill",
+                                             "category": "Methodology", "email": None}],
+                 "links": [{"id": 909, "source": 310, "target": 236}, {"id": 914, "source": 310, "target": 311},
+                           {"id": 910, "source": 310, "target": 243}, {"id": 924, "source": 310, "target": 32},
+                           {"id": 917, "source": 310, "target": 201}, {"id": 908, "source": 310, "target": 226},
+                           {"id": 918, "source": 310, "target": 120}, {"id": 923, "source": 310, "target": 89},
+                           {"id": 916, "source": 310, "target": 147}, {"id": 927, "source": 310, "target": 34},
+                           {"id": 919, "source": 310, "target": 13}, {"id": 925, "source": 310, "target": 76},
+                           {"id": 911, "source": 310, "target": 115}, {"id": 922, "source": 310, "target": 72},
+                           {"id": 921, "source": 310, "target": 47}, {"id": 912, "source": 310, "target": 268},
+                           {"id": 915, "source": 310, "target": 312}, {"id": 920, "source": 310, "target": 46},
+                           {"id": 926, "source": 310, "target": 151}, {"id": 913, "source": 310, "target": 159}]}
+
+    SCENARIO3 = {"nodes": [{"id": 0, "name": "Anthony Hopkins", "type": "Consultant", "category": None,
+                            "email": "anthony_hopkins@gmail.com"},
+                           {"id": 17, "name": "C++", "type": "Skill", "category": "Programming_languages",
+                            "email": None},
+                           {"id": 16, "name": "21 CFR Part 58 (GLP)", "type": "Skill", "category": "Regulation",
+                            "email": None},
+                           {"id": 15, "name": "Azure-DevOps", "type": "Skill", "category": "Products_And_Applications",
+                            "email": None},
+                           {"id": 14, "name": "GraphDB", "type": "Skill", "category": "Products_And_Applications",
+                            "email": None},
+                           {"id": 13, "name": "Remedy", "type": "Skill", "category": "Products_And_Applications",
+                            "email": None},
+                           {"id": 12, "name": "Slack", "type": "Skill", "category": "Products_And_Applications",
+                            "email": None},
+                           {"id": 11, "name": "HP ALM", "type": "Skill", "category": "Products_And_Applications",
+                            "email": None}, {"id": 10, "name": "Mbook ELN", "type": "Skill",
+                                             "category": "Scientific_Products_And_Applications", "email": None},
+                           {"id": 9, "name": "SciNote ELN", "type": "Skill",
+                            "category": "Scientific_Products_And_Applications", "email": None},
+                           {"id": 8, "name": "BIOVIA Pipeline Pilot", "type": "Skill",
+                            "category": "Scientific_Products_And_Applications", "email": None},
+                           {"id": 7, "name": "Hamilton", "type": "Skill",
+                            "category": "Scientific_Products_And_Applications", "email": None},
+                           {"id": 6, "name": "Nexus", "type": "Skill", "category": "Methodology", "email": None},
+                           {"id": 5, "name": "Statement of Work Authoring", "type": "Skill", "category": "Methodology",
+                            "email": None},
+                           {"id": 4, "name": "Business Process Modelling", "type": "Skill", "category": "Methodology",
+                            "email": None},
+                           {"id": 3, "name": "Cloud Archecture,Migration & Integration", "type": "Skill",
+                            "category": "Service", "email": None},
+                           {"id": 2, "name": "Computational Design & Modelling", "type": "Skill", "category": "Service",
+                            "email": None},
+                           {"id": 1, "name": "Statistics - Randomization", "type": "Skill", "category": "Service",
+                            "email": None}, {"id": 77, "name": "Matthew Rhys", "type": "Consultant", "category": None,
+                                             "email": "matthew_rhys@gmail.com"},
+                           {"id": 87, "name": "Data Analysis/Modelling", "type": "Skill", "category": "Data_Management",
+                            "email": None}, {"id": 76, "name": "Configuration Management", "type": "Skill",
+                                             "category": "Infrastructure_Technologies", "email": None},
+                           {"id": 85, "name": "ISO 9001 - Quality Management", "type": "Skill",
+                            "category": "Regulation", "email": None}, {"id": 80, "name": "STARLIMS", "type": "Skill",
+                                                                       "category": "Scientific_Products_And_Applications",
+                                                                       "email": None},
+                           {"id": 60, "name": "ML Ops", "type": "Skill", "category": "Data_Management", "email": None},
+                           {"id": 79, "name": "MoSaIC", "type": "Skill",
+                            "category": "Scientific_Products_And_Applications", "email": None},
+                           {"id": 86, "name": "21 CFR Part 11 (ERES)", "type": "Skill", "category": "Regulation",
+                            "email": None},
+                           {"id": 88, "name": "XML", "type": "Skill", "category": "Programming_languages",
+                            "email": None},
+                           {"id": 26, "name": "Data Governance", "type": "Skill", "category": "Data_Management",
+                            "email": None},
+                           {"id": 19, "name": "PROCI - ADKAR", "type": "Skill", "category": "Methodology",
+                            "email": None},
+                           {"id": 89, "name": "Java", "type": "Skill", "category": "Programming_languages",
+                            "email": None}, {"id": 81, "name": "L7 Informatics", "type": "Skill",
+                                             "category": "Scientific_Products_And_Applications", "email": None},
+                           {"id": 83, "name": "Epigenetics", "type": "Skill", "category": "R_And_D_Processes",
+                            "email": None}, {"id": 78, "name": "Pillar Science", "type": "Skill",
+                                             "category": "Scientific_Products_And_Applications", "email": None},
+                           {"id": 82, "name": "LabGuru LIMS", "type": "Skill",
+                            "category": "Scientific_Products_And_Applications", "email": None},
+                           {"id": 84, "name": "HIPAA", "type": "Skill", "category": "Regulation", "email": None},
+                           {"id": 48, "name": "ANSI/ISA-95 - Enterprise-Control Systems", "type": "Skill",
+                            "category": "Regulation", "email": None},
+                           {"id": 63, "name": "Snowflake", "type": "Skill", "category": "Infrastructure_Technologies",
+                            "email": None}, {"id": 125, "name": "Rob Brydon", "type": "Consultant", "category": None,
+                                             "email": "rob_brydon@gmail.com"},
+                           {"id": 132, "name": "F#", "type": "Skill", "category": "Programming_languages",
+                            "email": None}, {"id": 134, "name": "Oracle Database", "type": "Skill",
+                                             "category": "Infrastructure_Technologies", "email": None},
+                           {"id": 131, "name": "VBA", "type": "Skill", "category": "Programming_languages",
+                            "email": None}, {"id": 127, "name": "Xbiom", "type": "Skill",
+                                             "category": "Scientific_Products_And_Applications", "email": None},
+                           {"id": 129, "name": "PowerBI", "type": "Skill", "category": "Products_And_Applications",
+                            "email": None},
+                           {"id": 51, "name": "JQuery", "type": "Skill", "category": "Miscellaneous", "email": None},
+                           {"id": 61, "name": "Chinese", "type": "Skill", "category": "Languages", "email": None},
+                           {"id": 64, "name": "Unix", "type": "Skill", "category": "Infrastructure_Technologies",
+                            "email": None},
+                           {"id": 126, "name": "Quality Reporting", "type": "Skill", "category": "Service",
+                            "email": None}, {"id": 22, "name": "Scaled Agile Framework (Safe)", "type": "Skill",
+                                             "category": "Methodology", "email": None},
+                           {"id": 75, "name": "R Studio", "type": "Skill", "category": "Miscellaneous", "email": None},
+                           {"id": 98, "name": "REACT", "type": "Skill", "category": "Miscellaneous", "email": None},
+                           {"id": 128, "name": "LabVantage LIMS", "type": "Skill",
+                            "category": "Scientific_Products_And_Applications", "email": None},
+                           {"id": 133, "name": "HTML", "type": "Skill", "category": "Programming_languages",
+                            "email": None},
+                           {"id": 130, "name": "Rust", "type": "Skill", "category": "Programming_languages",
+                            "email": None},
+                           {"id": 65, "name": "Azure Cloud", "type": "Skill", "category": "Infrastructure_Technologies",
+                            "email": None}, {"id": 144, "name": "Duffy", "type": "Consultant", "category": None,
+                                             "email": "duffy@gmail.com"},
+                           {"id": 146, "name": "ITIL Methodology", "type": "Skill", "category": "Methodology",
+                            "email": None},
+                           {"id": 147, "name": "QSAR", "type": "Skill", "category": "R_And_D_Processes", "email": None},
+                           {"id": 72, "name": "Ontology Development & Management", "type": "Skill",
+                            "category": "Data_Management", "email": None},
+                           {"id": 92, "name": "DataOps", "type": "Skill", "category": "Service", "email": None},
+                           {"id": 140, "name": "Sharepoint", "type": "Skill", "category": "Products_And_Applications",
+                            "email": None},
+                           {"id": 145, "name": "Manufacturing QC", "type": "Skill", "category": "Service",
+                            "email": None}, {"id": 150, "name": "Business Intelligence Reporting", "type": "Skill",
+                                             "category": "Data_Management", "email": None},
+                           {"id": 148, "name": "Rshiny", "type": "Skill", "category": "Products_And_Applications",
+                            "email": None}, {"id": 34, "name": "Data Warehousing", "type": "Skill",
+                                             "category": "Infrastructure_Technologies", "email": None},
+                           {"id": 149, "name": "Data Pipelines", "type": "Skill", "category": "Data_Management",
+                            "email": None}, {"id": 106, "name": "Next Generation Sequencing (NGS)", "type": "Skill",
+                                             "category": "R_And_D_Processes", "email": None},
+                           {"id": 151, "name": "GCP Cloud", "type": "Skill", "category": "Infrastructure_Technologies",
+                            "email": None}, {"id": 163, "name": "Bonnie Tyler", "type": "Consultant", "category": None,
+                                             "email": "bonnie_tyler@gmail.com"},
+                           {"id": 166, "name": "Daisy", "type": "Skill",
+                            "category": "Scientific_Products_And_Applications", "email": None},
+                           {"id": 49, "name": "Arabic", "type": "Skill", "category": "Languages", "email": None},
+                           {"id": 169, "name": "Knowledge Graphs", "type": "Skill", "category": "Data_Management",
+                            "email": None},
+                           {"id": 52, "name": "MySQL", "type": "Skill", "category": "Infrastructure_Technologies",
+                            "email": None}, {"id": 164, "name": "Rspace ELN", "type": "Skill",
+                                             "category": "Scientific_Products_And_Applications", "email": None},
+                           {"id": 58, "name": "Schema Design", "type": "Skill", "category": "Data_Management",
+                            "email": None},
+                           {"id": 170, "name": "Python", "type": "Skill", "category": "Programming_languages",
+                            "email": None},
+                           {"id": 27, "name": "Dutch", "type": "Skill", "category": "Languages", "email": None},
+                           {"id": 122, "name": "Assembler", "type": "Skill", "category": "Programming_languages",
+                            "email": None}, {"id": 165, "name": "Biovia ChemDraw", "type": "Skill",
+                                             "category": "Scientific_Products_And_Applications", "email": None},
+                           {"id": 171, "name": "SQL", "type": "Skill", "category": "Programming_languages",
+                            "email": None}, {"id": 168, "name": "Taxonomy Development & Management", "type": "Skill",
+                                             "category": "Data_Management", "email": None},
+                           {"id": 167, "name": "Zoho Analytics", "type": "Skill",
+                            "category": "Products_And_Applications", "email": None},
+                           {"id": 109, "name": "Atlassian Confluence", "type": "Skill",
+                            "category": "Products_And_Applications", "email": None},
+                           {"id": 214, "name": "Nerys Hughes", "type": "Consultant", "category": None,
+                            "email": "nerys_hughes@gmail.com"},
+                           {"id": 110, "name": "ISO 14001 - Environmental management", "type": "Skill",
+                            "category": "Regulation", "email": None},
+                           {"id": 186, "name": "C#", "type": "Skill", "category": "Programming_languages",
+                            "email": None},
+                           {"id": 193, "name": "Process Development", "type": "Skill", "category": "R_And_D_Processes",
+                            "email": None},
+                           {"id": 216, "name": "C", "type": "Skill", "category": "Programming_languages",
+                            "email": None},
+                           {"id": 29, "name": "French", "type": "Skill", "category": "Languages", "email": None},
+                           {"id": 155, "name": "Service Now", "type": "Skill", "category": "Products_And_Applications",
+                            "email": None}, {"id": 194, "name": "CDISC Study Data Tabulation Model", "type": "Skill",
+                                             "category": "Data_Management", "email": None},
+                           {"id": 215, "name": "Genetic Engineering", "type": "Skill", "category": "R_And_D_Processes",
+                            "email": None},
+                           {"id": 57, "name": "21 CFR Part 820 (QSR)", "type": "Skill", "category": "Regulation",
+                            "email": None},
+                           {"id": 254, "name": "Christian Bale", "type": "Consultant", "category": None,
+                            "email": "christian_bale@gmail.com"},
+                           {"id": 260, "name": "ISO 27001 - Security Management", "type": "Skill",
+                            "category": "Regulation", "email": None},
+                           {"id": 71, "name": "EU Annex 11", "type": "Skill", "category": "Regulation", "email": None},
+                           {"id": 223, "name": "Release Management", "type": "Skill",
+                            "category": "Infrastructure_Technologies", "email": None},
+                           {"id": 256, "name": "Chemaxon Marvin", "type": "Skill",
+                            "category": "Scientific_Products_And_Applications", "email": None},
+                           {"id": 99, "name": "Django", "type": "Skill", "category": "Miscellaneous", "email": None},
+                           {"id": 112, "name": "Danish", "type": "Skill", "category": "Languages", "email": None},
+                           {"id": 259, "name": "PharmacoKinetics", "type": "Skill", "category": "R_And_D_Processes",
+                            "email": None},
+                           {"id": 261, "name": "Tamil", "type": "Skill", "category": "Languages", "email": None},
+                           {"id": 257, "name": "Certara WinNonlin", "type": "Skill",
+                            "category": "Scientific_Products_And_Applications", "email": None},
+                           {"id": 258, "name": "ecLabNote ELN", "type": "Skill",
+                            "category": "Scientific_Products_And_Applications", "email": None},
+                           {"id": 262, "name": "Jasper", "type": "Skill", "category": "Programming_languages",
+                            "email": None}, {"id": 255, "name": "KNIME", "type": "Skill",
+                                             "category": "Scientific_Products_And_Applications", "email": None},
+                           {"id": 275, "name": "David Emanuel", "type": "Consultant", "category": None,
+                            "email": "david_emanuel@gmail.com"},
+                           {"id": 225, "name": "Adverse Event Monitoring", "type": "Skill", "category": "Service",
+                            "email": None},
+                           {"id": 278, "name": "English", "type": "Skill", "category": "Languages", "email": None},
+                           {"id": 121, "name": "ISO 13485 - Medical Devices", "type": "Skill", "category": "Regulation",
+                            "email": None},
+                           {"id": 31, "name": "JSP", "type": "Skill", "category": "Programming_languages",
+                            "email": None},
+                           {"id": 208, "name": "Change Management", "type": "Skill", "category": "Methodology",
+                            "email": None},
+                           {"id": 268, "name": "Cheminformatics", "type": "Skill", "category": "Service",
+                            "email": None},
+                           {"id": 187, "name": "Fortran", "type": "Skill", "category": "Programming_languages",
+                            "email": None},
+                           {"id": 276, "name": "Packaging & Shipping", "type": "Skill", "category": "R_And_D_Processes",
+                            "email": None},
+                           {"id": 229, "name": "Application Migration", "type": "Skill", "category": "Service",
+                            "email": None}, {"id": 120, "name": "SAS Business Intelligence", "type": "Skill",
+                                             "category": "Products_And_Applications", "email": None},
+                           {"id": 277, "name": "Chromatography Techniques", "type": "Skill",
+                            "category": "R_And_D_Processes", "email": None},
+                           {"id": 310, "name": "Bryn Parry-Jones", "type": "Consultant", "category": None,
+                            "email": "bryn_parry-jones@gmail.com"},
+                           {"id": 236, "name": "Robotic Process Automation & Workflow Orchastration", "type": "Skill",
+                            "category": "Service", "email": None}, {"id": 311, "name": "ELOG", "type": "Skill",
+                                                                    "category": "Scientific_Products_And_Applications",
+                                                                    "email": None},
+                           {"id": 243, "name": "Product Lifecycle Management", "type": "Skill", "category": "Service",
+                            "email": None},
+                           {"id": 32, "name": "DB2", "type": "Skill", "category": "Infrastructure_Technologies",
+                            "email": None}, {"id": 201, "name": "Large molecule registration", "type": "Skill",
+                                             "category": "R_And_D_Processes", "email": None},
+                           {"id": 226, "name": "Machine Learning & AI", "type": "Skill", "category": "Service",
+                            "email": None},
+                           {"id": 115, "name": "Pharmacology & DMPK", "type": "Skill", "category": "Service",
+                            "email": None}, {"id": 47, "name": "Atlassian JIRA", "type": "Skill",
+                                             "category": "Products_And_Applications", "email": None},
+                           {"id": 312, "name": "Qlik", "type": "Skill",
+                            "category": "Scientific_Products_And_Applications", "email": None},
+                           {"id": 46, "name": "Trello", "type": "Skill", "category": "Products_And_Applications",
+                            "email": None}, {"id": 159, "name": "Rational Unified Process (RUP)", "type": "Skill",
+                                             "category": "Methodology", "email": None}],
+                 "links": [{"id": 16, "source": 0, "target": 17}, {"id": 15, "source": 0, "target": 16},
+                           {"id": 14, "source": 0, "target": 15}, {"id": 13, "source": 0, "target": 14},
+                           {"id": 12, "source": 0, "target": 13}, {"id": 11, "source": 0, "target": 12},
+                           {"id": 10, "source": 0, "target": 11}, {"id": 9, "source": 0, "target": 10},
+                           {"id": 8, "source": 0, "target": 9}, {"id": 7, "source": 0, "target": 8},
+                           {"id": 6, "source": 0, "target": 7}, {"id": 5, "source": 0, "target": 6},
+                           {"id": 4, "source": 0, "target": 5}, {"id": 3, "source": 0, "target": 4},
+                           {"id": 2, "source": 0, "target": 3}, {"id": 1, "source": 0, "target": 2},
+                           {"id": 0, "source": 0, "target": 1}, {"id": 98, "source": 77, "target": 87},
+                           {"id": 102, "source": 77, "target": 76}, {"id": 95, "source": 77, "target": 85},
+                           {"id": 89, "source": 77, "target": 80}, {"id": 99, "source": 77, "target": 60},
+                           {"id": 88, "source": 77, "target": 79}, {"id": 96, "source": 77, "target": 86},
+                           {"id": 100, "source": 77, "target": 88}, {"id": 97, "source": 77, "target": 26},
+                           {"id": 86, "source": 77, "target": 19}, {"id": 101, "source": 77, "target": 89},
+                           {"id": 90, "source": 77, "target": 81}, {"id": 92, "source": 77, "target": 83},
+                           {"id": 87, "source": 77, "target": 78}, {"id": 91, "source": 77, "target": 82},
+                           {"id": 94, "source": 77, "target": 84}, {"id": 93, "source": 77, "target": 48},
+                           {"id": 103, "source": 77, "target": 63}, {"id": 166, "source": 125, "target": 132},
+                           {"id": 172, "source": 125, "target": 134}, {"id": 165, "source": 125, "target": 131},
+                           {"id": 160, "source": 125, "target": 127}, {"id": 162, "source": 125, "target": 129},
+                           {"id": 171, "source": 125, "target": 51}, {"id": 163, "source": 125, "target": 61},
+                           {"id": 173, "source": 125, "target": 64}, {"id": 158, "source": 125, "target": 126},
+                           {"id": 159, "source": 125, "target": 22}, {"id": 170, "source": 125, "target": 75},
+                           {"id": 169, "source": 125, "target": 98}, {"id": 161, "source": 125, "target": 128},
+                           {"id": 168, "source": 125, "target": 133}, {"id": 164, "source": 125, "target": 130},
+                           {"id": 174, "source": 125, "target": 65}, {"id": 167, "source": 125, "target": 17},
+                           {"id": 195, "source": 144, "target": 146}, {"id": 196, "source": 144, "target": 147},
+                           {"id": 201, "source": 144, "target": 11}, {"id": 204, "source": 144, "target": 72},
+                           {"id": 199, "source": 144, "target": 14}, {"id": 208, "source": 144, "target": 17},
+                           {"id": 193, "source": 144, "target": 92}, {"id": 197, "source": 144, "target": 83},
+                           {"id": 202, "source": 144, "target": 140}, {"id": 194, "source": 144, "target": 145},
+                           {"id": 206, "source": 144, "target": 150}, {"id": 200, "source": 144, "target": 148},
+                           {"id": 207, "source": 144, "target": 88}, {"id": 209, "source": 144, "target": 34},
+                           {"id": 203, "source": 144, "target": 84}, {"id": 205, "source": 144, "target": 149},
+                           {"id": 198, "source": 144, "target": 106}, {"id": 211, "source": 144, "target": 76},
+                           {"id": 210, "source": 144, "target": 151}, {"id": 247, "source": 163, "target": 166},
+                           {"id": 262, "source": 163, "target": 134}, {"id": 255, "source": 163, "target": 49},
+                           {"id": 253, "source": 163, "target": 169}, {"id": 263, "source": 163, "target": 52},
+                           {"id": 245, "source": 163, "target": 164}, {"id": 252, "source": 163, "target": 58},
+                           {"id": 259, "source": 163, "target": 51}, {"id": 257, "source": 163, "target": 170},
+                           {"id": 254, "source": 163, "target": 27}, {"id": 256, "source": 163, "target": 122},
+                           {"id": 260, "source": 163, "target": 75}, {"id": 246, "source": 163, "target": 165},
+                           {"id": 258, "source": 163, "target": 171}, {"id": 251, "source": 163, "target": 168},
+                           {"id": 264, "source": 163, "target": 34}, {"id": 250, "source": 163, "target": 167},
+                           {"id": 249, "source": 163, "target": 140}, {"id": 248, "source": 163, "target": 109},
+                           {"id": 261, "source": 163, "target": 98}, {"id": 399, "source": 214, "target": 110},
+                           {"id": 406, "source": 214, "target": 186}, {"id": 391, "source": 214, "target": 193},
+                           {"id": 408, "source": 214, "target": 216}, {"id": 401, "source": 214, "target": 149},
+                           {"id": 405, "source": 214, "target": 29}, {"id": 395, "source": 214, "target": 155},
+                           {"id": 404, "source": 214, "target": 194}, {"id": 394, "source": 214, "target": 12},
+                           {"id": 400, "source": 214, "target": 16}, {"id": 407, "source": 214, "target": 17},
+                           {"id": 392, "source": 214, "target": 106}, {"id": 403, "source": 214, "target": 168},
+                           {"id": 396, "source": 214, "target": 140}, {"id": 402, "source": 214, "target": 72},
+                           {"id": 390, "source": 214, "target": 81}, {"id": 393, "source": 214, "target": 215},
+                           {"id": 398, "source": 214, "target": 57}, {"id": 397, "source": 214, "target": 85},
+                           {"id": 576, "source": 254, "target": 170}, {"id": 569, "source": 254, "target": 260},
+                           {"id": 578, "source": 254, "target": 216}, {"id": 570, "source": 254, "target": 71},
+                           {"id": 571, "source": 254, "target": 85}, {"id": 568, "source": 254, "target": 109},
+                           {"id": 573, "source": 254, "target": 61}, {"id": 580, "source": 254, "target": 223},
+                           {"id": 563, "source": 254, "target": 256}, {"id": 581, "source": 254, "target": 76},
+                           {"id": 579, "source": 254, "target": 99}, {"id": 575, "source": 254, "target": 112},
+                           {"id": 566, "source": 254, "target": 259}, {"id": 572, "source": 254, "target": 261},
+                           {"id": 564, "source": 254, "target": 257}, {"id": 565, "source": 254, "target": 258},
+                           {"id": 567, "source": 254, "target": 155}, {"id": 577, "source": 254, "target": 262},
+                           {"id": 562, "source": 254, "target": 255}, {"id": 574, "source": 254, "target": 29},
+                           {"id": 684, "source": 275, "target": 215}, {"id": 679, "source": 275, "target": 225},
+                           {"id": 691, "source": 275, "target": 278}, {"id": 683, "source": 275, "target": 193},
+                           {"id": 689, "source": 275, "target": 121}, {"id": 693, "source": 275, "target": 31},
+                           {"id": 690, "source": 275, "target": 60}, {"id": 681, "source": 275, "target": 208},
+                           {"id": 680, "source": 275, "target": 3}, {"id": 678, "source": 275, "target": 268},
+                           {"id": 695, "source": 275, "target": 170}, {"id": 687, "source": 275, "target": 129},
+                           {"id": 692, "source": 275, "target": 187}, {"id": 685, "source": 275, "target": 276},
+                           {"id": 677, "source": 275, "target": 229}, {"id": 688, "source": 275, "target": 120},
+                           {"id": 694, "source": 275, "target": 216}, {"id": 682, "source": 275, "target": 166},
+                           {"id": 686, "source": 275, "target": 277}, {"id": 909, "source": 310, "target": 236},
+                           {"id": 914, "source": 310, "target": 311}, {"id": 910, "source": 310, "target": 243},
+                           {"id": 924, "source": 310, "target": 32}, {"id": 917, "source": 310, "target": 201},
+                           {"id": 908, "source": 310, "target": 226}, {"id": 918, "source": 310, "target": 120},
+                           {"id": 923, "source": 310, "target": 89}, {"id": 916, "source": 310, "target": 147},
+                           {"id": 927, "source": 310, "target": 34}, {"id": 919, "source": 310, "target": 13},
+                           {"id": 925, "source": 310, "target": 76}, {"id": 911, "source": 310, "target": 115},
+                           {"id": 922, "source": 310, "target": 72}, {"id": 921, "source": 310, "target": 47},
+                           {"id": 912, "source": 310, "target": 268}, {"id": 915, "source": 310, "target": 312},
+                           {"id": 920, "source": 310, "target": 46}, {"id": 926, "source": 310, "target": 151},
+                           {"id": 913, "source": 310, "target": 159}]}
+
+    SCENARIO4 = {"nodes": [{"id": 0, "name": "Anthony Hopkins", "type": "Consultant", "category": None,
+                            "email": "anthony_hopkins@gmail.com"},
+                           {"id": 17, "name": "C++", "type": "Skill", "category": "Programming_languages",
+                            "email": None},
+                           {"id": 16, "name": "21 CFR Part 58 (GLP)", "type": "Skill", "category": "Regulation",
+                            "email": None},
+                           {"id": 15, "name": "Azure-DevOps", "type": "Skill", "category": "Products_And_Applications",
+                            "email": None},
+                           {"id": 14, "name": "GraphDB", "type": "Skill", "category": "Products_And_Applications",
+                            "email": None},
+                           {"id": 13, "name": "Remedy", "type": "Skill", "category": "Products_And_Applications",
+                            "email": None},
+                           {"id": 12, "name": "Slack", "type": "Skill", "category": "Products_And_Applications",
+                            "email": None},
+                           {"id": 11, "name": "HP ALM", "type": "Skill", "category": "Products_And_Applications",
+                            "email": None}, {"id": 10, "name": "Mbook ELN", "type": "Skill",
+                                             "category": "Scientific_Products_And_Applications", "email": None},
+                           {"id": 9, "name": "SciNote ELN", "type": "Skill",
+                            "category": "Scientific_Products_And_Applications", "email": None},
+                           {"id": 8, "name": "BIOVIA Pipeline Pilot", "type": "Skill",
+                            "category": "Scientific_Products_And_Applications", "email": None},
+                           {"id": 7, "name": "Hamilton", "type": "Skill",
+                            "category": "Scientific_Products_And_Applications", "email": None},
+                           {"id": 6, "name": "Nexus", "type": "Skill", "category": "Methodology", "email": None},
+                           {"id": 5, "name": "Statement of Work Authoring", "type": "Skill", "category": "Methodology",
+                            "email": None},
+                           {"id": 4, "name": "Business Process Modelling", "type": "Skill", "category": "Methodology",
+                            "email": None},
+                           {"id": 3, "name": "Cloud Archecture,Migration & Integration", "type": "Skill",
+                            "category": "Service", "email": None},
+                           {"id": 2, "name": "Computational Design & Modelling", "type": "Skill", "category": "Service",
+                            "email": None},
+                           {"id": 1, "name": "Statistics - Randomization", "type": "Skill", "category": "Service",
+                            "email": None}, {"id": 125, "name": "Rob Brydon", "type": "Consultant", "category": None,
+                                             "email": "rob_brydon@gmail.com"},
+                           {"id": 132, "name": "F#", "type": "Skill", "category": "Programming_languages",
+                            "email": None}, {"id": 134, "name": "Oracle Database", "type": "Skill",
+                                             "category": "Infrastructure_Technologies", "email": None},
+                           {"id": 131, "name": "VBA", "type": "Skill", "category": "Programming_languages",
+                            "email": None}, {"id": 127, "name": "Xbiom", "type": "Skill",
+                                             "category": "Scientific_Products_And_Applications", "email": None},
+                           {"id": 129, "name": "PowerBI", "type": "Skill", "category": "Products_And_Applications",
+                            "email": None},
+                           {"id": 51, "name": "JQuery", "type": "Skill", "category": "Miscellaneous", "email": None},
+                           {"id": 61, "name": "Chinese", "type": "Skill", "category": "Languages", "email": None},
+                           {"id": 64, "name": "Unix", "type": "Skill", "category": "Infrastructure_Technologies",
+                            "email": None},
+                           {"id": 126, "name": "Quality Reporting", "type": "Skill", "category": "Service",
+                            "email": None}, {"id": 22, "name": "Scaled Agile Framework (Safe)", "type": "Skill",
+                                             "category": "Methodology", "email": None},
+                           {"id": 75, "name": "R Studio", "type": "Skill", "category": "Miscellaneous", "email": None},
+                           {"id": 98, "name": "REACT", "type": "Skill", "category": "Miscellaneous", "email": None},
+                           {"id": 128, "name": "LabVantage LIMS", "type": "Skill",
+                            "category": "Scientific_Products_And_Applications", "email": None},
+                           {"id": 133, "name": "HTML", "type": "Skill", "category": "Programming_languages",
+                            "email": None},
+                           {"id": 130, "name": "Rust", "type": "Skill", "category": "Programming_languages",
+                            "email": None},
+                           {"id": 65, "name": "Azure Cloud", "type": "Skill", "category": "Infrastructure_Technologies",
+                            "email": None}, {"id": 144, "name": "Duffy", "type": "Consultant", "category": None,
+                                             "email": "duffy@gmail.com"},
+                           {"id": 146, "name": "ITIL Methodology", "type": "Skill", "category": "Methodology",
+                            "email": None},
+                           {"id": 147, "name": "QSAR", "type": "Skill", "category": "R_And_D_Processes", "email": None},
+                           {"id": 72, "name": "Ontology Development & Management", "type": "Skill",
+                            "category": "Data_Management", "email": None},
+                           {"id": 92, "name": "DataOps", "type": "Skill", "category": "Service", "email": None},
+                           {"id": 83, "name": "Epigenetics", "type": "Skill", "category": "R_And_D_Processes",
+                            "email": None},
+                           {"id": 140, "name": "Sharepoint", "type": "Skill", "category": "Products_And_Applications",
+                            "email": None},
+                           {"id": 145, "name": "Manufacturing QC", "type": "Skill", "category": "Service",
+                            "email": None}, {"id": 150, "name": "Business Intelligence Reporting", "type": "Skill",
+                                             "category": "Data_Management", "email": None},
+                           {"id": 148, "name": "Rshiny", "type": "Skill", "category": "Products_And_Applications",
+                            "email": None},
+                           {"id": 88, "name": "XML", "type": "Skill", "category": "Programming_languages",
+                            "email": None}, {"id": 34, "name": "Data Warehousing", "type": "Skill",
+                                             "category": "Infrastructure_Technologies", "email": None},
+                           {"id": 84, "name": "HIPAA", "type": "Skill", "category": "Regulation", "email": None},
+                           {"id": 149, "name": "Data Pipelines", "type": "Skill", "category": "Data_Management",
+                            "email": None}, {"id": 106, "name": "Next Generation Sequencing (NGS)", "type": "Skill",
+                                             "category": "R_And_D_Processes", "email": None},
+                           {"id": 76, "name": "Configuration Management", "type": "Skill",
+                            "category": "Infrastructure_Technologies", "email": None},
+                           {"id": 151, "name": "GCP Cloud", "type": "Skill", "category": "Infrastructure_Technologies",
+                            "email": None}, {"id": 214, "name": "Nerys Hughes", "type": "Consultant", "category": None,
+                                             "email": "nerys_hughes@gmail.com"},
+                           {"id": 110, "name": "ISO 14001 - Environmental management", "type": "Skill",
+                            "category": "Regulation", "email": None},
+                           {"id": 186, "name": "C#", "type": "Skill", "category": "Programming_languages",
+                            "email": None},
+                           {"id": 193, "name": "Process Development", "type": "Skill", "category": "R_And_D_Processes",
+                            "email": None},
+                           {"id": 216, "name": "C", "type": "Skill", "category": "Programming_languages",
+                            "email": None},
+                           {"id": 29, "name": "French", "type": "Skill", "category": "Languages", "email": None},
+                           {"id": 155, "name": "Service Now", "type": "Skill", "category": "Products_And_Applications",
+                            "email": None}, {"id": 194, "name": "CDISC Study Data Tabulation Model", "type": "Skill",
+                                             "category": "Data_Management", "email": None},
+                           {"id": 168, "name": "Taxonomy Development & Management", "type": "Skill",
+                            "category": "Data_Management", "email": None},
+                           {"id": 81, "name": "L7 Informatics", "type": "Skill",
+                            "category": "Scientific_Products_And_Applications", "email": None},
+                           {"id": 215, "name": "Genetic Engineering", "type": "Skill", "category": "R_And_D_Processes",
+                            "email": None},
+                           {"id": 57, "name": "21 CFR Part 820 (QSR)", "type": "Skill", "category": "Regulation",
+                            "email": None}, {"id": 85, "name": "ISO 9001 - Quality Management", "type": "Skill",
+                                             "category": "Regulation", "email": None}],
+                 "links": [{"id": 16, "source": 0, "target": 17}, {"id": 15, "source": 0, "target": 16},
+                           {"id": 14, "source": 0, "target": 15}, {"id": 13, "source": 0, "target": 14},
+                           {"id": 12, "source": 0, "target": 13}, {"id": 11, "source": 0, "target": 12},
+                           {"id": 10, "source": 0, "target": 11}, {"id": 9, "source": 0, "target": 10},
+                           {"id": 8, "source": 0, "target": 9}, {"id": 7, "source": 0, "target": 8},
+                           {"id": 6, "source": 0, "target": 7}, {"id": 5, "source": 0, "target": 6},
+                           {"id": 4, "source": 0, "target": 5}, {"id": 3, "source": 0, "target": 4},
+                           {"id": 2, "source": 0, "target": 3}, {"id": 1, "source": 0, "target": 2},
+                           {"id": 0, "source": 0, "target": 1}, {"id": 166, "source": 125, "target": 132},
+                           {"id": 172, "source": 125, "target": 134}, {"id": 165, "source": 125, "target": 131},
+                           {"id": 160, "source": 125, "target": 127}, {"id": 162, "source": 125, "target": 129},
+                           {"id": 171, "source": 125, "target": 51}, {"id": 163, "source": 125, "target": 61},
+                           {"id": 173, "source": 125, "target": 64}, {"id": 158, "source": 125, "target": 126},
+                           {"id": 159, "source": 125, "target": 22}, {"id": 170, "source": 125, "target": 75},
+                           {"id": 169, "source": 125, "target": 98}, {"id": 161, "source": 125, "target": 128},
+                           {"id": 168, "source": 125, "target": 133}, {"id": 164, "source": 125, "target": 130},
+                           {"id": 174, "source": 125, "target": 65}, {"id": 167, "source": 125, "target": 17},
+                           {"id": 195, "source": 144, "target": 146}, {"id": 196, "source": 144, "target": 147},
+                           {"id": 201, "source": 144, "target": 11}, {"id": 204, "source": 144, "target": 72},
+                           {"id": 199, "source": 144, "target": 14}, {"id": 208, "source": 144, "target": 17},
+                           {"id": 193, "source": 144, "target": 92}, {"id": 197, "source": 144, "target": 83},
+                           {"id": 202, "source": 144, "target": 140}, {"id": 194, "source": 144, "target": 145},
+                           {"id": 206, "source": 144, "target": 150}, {"id": 200, "source": 144, "target": 148},
+                           {"id": 207, "source": 144, "target": 88}, {"id": 209, "source": 144, "target": 34},
+                           {"id": 203, "source": 144, "target": 84}, {"id": 205, "source": 144, "target": 149},
+                           {"id": 198, "source": 144, "target": 106}, {"id": 211, "source": 144, "target": 76},
+                           {"id": 210, "source": 144, "target": 151}, {"id": 399, "source": 214, "target": 110},
+                           {"id": 406, "source": 214, "target": 186}, {"id": 391, "source": 214, "target": 193},
+                           {"id": 408, "source": 214, "target": 216}, {"id": 401, "source": 214, "target": 149},
+                           {"id": 405, "source": 214, "target": 29}, {"id": 395, "source": 214, "target": 155},
+                           {"id": 404, "source": 214, "target": 194}, {"id": 394, "source": 214, "target": 12},
+                           {"id": 400, "source": 214, "target": 16}, {"id": 407, "source": 214, "target": 17},
+                           {"id": 392, "source": 214, "target": 106}, {"id": 403, "source": 214, "target": 168},
+                           {"id": 396, "source": 214, "target": 140}, {"id": 402, "source": 214, "target": 72},
+                           {"id": 390, "source": 214, "target": 81}, {"id": 393, "source": 214, "target": 215},
+                           {"id": 398, "source": 214, "target": 57}, {"id": 397, "source": 214, "target": 85}]}
+
+    SCENARIO5 = {"nodes": [{"id": 0, "name": "Anthony Hopkins", "type": "Consultant", "category": None,
+                            "email": "anthony_hopkins@gmail.com"},
+                           {"id": 17, "name": "C++", "type": "Skill", "category": "Programming_languages",
+                            "email": None},
+                           {"id": 16, "name": "21 CFR Part 58 (GLP)", "type": "Skill", "category": "Regulation",
+                            "email": None},
+                           {"id": 15, "name": "Azure-DevOps", "type": "Skill", "category": "Products_And_Applications",
+                            "email": None},
+                           {"id": 14, "name": "GraphDB", "type": "Skill", "category": "Products_And_Applications",
+                            "email": None},
+                           {"id": 13, "name": "Remedy", "type": "Skill", "category": "Products_And_Applications",
+                            "email": None},
+                           {"id": 12, "name": "Slack", "type": "Skill", "category": "Products_And_Applications",
+                            "email": None},
+                           {"id": 11, "name": "HP ALM", "type": "Skill", "category": "Products_And_Applications",
+                            "email": None}, {"id": 10, "name": "Mbook ELN", "type": "Skill",
+                                             "category": "Scientific_Products_And_Applications", "email": None},
+                           {"id": 9, "name": "SciNote ELN", "type": "Skill",
+                            "category": "Scientific_Products_And_Applications", "email": None},
+                           {"id": 8, "name": "BIOVIA Pipeline Pilot", "type": "Skill",
+                            "category": "Scientific_Products_And_Applications", "email": None},
+                           {"id": 7, "name": "Hamilton", "type": "Skill",
+                            "category": "Scientific_Products_And_Applications", "email": None},
+                           {"id": 6, "name": "Nexus", "type": "Skill", "category": "Methodology", "email": None},
+                           {"id": 5, "name": "Statement of Work Authoring", "type": "Skill", "category": "Methodology",
+                            "email": None},
+                           {"id": 4, "name": "Business Process Modelling", "type": "Skill", "category": "Methodology",
+                            "email": None},
+                           {"id": 3, "name": "Cloud Archecture,Migration & Integration", "type": "Skill",
+                            "category": "Service", "email": None},
+                           {"id": 2, "name": "Computational Design & Modelling", "type": "Skill", "category": "Service",
+                            "email": None},
+                           {"id": 1, "name": "Statistics - Randomization", "type": "Skill", "category": "Service",
+                            "email": None}, {"id": 125, "name": "Rob Brydon", "type": "Consultant", "category": None,
+                                             "email": "rob_brydon@gmail.com"},
+                           {"id": 132, "name": "F#", "type": "Skill", "category": "Programming_languages",
+                            "email": None}, {"id": 134, "name": "Oracle Database", "type": "Skill",
+                                             "category": "Infrastructure_Technologies", "email": None},
+                           {"id": 131, "name": "VBA", "type": "Skill", "category": "Programming_languages",
+                            "email": None}, {"id": 127, "name": "Xbiom", "type": "Skill",
+                                             "category": "Scientific_Products_And_Applications", "email": None},
+                           {"id": 129, "name": "PowerBI", "type": "Skill", "category": "Products_And_Applications",
+                            "email": None},
+                           {"id": 51, "name": "JQuery", "type": "Skill", "category": "Miscellaneous", "email": None},
+                           {"id": 61, "name": "Chinese", "type": "Skill", "category": "Languages", "email": None},
+                           {"id": 64, "name": "Unix", "type": "Skill", "category": "Infrastructure_Technologies",
+                            "email": None},
+                           {"id": 126, "name": "Quality Reporting", "type": "Skill", "category": "Service",
+                            "email": None}, {"id": 22, "name": "Scaled Agile Framework (Safe)", "type": "Skill",
+                                             "category": "Methodology", "email": None},
+                           {"id": 75, "name": "R Studio", "type": "Skill", "category": "Miscellaneous", "email": None},
+                           {"id": 98, "name": "REACT", "type": "Skill", "category": "Miscellaneous", "email": None},
+                           {"id": 128, "name": "LabVantage LIMS", "type": "Skill",
+                            "category": "Scientific_Products_And_Applications", "email": None},
+                           {"id": 133, "name": "HTML", "type": "Skill", "category": "Programming_languages",
+                            "email": None},
+                           {"id": 130, "name": "Rust", "type": "Skill", "category": "Programming_languages",
+                            "email": None},
+                           {"id": 65, "name": "Azure Cloud", "type": "Skill", "category": "Infrastructure_Technologies",
+                            "email": None}, {"id": 144, "name": "Duffy", "type": "Consultant", "category": None,
+                                             "email": "duffy@gmail.com"},
+                           {"id": 146, "name": "ITIL Methodology", "type": "Skill", "category": "Methodology",
+                            "email": None},
+                           {"id": 147, "name": "QSAR", "type": "Skill", "category": "R_And_D_Processes", "email": None},
+                           {"id": 72, "name": "Ontology Development & Management", "type": "Skill",
+                            "category": "Data_Management", "email": None},
+                           {"id": 92, "name": "DataOps", "type": "Skill", "category": "Service", "email": None},
+                           {"id": 83, "name": "Epigenetics", "type": "Skill", "category": "R_And_D_Processes",
+                            "email": None},
+                           {"id": 140, "name": "Sharepoint", "type": "Skill", "category": "Products_And_Applications",
+                            "email": None},
+                           {"id": 145, "name": "Manufacturing QC", "type": "Skill", "category": "Service",
+                            "email": None}, {"id": 150, "name": "Business Intelligence Reporting", "type": "Skill",
+                                             "category": "Data_Management", "email": None},
+                           {"id": 148, "name": "Rshiny", "type": "Skill", "category": "Products_And_Applications",
+                            "email": None},
+                           {"id": 88, "name": "XML", "type": "Skill", "category": "Programming_languages",
+                            "email": None}, {"id": 34, "name": "Data Warehousing", "type": "Skill",
+                                             "category": "Infrastructure_Technologies", "email": None},
+                           {"id": 84, "name": "HIPAA", "type": "Skill", "category": "Regulation", "email": None},
+                           {"id": 149, "name": "Data Pipelines", "type": "Skill", "category": "Data_Management",
+                            "email": None}, {"id": 106, "name": "Next Generation Sequencing (NGS)", "type": "Skill",
+                                             "category": "R_And_D_Processes", "email": None},
+                           {"id": 76, "name": "Configuration Management", "type": "Skill",
+                            "category": "Infrastructure_Technologies", "email": None},
+                           {"id": 151, "name": "GCP Cloud", "type": "Skill", "category": "Infrastructure_Technologies",
+                            "email": None}, {"id": 214, "name": "Nerys Hughes", "type": "Consultant", "category": None,
+                                             "email": "nerys_hughes@gmail.com"},
+                           {"id": 110, "name": "ISO 14001 - Environmental management", "type": "Skill",
+                            "category": "Regulation", "email": None},
+                           {"id": 186, "name": "C#", "type": "Skill", "category": "Programming_languages",
+                            "email": None},
+                           {"id": 193, "name": "Process Development", "type": "Skill", "category": "R_And_D_Processes",
+                            "email": None},
+                           {"id": 216, "name": "C", "type": "Skill", "category": "Programming_languages",
+                            "email": None},
+                           {"id": 29, "name": "French", "type": "Skill", "category": "Languages", "email": None},
+                           {"id": 155, "name": "Service Now", "type": "Skill", "category": "Products_And_Applications",
+                            "email": None}, {"id": 194, "name": "CDISC Study Data Tabulation Model", "type": "Skill",
+                                             "category": "Data_Management", "email": None},
+                           {"id": 168, "name": "Taxonomy Development & Management", "type": "Skill",
+                            "category": "Data_Management", "email": None},
+                           {"id": 81, "name": "L7 Informatics", "type": "Skill",
+                            "category": "Scientific_Products_And_Applications", "email": None},
+                           {"id": 215, "name": "Genetic Engineering", "type": "Skill", "category": "R_And_D_Processes",
+                            "email": None},
+                           {"id": 57, "name": "21 CFR Part 820 (QSR)", "type": "Skill", "category": "Regulation",
+                            "email": None}, {"id": 85, "name": "ISO 9001 - Quality Management", "type": "Skill",
+                                             "category": "Regulation", "email": None}],
+                 "links": [{"id": 16, "source": 0, "target": 17}, {"id": 15, "source": 0, "target": 16},
+                           {"id": 14, "source": 0, "target": 15}, {"id": 13, "source": 0, "target": 14},
+                           {"id": 12, "source": 0, "target": 13}, {"id": 11, "source": 0, "target": 12},
+                           {"id": 10, "source": 0, "target": 11}, {"id": 9, "source": 0, "target": 10},
+                           {"id": 8, "source": 0, "target": 9}, {"id": 7, "source": 0, "target": 8},
+                           {"id": 6, "source": 0, "target": 7}, {"id": 5, "source": 0, "target": 6},
+                           {"id": 4, "source": 0, "target": 5}, {"id": 3, "source": 0, "target": 4},
+                           {"id": 2, "source": 0, "target": 3}, {"id": 1, "source": 0, "target": 2},
+                           {"id": 0, "source": 0, "target": 1}, {"id": 166, "source": 125, "target": 132},
+                           {"id": 172, "source": 125, "target": 134}, {"id": 165, "source": 125, "target": 131},
+                           {"id": 160, "source": 125, "target": 127}, {"id": 162, "source": 125, "target": 129},
+                           {"id": 171, "source": 125, "target": 51}, {"id": 163, "source": 125, "target": 61},
+                           {"id": 173, "source": 125, "target": 64}, {"id": 158, "source": 125, "target": 126},
+                           {"id": 159, "source": 125, "target": 22}, {"id": 170, "source": 125, "target": 75},
+                           {"id": 169, "source": 125, "target": 98}, {"id": 161, "source": 125, "target": 128},
+                           {"id": 168, "source": 125, "target": 133}, {"id": 164, "source": 125, "target": 130},
+                           {"id": 174, "source": 125, "target": 65}, {"id": 167, "source": 125, "target": 17},
+                           {"id": 195, "source": 144, "target": 146}, {"id": 196, "source": 144, "target": 147},
+                           {"id": 201, "source": 144, "target": 11}, {"id": 204, "source": 144, "target": 72},
+                           {"id": 199, "source": 144, "target": 14}, {"id": 208, "source": 144, "target": 17},
+                           {"id": 193, "source": 144, "target": 92}, {"id": 197, "source": 144, "target": 83},
+                           {"id": 202, "source": 144, "target": 140}, {"id": 194, "source": 144, "target": 145},
+                           {"id": 206, "source": 144, "target": 150}, {"id": 200, "source": 144, "target": 148},
+                           {"id": 207, "source": 144, "target": 88}, {"id": 209, "source": 144, "target": 34},
+                           {"id": 203, "source": 144, "target": 84}, {"id": 205, "source": 144, "target": 149},
+                           {"id": 198, "source": 144, "target": 106}, {"id": 211, "source": 144, "target": 76},
+                           {"id": 210, "source": 144, "target": 151}, {"id": 399, "source": 214, "target": 110},
+                           {"id": 406, "source": 214, "target": 186}, {"id": 391, "source": 214, "target": 193},
+                           {"id": 408, "source": 214, "target": 216}, {"id": 401, "source": 214, "target": 149},
+                           {"id": 405, "source": 214, "target": 29}, {"id": 395, "source": 214, "target": 155},
+                           {"id": 404, "source": 214, "target": 194}, {"id": 394, "source": 214, "target": 12},
+                           {"id": 400, "source": 214, "target": 16}, {"id": 407, "source": 214, "target": 17},
+                           {"id": 392, "source": 214, "target": 106}, {"id": 403, "source": 214, "target": 168},
+                           {"id": 396, "source": 214, "target": 140}, {"id": 402, "source": 214, "target": 72},
+                           {"id": 390, "source": 214, "target": 81}, {"id": 393, "source": 214, "target": 215},
+                           {"id": 398, "source": 214, "target": 57}, {"id": 397, "source": 214, "target": 85}]}
+
+    SCENARIO6 = {"nodes": [
+        {"id": 77, "name": "Matthew Rhys", "type": "Consultant", "category": None, "email": "matthew_rhys@gmail.com"},
+        {"id": 87, "name": "Data Analysis/Modelling", "type": "Skill", "category": "Data_Management", "email": None},
+        {"id": 76, "name": "Configuration Management", "type": "Skill", "category": "Infrastructure_Technologies",
+         "email": None},
+        {"id": 85, "name": "ISO 9001 - Quality Management", "type": "Skill", "category": "Regulation", "email": None},
+        {"id": 80, "name": "STARLIMS", "type": "Skill", "category": "Scientific_Products_And_Applications",
+         "email": None}, {"id": 60, "name": "ML Ops", "type": "Skill", "category": "Data_Management", "email": None},
+        {"id": 79, "name": "MoSaIC", "type": "Skill", "category": "Scientific_Products_And_Applications",
+         "email": None},
+        {"id": 86, "name": "21 CFR Part 11 (ERES)", "type": "Skill", "category": "Regulation", "email": None},
+        {"id": 88, "name": "XML", "type": "Skill", "category": "Programming_languages", "email": None},
+        {"id": 26, "name": "Data Governance", "type": "Skill", "category": "Data_Management", "email": None},
+        {"id": 19, "name": "PROCI - ADKAR", "type": "Skill", "category": "Methodology", "email": None},
+        {"id": 89, "name": "Java", "type": "Skill", "category": "Programming_languages", "email": None},
+        {"id": 81, "name": "L7 Informatics", "type": "Skill", "category": "Scientific_Products_And_Applications",
+         "email": None},
+        {"id": 83, "name": "Epigenetics", "type": "Skill", "category": "R_And_D_Processes", "email": None},
+        {"id": 78, "name": "Pillar Science", "type": "Skill", "category": "Scientific_Products_And_Applications",
+         "email": None},
+        {"id": 82, "name": "LabGuru LIMS", "type": "Skill", "category": "Scientific_Products_And_Applications",
+         "email": None}, {"id": 84, "name": "HIPAA", "type": "Skill", "category": "Regulation", "email": None},
+        {"id": 48, "name": "ANSI/ISA-95 - Enterprise-Control Systems", "type": "Skill", "category": "Regulation",
+         "email": None},
+        {"id": 63, "name": "Snowflake", "type": "Skill", "category": "Infrastructure_Technologies", "email": None},
+        {"id": 310, "name": "Bryn Parry-Jones", "type": "Consultant", "category": None,
+         "email": "bryn_parry-jones@gmail.com"},
+        {"id": 236, "name": "Robotic Process Automation & Workflow Orchastration", "type": "Skill",
+         "category": "Service", "email": None},
+        {"id": 311, "name": "ELOG", "type": "Skill", "category": "Scientific_Products_And_Applications", "email": None},
+        {"id": 243, "name": "Product Lifecycle Management", "type": "Skill", "category": "Service", "email": None},
+        {"id": 32, "name": "DB2", "type": "Skill", "category": "Infrastructure_Technologies", "email": None},
+        {"id": 201, "name": "Large molecule registration", "type": "Skill", "category": "R_And_D_Processes",
+         "email": None},
+        {"id": 226, "name": "Machine Learning & AI", "type": "Skill", "category": "Service", "email": None},
+        {"id": 120, "name": "SAS Business Intelligence", "type": "Skill", "category": "Products_And_Applications",
+         "email": None}, {"id": 147, "name": "QSAR", "type": "Skill", "category": "R_And_D_Processes", "email": None},
+        {"id": 34, "name": "Data Warehousing", "type": "Skill", "category": "Infrastructure_Technologies",
+         "email": None},
+        {"id": 13, "name": "Remedy", "type": "Skill", "category": "Products_And_Applications", "email": None},
+        {"id": 115, "name": "Pharmacology & DMPK", "type": "Skill", "category": "Service", "email": None},
+        {"id": 72, "name": "Ontology Development & Management", "type": "Skill", "category": "Data_Management",
+         "email": None},
+        {"id": 47, "name": "Atlassian JIRA", "type": "Skill", "category": "Products_And_Applications", "email": None},
+        {"id": 268, "name": "Cheminformatics", "type": "Skill", "category": "Service", "email": None},
+        {"id": 312, "name": "Qlik", "type": "Skill", "category": "Scientific_Products_And_Applications", "email": None},
+        {"id": 46, "name": "Trello", "type": "Skill", "category": "Products_And_Applications", "email": None},
+        {"id": 151, "name": "GCP Cloud", "type": "Skill", "category": "Infrastructure_Technologies", "email": None},
+        {"id": 159, "name": "Rational Unified Process (RUP)", "type": "Skill", "category": "Methodology",
+         "email": None}], "links": [{"id": 98, "source": 77, "target": 87}, {"id": 102, "source": 77, "target": 76},
+                                    {"id": 95, "source": 77, "target": 85}, {"id": 89, "source": 77, "target": 80},
+                                    {"id": 99, "source": 77, "target": 60}, {"id": 88, "source": 77, "target": 79},
+                                    {"id": 96, "source": 77, "target": 86}, {"id": 100, "source": 77, "target": 88},
+                                    {"id": 97, "source": 77, "target": 26}, {"id": 86, "source": 77, "target": 19},
+                                    {"id": 101, "source": 77, "target": 89}, {"id": 90, "source": 77, "target": 81},
+                                    {"id": 92, "source": 77, "target": 83}, {"id": 87, "source": 77, "target": 78},
+                                    {"id": 91, "source": 77, "target": 82}, {"id": 94, "source": 77, "target": 84},
+                                    {"id": 93, "source": 77, "target": 48}, {"id": 103, "source": 77, "target": 63},
+                                    {"id": 909, "source": 310, "target": 236},
+                                    {"id": 914, "source": 310, "target": 311},
+                                    {"id": 910, "source": 310, "target": 243}, {"id": 924, "source": 310, "target": 32},
+                                    {"id": 917, "source": 310, "target": 201},
+                                    {"id": 908, "source": 310, "target": 226},
+                                    {"id": 918, "source": 310, "target": 120}, {"id": 923, "source": 310, "target": 89},
+                                    {"id": 916, "source": 310, "target": 147}, {"id": 927, "source": 310, "target": 34},
+                                    {"id": 919, "source": 310, "target": 13}, {"id": 925, "source": 310, "target": 76},
+                                    {"id": 911, "source": 310, "target": 115}, {"id": 922, "source": 310, "target": 72},
+                                    {"id": 921, "source": 310, "target": 47}, {"id": 912, "source": 310, "target": 268},
+                                    {"id": 915, "source": 310, "target": 312}, {"id": 920, "source": 310, "target": 46},
+                                    {"id": 926, "source": 310, "target": 151},
+                                    {"id": 913, "source": 310, "target": 159}]}
+
+    SCENARIO7 = {"nodes": [
+        {"id": 77, "name": "Matthew Rhys", "type": "Consultant", "category": None, "email": "matthew_rhys@gmail.com"},
+        {"id": 87, "name": "Data Analysis/Modelling", "type": "Skill", "category": "Data_Management", "email": None},
+        {"id": 76, "name": "Configuration Management", "type": "Skill", "category": "Infrastructure_Technologies",
+         "email": None},
+        {"id": 85, "name": "ISO 9001 - Quality Management", "type": "Skill", "category": "Regulation", "email": None},
+        {"id": 80, "name": "STARLIMS", "type": "Skill", "category": "Scientific_Products_And_Applications",
+         "email": None}, {"id": 60, "name": "ML Ops", "type": "Skill", "category": "Data_Management", "email": None},
+        {"id": 79, "name": "MoSaIC", "type": "Skill", "category": "Scientific_Products_And_Applications",
+         "email": None},
+        {"id": 86, "name": "21 CFR Part 11 (ERES)", "type": "Skill", "category": "Regulation", "email": None},
+        {"id": 88, "name": "XML", "type": "Skill", "category": "Programming_languages", "email": None},
+        {"id": 26, "name": "Data Governance", "type": "Skill", "category": "Data_Management", "email": None},
+        {"id": 19, "name": "PROCI - ADKAR", "type": "Skill", "category": "Methodology", "email": None},
+        {"id": 89, "name": "Java", "type": "Skill", "category": "Programming_languages", "email": None},
+        {"id": 81, "name": "L7 Informatics", "type": "Skill", "category": "Scientific_Products_And_Applications",
+         "email": None},
+        {"id": 83, "name": "Epigenetics", "type": "Skill", "category": "R_And_D_Processes", "email": None},
+        {"id": 78, "name": "Pillar Science", "type": "Skill", "category": "Scientific_Products_And_Applications",
+         "email": None},
+        {"id": 82, "name": "LabGuru LIMS", "type": "Skill", "category": "Scientific_Products_And_Applications",
+         "email": None}, {"id": 84, "name": "HIPAA", "type": "Skill", "category": "Regulation", "email": None},
+        {"id": 48, "name": "ANSI/ISA-95 - Enterprise-Control Systems", "type": "Skill", "category": "Regulation",
+         "email": None},
+        {"id": 63, "name": "Snowflake", "type": "Skill", "category": "Infrastructure_Technologies", "email": None}],
+        "links": [{"id": 98, "source": 77, "target": 87}, {"id": 102, "source": 77, "target": 76},
+                  {"id": 95, "source": 77, "target": 85}, {"id": 89, "source": 77, "target": 80},
+                  {"id": 99, "source": 77, "target": 60}, {"id": 88, "source": 77, "target": 79},
+                  {"id": 96, "source": 77, "target": 86}, {"id": 100, "source": 77, "target": 88},
+                  {"id": 97, "source": 77, "target": 26}, {"id": 86, "source": 77, "target": 19},
+                  {"id": 101, "source": 77, "target": 89}, {"id": 90, "source": 77, "target": 81},
+                  {"id": 92, "source": 77, "target": 83}, {"id": 87, "source": 77, "target": 78},
+                  {"id": 91, "source": 77, "target": 82}, {"id": 94, "source": 77, "target": 84},
+                  {"id": 93, "source": 77, "target": 48}, {"id": 103, "source": 77, "target": 63}]}
+
+    SCENARIO8 = {"nodes": [
+        {"id": 77, "name": "Matthew Rhys", "type": "Consultant", "category": None, "email": "matthew_rhys@gmail.com"},
+        {"id": 87, "name": "Data Analysis/Modelling", "type": "Skill", "category": "Data_Management", "email": None},
+        {"id": 76, "name": "Configuration Management", "type": "Skill", "category": "Infrastructure_Technologies",
+         "email": None},
+        {"id": 85, "name": "ISO 9001 - Quality Management", "type": "Skill", "category": "Regulation", "email": None},
+        {"id": 80, "name": "STARLIMS", "type": "Skill", "category": "Scientific_Products_And_Applications",
+         "email": None}, {"id": 60, "name": "ML Ops", "type": "Skill", "category": "Data_Management", "email": None},
+        {"id": 79, "name": "MoSaIC", "type": "Skill", "category": "Scientific_Products_And_Applications",
+         "email": None},
+        {"id": 86, "name": "21 CFR Part 11 (ERES)", "type": "Skill", "category": "Regulation", "email": None},
+        {"id": 88, "name": "XML", "type": "Skill", "category": "Programming_languages", "email": None},
+        {"id": 26, "name": "Data Governance", "type": "Skill", "category": "Data_Management", "email": None},
+        {"id": 19, "name": "PROCI - ADKAR", "type": "Skill", "category": "Methodology", "email": None},
+        {"id": 89, "name": "Java", "type": "Skill", "category": "Programming_languages", "email": None},
+        {"id": 81, "name": "L7 Informatics", "type": "Skill", "category": "Scientific_Products_And_Applications",
+         "email": None},
+        {"id": 83, "name": "Epigenetics", "type": "Skill", "category": "R_And_D_Processes", "email": None},
+        {"id": 78, "name": "Pillar Science", "type": "Skill", "category": "Scientific_Products_And_Applications",
+         "email": None},
+        {"id": 82, "name": "LabGuru LIMS", "type": "Skill", "category": "Scientific_Products_And_Applications",
+         "email": None}, {"id": 84, "name": "HIPAA", "type": "Skill", "category": "Regulation", "email": None},
+        {"id": 48, "name": "ANSI/ISA-95 - Enterprise-Control Systems", "type": "Skill", "category": "Regulation",
+         "email": None},
+        {"id": 63, "name": "Snowflake", "type": "Skill", "category": "Infrastructure_Technologies", "email": None},
+        {"id": 163, "name": "Bonnie Tyler", "type": "Consultant", "category": None, "email": "bonnie_tyler@gmail.com"},
+        {"id": 166, "name": "Daisy", "type": "Skill", "category": "Scientific_Products_And_Applications",
+         "email": None},
+        {"id": 134, "name": "Oracle Database", "type": "Skill", "category": "Infrastructure_Technologies",
+         "email": None}, {"id": 49, "name": "Arabic", "type": "Skill", "category": "Languages", "email": None},
+        {"id": 169, "name": "Knowledge Graphs", "type": "Skill", "category": "Data_Management", "email": None},
+        {"id": 52, "name": "MySQL", "type": "Skill", "category": "Infrastructure_Technologies", "email": None},
+        {"id": 164, "name": "Rspace ELN", "type": "Skill", "category": "Scientific_Products_And_Applications",
+         "email": None},
+        {"id": 58, "name": "Schema Design", "type": "Skill", "category": "Data_Management", "email": None},
+        {"id": 51, "name": "JQuery", "type": "Skill", "category": "Miscellaneous", "email": None},
+        {"id": 170, "name": "Python", "type": "Skill", "category": "Programming_languages", "email": None},
+        {"id": 27, "name": "Dutch", "type": "Skill", "category": "Languages", "email": None},
+        {"id": 122, "name": "Assembler", "type": "Skill", "category": "Programming_languages", "email": None},
+        {"id": 75, "name": "R Studio", "type": "Skill", "category": "Miscellaneous", "email": None},
+        {"id": 165, "name": "Biovia ChemDraw", "type": "Skill", "category": "Scientific_Products_And_Applications",
+         "email": None},
+        {"id": 171, "name": "SQL", "type": "Skill", "category": "Programming_languages", "email": None},
+        {"id": 168, "name": "Taxonomy Development & Management", "type": "Skill", "category": "Data_Management",
+         "email": None},
+        {"id": 34, "name": "Data Warehousing", "type": "Skill", "category": "Infrastructure_Technologies",
+         "email": None},
+        {"id": 167, "name": "Zoho Analytics", "type": "Skill", "category": "Products_And_Applications", "email": None},
+        {"id": 140, "name": "Sharepoint", "type": "Skill", "category": "Products_And_Applications", "email": None},
+        {"id": 109, "name": "Atlassian Confluence", "type": "Skill", "category": "Products_And_Applications",
+         "email": None}, {"id": 98, "name": "REACT", "type": "Skill", "category": "Miscellaneous", "email": None},
+        {"id": 228, "name": "Iwan Rheon", "type": "Consultant", "category": None, "email": "iwan_rheon@gmail.com"},
+        {"id": 23, "name": "Aliquot handling", "type": "Skill", "category": "R_And_D_Processes", "email": None},
+        {"id": 233, "name": "Perl", "type": "Skill", "category": "Programming_languages", "email": None},
+        {"id": 30, "name": "Japanese", "type": "Skill", "category": "Languages", "email": None},
+        {"id": 97, "name": "Bootstrap", "type": "Skill", "category": "Miscellaneous", "email": None},
+        {"id": 71, "name": "EU Annex 11", "type": "Skill", "category": "Regulation", "email": None},
+        {"id": 181, "name": "IDBS Inventory", "type": "Skill", "category": "Scientific_Products_And_Applications",
+         "email": None},
+        {"id": 137, "name": "Large Scale Scrum (LeSS)", "type": "Skill", "category": "Methodology", "email": None},
+        {"id": 231, "name": "Sapio LIMS", "type": "Skill", "category": "Scientific_Products_And_Applications",
+         "email": None},
+        {"id": 229, "name": "Application Migration", "type": "Skill", "category": "Service", "email": None},
+        {"id": 223, "name": "Release Management", "type": "Skill", "category": "Infrastructure_Technologies",
+         "email": None},
+        {"id": 151, "name": "GCP Cloud", "type": "Skill", "category": "Infrastructure_Technologies", "email": None},
+        {"id": 234, "name": "Linux", "type": "Skill", "category": "Infrastructure_Technologies", "email": None},
+        {"id": 21, "name": "Business Analysis", "type": "Skill", "category": "Methodology", "email": None},
+        {"id": 230, "name": "IDBS Request", "type": "Skill", "category": "Scientific_Products_And_Applications",
+         "email": None}, {"id": 189, "name": "Training", "type": "Skill", "category": "Service", "email": None},
+        {"id": 232, "name": "DMPK assays", "type": "Skill", "category": "R_And_D_Processes", "email": None},
+        {"id": 310, "name": "Bryn Parry-Jones", "type": "Consultant", "category": None,
+         "email": "bryn_parry-jones@gmail.com"},
+        {"id": 236, "name": "Robotic Process Automation & Workflow Orchastration", "type": "Skill",
+         "category": "Service", "email": None},
+        {"id": 311, "name": "ELOG", "type": "Skill", "category": "Scientific_Products_And_Applications", "email": None},
+        {"id": 243, "name": "Product Lifecycle Management", "type": "Skill", "category": "Service", "email": None},
+        {"id": 32, "name": "DB2", "type": "Skill", "category": "Infrastructure_Technologies", "email": None},
+        {"id": 201, "name": "Large molecule registration", "type": "Skill", "category": "R_And_D_Processes",
+         "email": None},
+        {"id": 226, "name": "Machine Learning & AI", "type": "Skill", "category": "Service", "email": None},
+        {"id": 120, "name": "SAS Business Intelligence", "type": "Skill", "category": "Products_And_Applications",
+         "email": None}, {"id": 147, "name": "QSAR", "type": "Skill", "category": "R_And_D_Processes", "email": None},
+        {"id": 13, "name": "Remedy", "type": "Skill", "category": "Products_And_Applications", "email": None},
+        {"id": 115, "name": "Pharmacology & DMPK", "type": "Skill", "category": "Service", "email": None},
+        {"id": 72, "name": "Ontology Development & Management", "type": "Skill", "category": "Data_Management",
+         "email": None},
+        {"id": 47, "name": "Atlassian JIRA", "type": "Skill", "category": "Products_And_Applications", "email": None},
+        {"id": 268, "name": "Cheminformatics", "type": "Skill", "category": "Service", "email": None},
+        {"id": 312, "name": "Qlik", "type": "Skill", "category": "Scientific_Products_And_Applications", "email": None},
+        {"id": 46, "name": "Trello", "type": "Skill", "category": "Products_And_Applications", "email": None},
+        {"id": 159, "name": "Rational Unified Process (RUP)", "type": "Skill", "category": "Methodology",
+         "email": None}], "links": [{"id": 98, "source": 77, "target": 87}, {"id": 102, "source": 77, "target": 76},
+                                    {"id": 95, "source": 77, "target": 85}, {"id": 89, "source": 77, "target": 80},
+                                    {"id": 99, "source": 77, "target": 60}, {"id": 88, "source": 77, "target": 79},
+                                    {"id": 96, "source": 77, "target": 86}, {"id": 100, "source": 77, "target": 88},
+                                    {"id": 97, "source": 77, "target": 26}, {"id": 86, "source": 77, "target": 19},
+                                    {"id": 101, "source": 77, "target": 89}, {"id": 90, "source": 77, "target": 81},
+                                    {"id": 92, "source": 77, "target": 83}, {"id": 87, "source": 77, "target": 78},
+                                    {"id": 91, "source": 77, "target": 82}, {"id": 94, "source": 77, "target": 84},
+                                    {"id": 93, "source": 77, "target": 48}, {"id": 103, "source": 77, "target": 63},
+                                    {"id": 247, "source": 163, "target": 166},
+                                    {"id": 262, "source": 163, "target": 134}, {"id": 255, "source": 163, "target": 49},
+                                    {"id": 253, "source": 163, "target": 169}, {"id": 263, "source": 163, "target": 52},
+                                    {"id": 245, "source": 163, "target": 164}, {"id": 252, "source": 163, "target": 58},
+                                    {"id": 259, "source": 163, "target": 51}, {"id": 257, "source": 163, "target": 170},
+                                    {"id": 254, "source": 163, "target": 27}, {"id": 256, "source": 163, "target": 122},
+                                    {"id": 260, "source": 163, "target": 75}, {"id": 246, "source": 163, "target": 165},
+                                    {"id": 258, "source": 163, "target": 171},
+                                    {"id": 251, "source": 163, "target": 168}, {"id": 264, "source": 163, "target": 34},
+                                    {"id": 250, "source": 163, "target": 167},
+                                    {"id": 249, "source": 163, "target": 140},
+                                    {"id": 248, "source": 163, "target": 109}, {"id": 261, "source": 163, "target": 98},
+                                    {"id": 450, "source": 228, "target": 23}, {"id": 455, "source": 228, "target": 233},
+                                    {"id": 454, "source": 228, "target": 30}, {"id": 458, "source": 228, "target": 52},
+                                    {"id": 453, "source": 228, "target": 49}, {"id": 457, "source": 228, "target": 97},
+                                    {"id": 452, "source": 228, "target": 71}, {"id": 447, "source": 228, "target": 181},
+                                    {"id": 445, "source": 228, "target": 137},
+                                    {"id": 449, "source": 228, "target": 231},
+                                    {"id": 444, "source": 228, "target": 229},
+                                    {"id": 460, "source": 228, "target": 223},
+                                    {"id": 459, "source": 228, "target": 151},
+                                    {"id": 461, "source": 228, "target": 234}, {"id": 446, "source": 228, "target": 21},
+                                    {"id": 448, "source": 228, "target": 230},
+                                    {"id": 443, "source": 228, "target": 189},
+                                    {"id": 456, "source": 228, "target": 171},
+                                    {"id": 451, "source": 228, "target": 232},
+                                    {"id": 909, "source": 310, "target": 236},
+                                    {"id": 914, "source": 310, "target": 311},
+                                    {"id": 910, "source": 310, "target": 243}, {"id": 924, "source": 310, "target": 32},
+                                    {"id": 917, "source": 310, "target": 201},
+                                    {"id": 908, "source": 310, "target": 226},
+                                    {"id": 918, "source": 310, "target": 120}, {"id": 923, "source": 310, "target": 89},
+                                    {"id": 916, "source": 310, "target": 147}, {"id": 927, "source": 310, "target": 34},
+                                    {"id": 919, "source": 310, "target": 13}, {"id": 925, "source": 310, "target": 76},
+                                    {"id": 911, "source": 310, "target": 115}, {"id": 922, "source": 310, "target": 72},
+                                    {"id": 921, "source": 310, "target": 47}, {"id": 912, "source": 310, "target": 268},
+                                    {"id": 915, "source": 310, "target": 312}, {"id": 920, "source": 310, "target": 46},
+                                    {"id": 926, "source": 310, "target": 151},
+                                    {"id": 913, "source": 310, "target": 159}]}
