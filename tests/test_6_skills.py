@@ -1,8 +1,8 @@
-from fastapi.testclient import TestClient
-from tests.expected_results.expected_skills import Skills
 import pytest
+from fastapi.testclient import TestClient
 
 from app import main
+from tests.expected_results.expected_skills import Skills
 
 test_client = TestClient(main.app)
 

@@ -1,5 +1,5 @@
-from fastapi.testclient import TestClient
 import pytest
+from fastapi.testclient import TestClient
 
 from app import main
 from tests.expected_results.expected_consultants import CONSULTANTS
@@ -53,7 +53,7 @@ class TestConsultants:
         assert response.status_code == 200
         assert response.json() == CONSULTANTS.expected_new_consultant_json
 
-    @pytest.mark.dependency(depends=["TestConsultants::test_get_single_consultant", "TestConsultants" 
+    @pytest.mark.dependency(depends=["TestConsultants::test_get_single_consultant", "TestConsultants"
                                                                                     "::test_create_consultant"])
     def test_create_consultant_check_result(self):
         double_check = test_client.get(f"/consultants/{CONSULTANTS.unknown_email}")
