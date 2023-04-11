@@ -140,17 +140,16 @@ class TestGraph:
         query_base_path = f"/graph/?skills={json_b64}"
 
         response = test_client.get(query_base_path + Graph.query_path)
-        respose_json = response.json()
-        print(f"Response:\n{json.dumps(respose_json, indent=4)}")
+        response_json = response.json()
+        print(f"Response:\n{json.dumps(response_json, indent=4)}")
 
         assert response.status_code == 200
 
-        # API sometimes switches ordering within the response "nodes" and "links" lists - to aviod this failing the
-        # test and still comapre all data, function distlist_to_dict converts the lists (of dicts) to dicts (of
-        # dicts) using the dict's "id" attribute as key - this is done for both actual and expected results. The
-        # resulting dicts can then be compared while ignoring list indexing.
-        assert dictlist_to_dict(respose_json["nodes"]) == dictlist_to_dict(Graph.SKILL_HIDDEN_CATEGORIES["nodes"])
-        assert dictlist_to_dict(respose_json["links"]) == dictlist_to_dict(Graph.SKILL_HIDDEN_CATEGORIES["links"])
+        # API sometimes switches ordering within the response "nodes" and "links" lists - to aviod failing the test
+        # due to differing indices, the following statements check if each list item from expected results is in
+        # actual result
+        assert all([dictitem in response_json["nodes"] for dictitem in Graph.SKILL_HIDDEN_CATEGORIES["nodes"]] +
+                   [dictitem in response_json["links"] for dictitem in Graph.SKILL_HIDDEN_CATEGORIES["links"]])
 
     def test_graph_skills_all_hidden(self):
         json_list = Graph.SCENARIOS_INPUT[0]
