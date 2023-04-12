@@ -1,1 +1,1 @@
-export const API_URL = "https://skills.zifo-tech.com/api/";
+export const API_URL = process.env.REACT_APP_API_URL || "http://localhost:8080/";
