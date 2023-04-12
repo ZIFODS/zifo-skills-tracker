@@ -4,7 +4,7 @@ import { useQuery } from "react-query";
 export const getAllCategories = (): Promise<any> => {
   return axios({
     method: "get",
-    url: "/categories",
+    url: "/categories/",
   });
 };
 
