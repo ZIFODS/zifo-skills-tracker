@@ -22,7 +22,7 @@ You will need to configure specific environment variables depending on the envir
 
 You can simply add them to the corresponding `.env` file in the root directory with the following info:
 
-| .env.prod           | .env.demo          | .env.prod          |
+| .env.prod           | .env.demo          | .env.dev           |
 | ---                 | ---                | ---                |
 | SESSION_SECRET_KEY  | SESSION_SECRET_KEY | SESSION_SECRET_KEY |
 | NEO4J_URI           | NEO4J_URI          | NEO4J_URI          |
@@ -49,16 +49,31 @@ The data required to launch the dev and demo environments is stored in an S3 buc
 [Ross Burton](mailto:ross.burton@zifornd.com)
 
 
-## Running the application
+## Running the application locally
 
 Once the environment variables are configured, load them using the following command:
 
 ```
-source .env.prod
+source .env.dev
 ```
 
 Use docker compose to launch the application:
 
 ```
 docker compose -f docker/docker-compose.dev.yml up -d --build
+```
+
+## Running the application in production
+
+When running in production, the Azure AD app requires that this application is running on a secure domain. To do this, you will need to configure a reverse proxy using `nginx` and use `certbot` to generate an SSL certificate for the domain.
+
+A [bash script](./init-letsencrypt.sh) has been acquired from a separate [repository](https://github.com/wmnnd/nginx-certbot) to automate the process of generating an SSL certificate.
+
+Run this script once to generate the SSL certificate. The certificate should be automatically renewed after 90 days.
+
+Once the SSL certificate has been generated, you can load the environment variables and launch the application using the following command:
+
+```
+source .env.prod &&
+docker compose -f docker/docker-compose.prod.yml up -d --build
 ```
