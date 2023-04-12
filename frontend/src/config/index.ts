@@ -1,1 +1,1 @@
-export const API_URL = "http://skills.zifo-tech.com:8080/";
+export const API_URL = "https://skilltracker.zifo-tech.com/api/";
