@@ -79,6 +79,9 @@ class AzureAuthProvider:
         username = response_data.get("userPrincipalName")
         email = response_data.get("mail")
 
+        if email:
+            email = email.lower()
+
         if not user_id or not username or not email:
             raise UnauthorizedUser("User account not verified by Azure.")
 

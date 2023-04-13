@@ -42,7 +42,7 @@ AZURE_DISCOVERY_URL = f"{AZURE_AUTHORITY}/v2.0/.well-known/openid-configuration"
 AZURE_REDIRECT_URI = config("AZURE_REDIRECT_URI", None)
 
 # Front end endpoint
-FRONTEND_URL = "http://localhost:3000"
+FRONTEND_URL = config("FRONTEND_URL", "http://localhost:3000")
 
 # Request session
 SESSION_SECRET_KEY = config("SESSION_SECRET_KEY", None)
