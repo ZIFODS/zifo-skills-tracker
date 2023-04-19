@@ -23,7 +23,7 @@ export function Admin() {
   return (
     <Layout>
       <Grid container columnSpacing={2}>
-        <Grid item xs={6}>
+        <Grid item xs={7}>
           <Paper sx={{ p: 2 }}>
             <Stack spacing={3}>
               <ToggleButtonGroup
