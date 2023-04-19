@@ -2,6 +2,7 @@ import * as React from "react";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import { Box } from "@mui/material";
 import { useGetAllConsultants } from "../../graph";
+import { Consultant } from "../types";
 
 const columns: GridColDef[] = [
   {
@@ -24,17 +25,23 @@ const columns: GridColDef[] = [
   },
 ];
 
-export function ConsultantDataGrid() {
+interface ConsultantDataGridProps {
+  filterQuery: string;
+}
+
+export function ConsultantDataGrid({ filterQuery }: ConsultantDataGridProps) {
   const consultants = useGetAllConsultants();
   const consultantsData = consultants.data ? consultants.data.items : [];
-
-  console.log(consultants);
+  const filteredConsultantsData = consultantsData.filter(
+    (consultant: Consultant) =>
+      consultant.name.toLowerCase().includes(filterQuery.toLowerCase())
+  );
 
   return (
     <Box sx={{ height: "70vh", width: "100%" }}>
       <DataGrid
         columns={columns}
-        rows={consultantsData}
+        rows={filteredConsultantsData}
         checkboxSelection
         getRowId={(row) => row.name}
       />
