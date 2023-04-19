@@ -3,7 +3,7 @@ import { useMutation } from "react-query";
 import { queryClient } from "../../../lib/react-query";
 
 export const deleteSkill = (skill_name: string): Promise<any> => {
-  return axios.delete(`/skills?skill_name=${skill_name}`);
+  return axios.delete(`/skills/${encodeURIComponent(skill_name)}`);
 };
 
 export const useDeleteSkill = () => {
@@ -11,7 +11,7 @@ export const useDeleteSkill = () => {
     mutationKey: ["delete-skill"],
     mutationFn: (skill_name: string) => deleteSkill(skill_name),
     onSuccess: () => {
-      queryClient.invalidateQueries("skills");
+      queryClient.invalidateQueries("get-all-skills");
     },
   });
 };

@@ -3,7 +3,7 @@ import { useMutation } from "react-query";
 import { queryClient } from "../../../lib/react-query";
 
 export const deleteConsultant = (consultantEmail: string): Promise<any> => {
-  return axios.delete(`/consultants?consultant_email=${consultantEmail}`);
+  return axios.delete(`/consultants/${encodeURIComponent(consultantEmail)}`);
 };
 
 export const useDeleteConsultant = () => {
@@ -11,7 +11,7 @@ export const useDeleteConsultant = () => {
     mutationKey: ["delete-consultant"],
     mutationFn: (consultantEmail: string) => deleteConsultant(consultantEmail),
     onSuccess: () => {
-      queryClient.invalidateQueries("consultants");
+      queryClient.invalidateQueries("get-all-consultants");
     },
   });
 };

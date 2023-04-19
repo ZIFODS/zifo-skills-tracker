@@ -27,9 +27,13 @@ const columns: GridColDef[] = [
 
 interface ConsultantDataGridProps {
   filterQuery: string;
+  setSelectedConsultants: React.Dispatch<React.SetStateAction<string[]>>;
 }
 
-export function ConsultantDataGrid({ filterQuery }: ConsultantDataGridProps) {
+export function ConsultantDataGrid({
+  filterQuery,
+  setSelectedConsultants,
+}: ConsultantDataGridProps) {
   const consultants = useGetAllConsultants();
   const consultantsData = consultants.data ? consultants.data.items : [];
   const filteredConsultantsData = consultantsData.filter(
@@ -43,7 +47,10 @@ export function ConsultantDataGrid({ filterQuery }: ConsultantDataGridProps) {
         columns={columns}
         rows={filteredConsultantsData}
         checkboxSelection
-        getRowId={(row) => row.name}
+        getRowId={(row) => row.email}
+        onRowSelectionModelChange={(consultantEmails) => {
+          setSelectedConsultants(consultantEmails as string[]);
+        }}
       />
     </Box>
   );

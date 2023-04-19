@@ -27,9 +27,13 @@ const columns: GridColDef[] = [
 
 interface SkillDataGridProps {
   filterQuery: string;
+  setSelectedSkills: React.Dispatch<React.SetStateAction<string[]>>;
 }
 
-export function SkillDataGrid({ filterQuery }: SkillDataGridProps) {
+export function SkillDataGrid({
+  filterQuery,
+  setSelectedSkills,
+}: SkillDataGridProps) {
   const skills = useGetAllSkills();
   const skillsData = skills.data ? skills.data.items : [];
   const filteredSkillsData = skillsData.filter((skill: Skill) =>
@@ -43,6 +47,9 @@ export function SkillDataGrid({ filterQuery }: SkillDataGridProps) {
         rows={filteredSkillsData}
         checkboxSelection
         getRowId={(row) => row.name}
+        onRowSelectionModelChange={(skillNames) => {
+          setSelectedSkills(skillNames as string[]);
+        }}
       />
     </Box>
   );
