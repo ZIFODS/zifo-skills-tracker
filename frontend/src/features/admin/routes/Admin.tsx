@@ -35,6 +35,8 @@ export function Admin() {
     newResource: string
   ) => {
     setResource(newResource as "Skill" | "Consultant");
+    setSelectedSkills([]);
+    setSelectedConsultants([]);
   };
 
   const handleAddClicked = () => {
@@ -87,7 +89,13 @@ export function Admin() {
                   <IconButton onClick={handleAddClicked}>
                     <AddIcon />
                   </IconButton>
-                  <IconButton onClick={handleDeleteClicked}>
+                  <IconButton
+                    onClick={handleDeleteClicked}
+                    disabled={
+                      selectedSkills.length === 0 &&
+                      selectedConsultants.length === 0
+                    }
+                  >
                     <DeleteIcon />
                   </IconButton>
                 </Stack>
