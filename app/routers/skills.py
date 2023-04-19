@@ -116,7 +116,7 @@ async def create_skill(skill: SkillCreate) -> Skill:
     return result[0][0]
 
 
-@skills_router.delete("/{skill_name}")
+@skills_router.delete("/{skill_name:path}")
 async def delete_skill(skill_name: str) -> Message:
     """
     Deletes a skill from the database.
