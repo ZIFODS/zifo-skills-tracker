@@ -5,6 +5,7 @@ import { Navigate } from "react-router-dom";
 import { UpdateRoutes } from "../features/update";
 import { GraphRoutes } from "../features/graph";
 import Loading from "../components/Loading/Loading";
+import { AdminRoutes } from "../features/admin";
 
 const App = () => {
   return (
@@ -22,16 +23,20 @@ export const protectedRoutes = [
     element: <App />,
     children: [
       {
-        path: "/update",
-        element: <UpdateRoutes />,
+        path: "/",
+        element: <Navigate to="/graph" />,
       },
       {
         path: "/graph",
         element: <GraphRoutes />,
       },
       {
-        path: "/",
-        element: <Navigate to="/graph" />,
+        path: "/update",
+        element: <UpdateRoutes />,
+      },
+      {
+        path: "/admin",
+        element: <AdminRoutes />,
       },
     ],
   },

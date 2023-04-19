@@ -51,6 +51,10 @@ function ResponsiveAppBar() {
     navigate("/update");
   };
 
+  const adminOnClick = () => {
+    navigate("/admin");
+  };
+
   const pages = [
     {
       name: "Graph",
@@ -59,6 +63,10 @@ function ResponsiveAppBar() {
     {
       name: "Update",
       onClick: updateOnClick,
+    },
+    {
+      name: "Admin",
+      onClick: adminOnClick,
     },
   ];
 
