@@ -61,8 +61,8 @@ async def filter_graph(
         query = process_skills_query(rules, hidden_categories, all_hidden)
         result = conn.query(query)
 
-        result[0][0]["nodes"].sort(key=lambda x: x.get('id'))
-        result[0][0]["links"].sort(key=lambda x: x.get('id'))
+        result[0][0]["nodes"].sort(key=lambda x: x.get("id"))
+        result[0][0]["links"].sort(key=lambda x: x.get("id"))
 
         output = result[0][0]
 
@@ -70,8 +70,8 @@ async def filter_graph(
         query = process_consultant_query(consultant, hidden_categories, all_hidden)
         result = conn.query(query)
 
-        result[0][0]["nodes"].sort(key=lambda x: x.get('id'))
-        result[0][0]["links"].sort(key=lambda x: x.get('id'))
+        result[0][0]["nodes"].sort(key=lambda x: x.get("id"))
+        result[0][0]["links"].sort(key=lambda x: x.get("id"))
 
         output = result[0][0]
         if not output["nodes"]:

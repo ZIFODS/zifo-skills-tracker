@@ -27,7 +27,7 @@ There are 3 environments that can be launched using this application:
 You will need to configure environment variables by adding them to the corresponding `.env` file in the root directory with the following info:
 
 | .env.prod           | .env.demo          | .env.prod          |
-| ---                 | ---                | ---                |
+| ------------------- | ------------------ | ------------------ |
 | SESSION_SECRET_KEY  | SESSION_SECRET_KEY | SESSION_SECRET_KEY |
 | NEO4J_URI           | NEO4J_URI          | NEO4J_URI          |
 | NEO4J_USER          | NEO4J_USER         | NEO4J_USER         |

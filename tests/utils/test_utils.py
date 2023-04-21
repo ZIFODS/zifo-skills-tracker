@@ -1,5 +1,5 @@
-import json
 import base64
+import json
 
 
 def encode_list_json(list_in: list) -> str:
@@ -34,5 +34,6 @@ def query_add_hidden_categories(base_query: str, hidden_categories: list[str]) -
             base_query + [&hidden_categories={category} for category in hidden_categories]
     """
 
-    return base_query + ''.join([f"&hidden_categories={category}" for category in hidden_categories])
-
+    return base_query + "".join(
+        [f"&hidden_categories={category}" for category in hidden_categories]
+    )

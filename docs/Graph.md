@@ -10,9 +10,9 @@ There is also the option to hide certain skill categories from the final results
 
 The skill search query is a base64 encoded JSON list of objects which each object containing the following fields:
 
-  * `name`: the name of the skill
-  * `operator`: the operator that applies to the previous skill or bracket: either `AND`, `OR` or no value.
-  * `parenthesis`: whether the skill is at the start or end of a bracket: either `[` or `]` or no value.
+- `name`: the name of the skill
+- `operator`: the operator that applies to the previous skill or bracket: either `AND`, `OR` or no value.
+- `parenthesis`: whether the skill is at the start or end of a bracket: either `[` or `]` or no value.
 
 Each of these JSON objects in the list has been represented in the endpoint as a `Rule` object.
 
@@ -42,9 +42,9 @@ The JSON list is encoded using base64 by the frontend and then passed as a query
 
 ## Cypher
 
-The Cypher query is generated using information from the components described previously. 
+The Cypher query is generated using information from the components described previously.
 
-The general premise is that we are matching Consultants who have `KNOWS` relationships to skills that fit certain criteria. 
+The general premise is that we are matching Consultants who have `KNOWS` relationships to skills that fit certain criteria.
 
 Generally, we are creating an initial `MATCH` statement that gets all of the consultants that know at least one skill. We then use a WHERE clause and define successive MATCH statements related by AND and OR operators to filter the consultants that know the skills that we are looking for.
 
@@ -94,7 +94,6 @@ WHERE ( (c)-[:KNOWS]->(:Skill {name: "Java"}) AND (c)-[:KNOWS]->(:Skill {name: "
 OR (c)-[:KNOWS]->(:Skill {name: "C++"})
 ```
 
-
 ## Compiling results
 
 After the query above is performed, the consultants stored in the `c` variable will match those defined by our query. We then need to get the skills that they know and return them as part of the result.
@@ -108,13 +107,14 @@ MATCH (c:Consultant)-[:KNOWS]->(:Skill)
 WHERE ( (c)-[:KNOWS]->(:Skill {name: "Java"}) AND (c)-[:KNOWS]->(:Skill {name: "Python"}) )
 OR (c)-[:KNOWS]->(:Skill {name: "C++"})
 MATCH p=(c)-[:KNOWS]->(:Skill)
-UNWIND nodes(p) as n UNWIND relationships(p) as r 
-with collect( distinct {id: ID(n), name: n.name, type: labels(n)[0], email: n.email, category: n.category}) as nz, 
-collect( distinct {id: ID(r), source: ID(startnode(r)), taret: ID(endnode(r))}) as rz 
+UNWIND nodes(p) as n UNWIND relationships(p) as r
+with collect( distinct {id: ID(n), name: n.name, type: labels(n)[0], email: n.email, category: n.category}) as nz,
+collect( distinct {id: ID(r), source: ID(startnode(r)), taret: ID(endnode(r))}) as rz
 RETURN {nodes: nz, links: rz}
 ```
 
 The return value will look something like this:
+
 ```
 {
     "nodes": [
@@ -141,7 +141,6 @@ The return value will look something like this:
 }
 ```
 
-
 ## Hiding skill categories
 
 If specific skill categories, but not all, have been selected to be hidden, we use the `WHERE NOT` statement to filter. Here's how it looks with our example, ignoring the query up to the final `MATCH` statement:
@@ -151,13 +150,13 @@ If specific skill categories, but not all, have been selected to be hidden, we u
 ...
 MATCH p=(c)-[:KNOWS]->(s:Skill)
 WHERE NOT s.category IN ["Programming_Languages", "Data_Management"]
-UNWIND nodes(p) as n UNWIND relationships(p) as r 
-with collect( distinct {id: ID(n), name: n.name, type: labels(n)[0], email: n.email, category: n.category}) as nz, 
-collect( distinct {id: ID(r), source: ID(startnode(r)), taret: ID(endnode(r))}) as rz 
+UNWIND nodes(p) as n UNWIND relationships(p) as r
+with collect( distinct {id: ID(n), name: n.name, type: labels(n)[0], email: n.email, category: n.category}) as nz,
+collect( distinct {id: ID(r), source: ID(startnode(r)), taret: ID(endnode(r))}) as rz
 RETURN {nodes: nz, links: rz}
 ```
 
-If all skill categories have been selected to be hidden from the final results, we simply take the filtered Consultant nodes and return them, without defining that they should have any relationships: 
+If all skill categories have been selected to be hidden from the final results, we simply take the filtered Consultant nodes and return them, without defining that they should have any relationships:
 
 ```
 ...
@@ -187,9 +186,9 @@ Some other rule list scenarios and their associated Cypher queries are shown bel
 MATCH (c:Consultant)-[:KNOWS]->(:Skill)
 WHERE (c)-[:KNOWS]->(:Skill {name: "Java"})
 MATCH p=(c)-[:KNOWS]->(:Skill)
-UNWIND nodes(p) as n UNWIND relationships(p) as r 
-with collect( distinct {id: ID(n), name: n.name, type: labels(n)[0], email: n.email, category: n.category}) as nz, 
-collect( distinct {id: ID(r), source: ID(startnode(r)), taret: ID(endnode(r))}) as rz 
+UNWIND nodes(p) as n UNWIND relationships(p) as r
+with collect( distinct {id: ID(n), name: n.name, type: labels(n)[0], email: n.email, category: n.category}) as nz,
+collect( distinct {id: ID(r), source: ID(startnode(r)), taret: ID(endnode(r))}) as rz
 RETURN {nodes: nz, links: rz}
 ```
 
@@ -214,9 +213,9 @@ RETURN {nodes: nz, links: rz}
 MATCH (c:Consultant)-[:KNOWS]->(:Skill)
 WHERE (c)-[:KNOWS]->(:Skill {name: "Java"}) AND (c)-[:KNOWS]->(:Skill {name: "ELOG"})
 MATCH p=(c)-[:KNOWS]->(:Skill)
-UNWIND nodes(p) as n UNWIND relationships(p) as r 
-with collect( distinct {id: ID(n), name: n.name, type: labels(n)[0], email: n.email, category: n.category}) as nz, 
-collect( distinct {id: ID(r), source: ID(startnode(r)), taret: ID(endnode(r))}) as rz 
+UNWIND nodes(p) as n UNWIND relationships(p) as r
+with collect( distinct {id: ID(n), name: n.name, type: labels(n)[0], email: n.email, category: n.category}) as nz,
+collect( distinct {id: ID(r), source: ID(startnode(r)), taret: ID(endnode(r))}) as rz
 RETURN {nodes: nz, links: rz}
 ```
 
@@ -246,9 +245,9 @@ RETURN {nodes: nz, links: rz}
 MATCH (c:Consultant)-[:KNOWS]->(:Skill)
 WHERE (c)-[:KNOWS]->(:Skill {name: "Java"}) OR (c)-[:KNOWS]->(:Skill {name: "Python"}) OR (c)-[:KNOWS]->(:Skill {name: "C++"})
 MATCH p=(c)-[:KNOWS]->(:Skill)
-UNWIND nodes(p) as n UNWIND relationships(p) as r 
-with collect( distinct {id: ID(n), name: n.name, type: labels(n)[0], email: n.email, category: n.category}) as nz, 
-collect( distinct {id: ID(r), source: ID(startnode(r)), taret: ID(endnode(r))}) as rz 
+UNWIND nodes(p) as n UNWIND relationships(p) as r
+with collect( distinct {id: ID(n), name: n.name, type: labels(n)[0], email: n.email, category: n.category}) as nz,
+collect( distinct {id: ID(r), source: ID(startnode(r)), taret: ID(endnode(r))}) as rz
 RETURN {nodes: nz, links: rz}
 ```
 
@@ -278,9 +277,9 @@ RETURN {nodes: nz, links: rz}
 MATCH (c:Consultant)-[:KNOWS]->(:Skill)
 WHERE (c)-[:KNOWS]->(:Skill {name: "Java"}) AND (c)-[:KNOWS]->(:Skill {name: "Python"}) OR (c)-[:KNOWS]->(:Skill {name: "C++"})
 MATCH p=(c)-[:KNOWS]->(:Skill)
-UNWIND nodes(p) as n UNWIND relationships(p) as r 
-with collect( distinct {id: ID(n), name: n.name, type: labels(n)[0], email: n.email, category: n.category}) as nz, 
-collect( distinct {id: ID(r), source: ID(startnode(r)), taret: ID(endnode(r))}) as rz 
+UNWIND nodes(p) as n UNWIND relationships(p) as r
+with collect( distinct {id: ID(n), name: n.name, type: labels(n)[0], email: n.email, category: n.category}) as nz,
+collect( distinct {id: ID(r), source: ID(startnode(r)), taret: ID(endnode(r))}) as rz
 RETURN {nodes: nz, links: rz}
 ```
 
@@ -308,16 +307,17 @@ RETURN {nodes: nz, links: rz}
 
 ```
 MATCH (c:Consultant)-[:KNOWS]->(:Skill)
-WHERE ( (c)-[:KNOWS]->(:Skill {name: "Java"}) AND (c)-[:KNOWS]->(:Skill {name: "Python"}) ) 
+WHERE ( (c)-[:KNOWS]->(:Skill {name: "Java"}) AND (c)-[:KNOWS]->(:Skill {name: "Python"}) )
 OR (c)-[:KNOWS]->(:Skill {name: "C++"})
 MATCH p=(c)-[:KNOWS]->(:Skill)
-UNWIND nodes(p) as n UNWIND relationships(p) as r 
-with collect( distinct {id: ID(n), name: n.name, type: labels(n)[0], email: n.email, category: n.category}) as nz, 
-collect( distinct {id: ID(r), source: ID(startnode(r)), taret: ID(endnode(r))}) as rz 
+UNWIND nodes(p) as n UNWIND relationships(p) as r
+with collect( distinct {id: ID(n), name: n.name, type: labels(n)[0], email: n.email, category: n.category}) as nz,
+collect( distinct {id: ID(r), source: ID(startnode(r)), taret: ID(endnode(r))}) as rz
 RETURN {nodes: nz, links: rz}
 ```
 
 ### Scenario 6
+
 Note: Closing parenthesis can be omitted in the UI and JSON, it is automatically added after the last item in the cypher query.
 
 ```
@@ -345,9 +345,9 @@ MATCH (c:Consultant)-[:KNOWS]->(:Skill)
 WHERE (c)-[:KNOWS]->(:Skill {name: "Java"})
 AND ( (c)-[:KNOWS]->(:Skill {name: "XML"}) OR (c)-[:KNOWS]->(:Skill {name: "ELOG"}) )
 MATCH p=(c)-[:KNOWS]->(:Skill)
-UNWIND nodes(p) as n UNWIND relationships(p) as r 
-with collect( distinct {id: ID(n), name: n.name, type: labels(n)[0], email: n.email, category: n.category}) as nz, 
-collect( distinct {id: ID(r), source: ID(startnode(r)), taret: ID(endnode(r))}) as rz 
+UNWIND nodes(p) as n UNWIND relationships(p) as r
+with collect( distinct {id: ID(n), name: n.name, type: labels(n)[0], email: n.email, category: n.category}) as nz,
+collect( distinct {id: ID(r), source: ID(startnode(r)), taret: ID(endnode(r))}) as rz
 RETURN {nodes: nz, links: rz}
 ```
 
@@ -383,9 +383,9 @@ MATCH (c:Consultant)-[:KNOWS]->(:Skill)
 WHERE (c)-[:KNOWS]->(:Skill {name: "Java"})
 AND ( (c)-[:KNOWS]->(:Skill {name: "XML"}) OR (c)-[:KNOWS]->(:Skill {name: "ELOG"}) AND (c)-[:KNOWS]->(:Skill {name: "SQL"}) )
 MATCH p=(c)-[:KNOWS]->(:Skill)
-UNWIND nodes(p) as n UNWIND relationships(p) as r 
-with collect( distinct {id: ID(n), name: n.name, type: labels(n)[0], email: n.email, category: n.category}) as nz, 
-collect( distinct {id: ID(r), source: ID(startnode(r)), taret: ID(endnode(r))}) as rz 
+UNWIND nodes(p) as n UNWIND relationships(p) as r
+with collect( distinct {id: ID(n), name: n.name, type: labels(n)[0], email: n.email, category: n.category}) as nz,
+collect( distinct {id: ID(r), source: ID(startnode(r)), taret: ID(endnode(r))}) as rz
 RETURN {nodes: nz, links: rz}
 ```
 
@@ -427,8 +427,8 @@ WHERE (c)-[:KNOWS]->(:Skill {name: "Java"})
 OR ( (c)-[:KNOWS]->(:Skill {name: "SQL"}) AND (c)-[:KNOWS]->(:Skill {name: "Perl"}) )
 OR ( (c)-[:KNOWS]->(:Skill {name: "SQL"}) AND (c)-[:KNOWS]->(:Skill {name: "Assembler"}) )
 MATCH p=(c)-[:KNOWS]->(:Skill)
-UNWIND nodes(p) as n UNWIND relationships(p) as r 
-with collect( distinct {id: ID(n), name: n.name, type: labels(n)[0], email: n.email, category: n.category}) as nz, 
-collect( distinct {id: ID(r), source: ID(startnode(r)), taret: ID(endnode(r))}) as rz 
+UNWIND nodes(p) as n UNWIND relationships(p) as r
+with collect( distinct {id: ID(n), name: n.name, type: labels(n)[0], email: n.email, category: n.category}) as nz,
+collect( distinct {id: ID(r), source: ID(startnode(r)), taret: ID(endnode(r))}) as rz
 RETURN {nodes: nz, links: rz}
 ```
