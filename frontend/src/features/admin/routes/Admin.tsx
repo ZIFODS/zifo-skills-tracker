@@ -32,11 +32,13 @@ export function Admin() {
 
   const handleResourceChange = (
     _event: React.MouseEvent<HTMLElement>,
-    newResource: string
+    newResource: string | null
   ) => {
-    setResource(newResource as "Skill" | "Consultant");
-    setSelectedSkills([]);
-    setSelectedConsultants([]);
+    if (newResource !== null) {
+      setResource(newResource as "Skill" | "Consultant");
+      setSelectedSkills([]);
+      setSelectedConsultants([]);
+    }
   };
 
   const handleAddClicked = () => {
