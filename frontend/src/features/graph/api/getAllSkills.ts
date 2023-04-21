@@ -4,7 +4,7 @@ import { useQuery } from "react-query";
 export const getAllSkills = (): Promise<any> => {
   return axios({
     method: "get",
-    url: "/skills",
+    url: "/skills/",
   });
 };
 
