@@ -26,9 +26,6 @@ async def list_all_categories() -> CategoryList:
     result = conn.query(query)
     conn.close()
 
-    if not result:
-        return CategoryList(items=[])
-
     categories = result[0][0]
     categories.sort()
 

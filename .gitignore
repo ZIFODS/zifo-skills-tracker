@@ -176,3 +176,6 @@ package-lock.json
 
 # DB
 sql_app.db
+
+# HTTPS
+docker/data/certbot*

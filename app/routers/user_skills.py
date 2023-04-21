@@ -136,7 +136,7 @@ async def create_user_skill(
         )
         email = external_user.email
 
-    skills = [s.dict() for s in skills]
+    skills_dict = [s.dict() for s in skills]
 
     conn = Neo4jConnection()
     exists_query = """
@@ -144,7 +144,7 @@ async def create_user_skill(
     MATCH (c:Consultant {email: $email})-[:KNOWS]->(s:Skill {name: skills.name})
     RETURN s
     """
-    result = conn.query(exists_query, email=email, skills=skills)
+    result = conn.query(exists_query, email=email, skills=skills_dict)
     conn.close()
     if result:
         skill_names_linked = ", ".join([r[0]["name"] for r in result])
@@ -161,10 +161,10 @@ async def create_user_skill(
     RETURN COLLECT(skillsMerged) as skillsOut
     """
     conn = Neo4jConnection()
-    result = conn.query(query, email=email, skills=skills)
+    result = conn.query(query, email=email, skills=skills_dict)
     conn.close()
 
-    if not result:
+    if not result[0][0]:
         raise HTTPException(
             status_code=404, detail="Skill not found and could not be linked to user"
         )
@@ -214,7 +214,9 @@ async def delete_user_skill(
     conn.close()
     if len(result) != len(skill_names):
         skill_names_linked = [r[0]["name"] for r in result]
-        skill_names_not_linked = ", ".join([s for s in skill_names if s not in skill_names_linked])
+        skill_names_not_linked = ", ".join(
+            [s for s in skill_names if s not in skill_names_linked]
+        )
         raise HTTPException(
             status_code=409,
             detail=f"The following skills are not linked to the user: {skill_names_not_linked}",
@@ -235,7 +237,7 @@ async def delete_user_skill(
         skill_names=skill_names,
     )
     conn.close()
-    
+
     skill_names_removed = ", ".join([r[0]["name"] for r in result])
 
     return Message(message=f"Removed {skill_names_removed} for user {email}")
