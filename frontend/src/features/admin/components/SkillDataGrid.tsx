@@ -3,6 +3,7 @@ import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import { Box } from "@mui/material";
 import { useGetAllSkills } from "../../graph";
 import { Skill } from "../../update";
+import { categoryMap } from "../../../utils/skillCategories";
 
 const columns: GridColDef[] = [
   {
@@ -16,6 +17,9 @@ const columns: GridColDef[] = [
     headerName: "Category",
     flex: 1,
     editable: true,
+    renderCell: (params) => {
+      return categoryMap[params.value].displayName;
+    },
   },
   {
     field: "consultantTotal",
