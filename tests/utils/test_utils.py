@@ -19,22 +19,20 @@ def encode_list_json(list_in: list) -> str:
     return base64.urlsafe_b64encode(str.encode(json_string)).decode()
 
 
-def dictlist_to_dict(list_in: list[dict]) -> dict:
+def query_add_hidden_categories(base_query: str, hidden_categories: list[str]) -> str:
     """
-    Convert list of dicts to dict of dicts - list items must be dicts containing an "id" key, each. "id" values are
-    used as keys in new dict. Used to convert the lists of "nodes" and "links" recieved in API responses. This makes
-    test independent of list sorting, which occasionally changed in the responses for some reason.
+    Appends hidden categories from a list to the base query path.
 
     Parameters
     ----------
-    list_in : List of dicts to convert to dicts of dicts
+    base_query : graph query without hiddencategories, e.g. "/graph/?consultant=Duffy"
+    hidden_categories: list of strings containing category names to hide, e.g. ["Methodology", "R_And_D_Processes"]
 
     Returns
     -------
-
+    query : full query path with hidden categories.
+            base_query + [&hidden_categories={category} for category in hidden_categories]
     """
-    tempdict = {}
-    for dictionary in list_in:
-        tempdict[dictionary["id"]] = dictionary
 
-    return tempdict
+    return base_query + ''.join([f"&hidden_categories={category}" for category in hidden_categories])
+
