@@ -1,4 +1,5 @@
 class GetAllCategories:
+    QUERY_PATH = "/categories"
     CATEGORIES = {
         "items": [
             "Data_Management",

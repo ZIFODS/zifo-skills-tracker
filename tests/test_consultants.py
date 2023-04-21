@@ -2,7 +2,7 @@ import pytest
 from fastapi.testclient import TestClient
 
 from app import main
-from tests.expected_results import consultants_testdata
+from tests.expected_results import consultants_test_data
 
 test_client = TestClient(main.app)
 
@@ -10,57 +10,59 @@ test_client = TestClient(main.app)
 @pytest.mark.order(5)
 class TestConsultants:
     def test_get_all_consultants(self):
-        response = test_client.get(consultants_testdata.GetAllConsultants.QUERY_PATH)
+        response = test_client.get(consultants_test_data.GetAllConsultants.QUERY_PATH)
         assert response.status_code == 200
-        assert response.json() == consultants_testdata.GetAllConsultants.EXPECTED_RESULT
+        assert (
+            response.json() == consultants_test_data.GetAllConsultants.EXPECTED_RESULT
+        )
 
     @pytest.mark.dependency()
     def test_get_single_consultant(self):
-        response = test_client.get(consultants_testdata.GetSingleConsultant.QUERY_PATH)
+        response = test_client.get(consultants_test_data.GetSingleConsultant.QUERY_PATH)
         assert response.status_code == 200
         assert (
-            response.json() == consultants_testdata.GetSingleConsultant.EXPECTED_RESULT
+            response.json() == consultants_test_data.GetSingleConsultant.EXPECTED_RESULT
         )
 
     def test_get_single_consultant_not_found(self):
         response = test_client.get(
-            consultants_testdata.GetSingleConsultantNotFound.QUERY_PATH
+            consultants_test_data.GetSingleConsultantNotFound.QUERY_PATH
         )
         assert response.status_code == 404
         assert (
             response.json()["detail"]
-            == consultants_testdata.GetSingleConsultantNotFound.EXPECTED_DETAIL
+            == consultants_test_data.GetSingleConsultantNotFound.EXPECTED_DETAIL
         )
 
     def test_create_duplicate_consultant(self):
         response = test_client.post(
-            consultants_testdata.CreateDuplicateConsultant.QUERY_PATH,
-            json=consultants_testdata.CreateDuplicateConsultant.INPUT,
+            consultants_test_data.CreateDuplicateConsultant.QUERY_PATH,
+            json=consultants_test_data.CreateDuplicateConsultant.INPUT,
         )
         assert response.status_code == 409
         assert (
             response.json()["detail"]
-            == consultants_testdata.CreateDuplicateConsultant.EXPECTED_DETAIL
+            == consultants_test_data.CreateDuplicateConsultant.EXPECTED_DETAIL
         )
 
     def test_delete_consultant_not_found(self):
         response = test_client.delete(
-            consultants_testdata.DeleteConsultantNotFound.QUERY_PATH
+            consultants_test_data.DeleteConsultantNotFound.QUERY_PATH
         )
         assert response.status_code == 404
         assert (
             response.json()["detail"]
-            == consultants_testdata.DeleteConsultantNotFound.EXPECTED_DETAIL
+            == consultants_test_data.DeleteConsultantNotFound.EXPECTED_DETAIL
         )
 
     @pytest.mark.dependency()
     def test_create_consultant(self):
         response = test_client.post(
-            consultants_testdata.CreateConsultant.QUERY_PATH,
-            json=consultants_testdata.CreateConsultant.INPUT,
+            consultants_test_data.CreateConsultant.QUERY_PATH,
+            json=consultants_test_data.CreateConsultant.INPUT,
         )
         assert response.status_code == 200
-        assert response.json() == consultants_testdata.CreateConsultant.EXPECTED_RESULT
+        assert response.json() == consultants_test_data.CreateConsultant.EXPECTED_RESULT
 
     @pytest.mark.dependency(
         depends=[
@@ -70,21 +72,21 @@ class TestConsultants:
     )
     def test_create_consultant_check_result(self):
         double_check = test_client.get(
-            consultants_testdata.CreateConsultantCheckResult.QUERY_PATH
+            consultants_test_data.CreateConsultantCheckResult.QUERY_PATH
         )
         assert double_check.status_code == 200
         assert (
             double_check.json()
-            == consultants_testdata.CreateConsultantCheckResult.EXPECTED_RESULT
+            == consultants_test_data.CreateConsultantCheckResult.EXPECTED_RESULT
         )
 
     @pytest.mark.dependency()
     def test_delete_consultant(self):
-        response = test_client.delete(consultants_testdata.DeleteConsultant.QUERY_PATH)
+        response = test_client.delete(consultants_test_data.DeleteConsultant.QUERY_PATH)
         assert response.status_code == 200
         assert (
             response.json()["message"]
-            == consultants_testdata.DeleteConsultant.EXPECTED_MESSAGE
+            == consultants_test_data.DeleteConsultant.EXPECTED_MESSAGE
         )
 
     @pytest.mark.dependency(
@@ -95,10 +97,10 @@ class TestConsultants:
     )
     def test_delete_consultant_check_result(self):
         double_check = test_client.get(
-            consultants_testdata.DeleteConsultantCheckResult.QUERY_PATH
+            consultants_test_data.DeleteConsultantCheckResult.QUERY_PATH
         )
         assert double_check.status_code == 404
         assert (
             double_check.json()["detail"]
-            == consultants_testdata.DeleteConsultantCheckResult.EXPECTED_DETAIL
+            == consultants_test_data.DeleteConsultantCheckResult.EXPECTED_DETAIL
         )

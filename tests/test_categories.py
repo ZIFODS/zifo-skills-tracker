@@ -1,8 +1,8 @@
 import pytest
 from fastapi.testclient import TestClient
 
-import tests.expected_results.categories_testdata as expected
 from app import main
+from tests.expected_results import categories_test_data
 
 test_client = TestClient(main.app)
 
@@ -10,6 +10,6 @@ test_client = TestClient(main.app)
 @pytest.mark.order(2)
 class TestCategories:
     def test_get_all_categories(self):
-        response = test_client.get("/categories")
+        response = test_client.get(categories_test_data.GetAllCategories.QUERY_PATH)
         assert response.status_code == 200
-        assert response.json() == expected.GetAllCategories.CATEGORIES
+        assert response.json() == categories_test_data.GetAllCategories.CATEGORIES

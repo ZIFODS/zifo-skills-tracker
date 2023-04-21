@@ -1,4 +1,4 @@
-from tests.expected_results.categories_testdata import GetAllCategories
+from tests.expected_results.categories_test_data import GetAllCategories
 from tests.utils.test_utils import encode_list_json, query_add_hidden_categories
 
 
@@ -350,7 +350,7 @@ class GraphConsultantHideCategories:
 class GraphConsultantHideAllCategories:
     """
     Input: Consultant full name (existing) - update EXPECTED_OUTPUT if this is changed and ALL categories
-    (from categories_testdata.py)
+    (from categories_test_data.py)
     """
 
     INPUT = "Duffy"
@@ -4454,7 +4454,7 @@ class GraphSkillRulesHideCategories:
 
 class GraphSkillRulesHideAllCategories:
     """
-    Input: List of skill rules and ALL categories (from categories_testdata.py)
+    Input: List of skill rules and ALL categories (from categories_test_data.py)
     """
 
     INPUT = [{"name": "Java", "operator": "", "parenthesis": ""}]
