@@ -1,4 +1,3 @@
-import pytest
 from fastapi.testclient import TestClient
 
 import tests.expected_results.graph_test_data as graph_test_data
@@ -7,7 +6,6 @@ from app import main
 test_client = TestClient(main.app)
 
 
-@pytest.mark.order(3)
 class TestGraph:
     def test_graph_consultant_unfiltered(self):
         response = test_client.get(graph_test_data.GraphConsultantUnfiltered.QUERY_PATH)

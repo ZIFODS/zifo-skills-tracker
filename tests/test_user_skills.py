@@ -1,13 +1,12 @@
-import pytest
 from fastapi.testclient import TestClient
 
 import tests.expected_results.user_skills_test_data as user_skills_test_data
 from app import main
+from tests.utils.load_mock_data import load_neo4j
 
 test_client = TestClient(main.app)
 
 
-@pytest.mark.order(4)
 class TestUserSkills:
     def test_userskills_get_all(self):
         response = test_client.get(user_skills_test_data.UserSkillsGetAll.QUERY_PATH)
@@ -81,6 +80,7 @@ class TestUserSkills:
             user_skills_test_data.UserSkillsTrainSkills.QUERY_PATH,
             json=user_skills_test_data.UserSkillsTrainSkills.INPUT,
         )
+        load_neo4j(reset=True)
         assert response.status_code == 200
         assert (
             response.json()
@@ -91,6 +91,7 @@ class TestUserSkills:
         response = test_client.delete(
             user_skills_test_data.UserSkillsForgetSkills.QUERY_PATH
         )
+        load_neo4j(reset=True)
         assert response.status_code == 200
         assert (
             response.json()["message"]

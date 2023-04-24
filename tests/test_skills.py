@@ -3,11 +3,11 @@ from fastapi.testclient import TestClient
 
 from app import main
 from tests.expected_results import skills_test_data
+from tests.utils.load_mock_data import load_neo4j
 
 test_client = TestClient(main.app)
 
 
-@pytest.mark.order(6)
 class TestCategories:
     def test_get_all_skills(self):
         response = test_client.get(skills_test_data.GetAllSkills.QUERY_PATH)
@@ -71,6 +71,7 @@ class TestCategories:
         double_check = test_client.get(
             skills_test_data.CreateSkillCheckResult.QUERY_PATH
         )
+        load_neo4j(reset=True)
         assert double_check.status_code == 200
         assert (
             double_check.json()
@@ -95,6 +96,7 @@ class TestCategories:
         double_check = test_client.get(
             skills_test_data.DeleteSkillCheckResult.QUERY_PATH
         )
+        load_neo4j(reset=True)
         assert double_check.status_code == 404
         assert (
             double_check.json()["detail"]
