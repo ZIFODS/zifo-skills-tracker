@@ -6,11 +6,16 @@ sys.path.append(str(Path(__file__).parent.parent.parent))
 from app.utils.neo4j_connect import Neo4jConnection  # noqa: E402
 
 
-def load_neo4j():
+def load_neo4j(reset: bool = False, empty: bool = False):
     """
     Load mock data into Neo4j
+    No flags: load from csv
+    reset = True: delete DB data and constraints, create constraints, load data from csv - has priority over 'empty'
+    empty = True: delete DB data and constraints. Ignored if reset = True.
     """
     queries = [
+        "MATCH (n) DETACH DELETE n",
+        "CALL apoc.schema.assert({},{},true) YIELD label, key RETURN *",
         "CREATE CONSTRAINT ON (c:Consultant) ASSERT c.email IS UNIQUE",
         "CREATE CONSTRAINT ON (s:Skill) ASSERT s.name IS UNIQUE",
         """
@@ -20,6 +25,11 @@ def load_neo4j():
         MERGE (c)-[:KNOWS {uid: row.rid}]->(s)
         """,
     ]
+
+    if not reset and not empty:
+        queries = [queries[2], queries[3], queries[4]]
+    elif empty:
+        queries = [queries[0], queries[1]]
 
     conn = Neo4jConnection()
 
