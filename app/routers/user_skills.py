@@ -53,6 +53,8 @@ async def list_user_skills(
     result = conn.query(query, email=email, category=category)
     conn.close()
 
+    result[0][0].sort(key=lambda x: x.get("name"))
+
     return SkillList(items=result[0][0])
 
 
@@ -169,6 +171,8 @@ async def create_user_skill(
             status_code=404, detail="Skill not found and could not be linked to user"
         )
 
+    result[0][0].sort(key=lambda x: x.get("name"))
+
     return SkillList(items=result[0][0])
 
 
@@ -228,6 +232,7 @@ async def delete_user_skill(
         WITH r, {name: s.name, type: labels(s)[0],  category: s.category} as skillOut
         DELETE r
         RETURN skillOut
+        ORDER BY skillOut.name
         """
 
     conn = Neo4jConnection()
