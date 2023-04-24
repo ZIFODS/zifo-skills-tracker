@@ -9,8 +9,8 @@ def main():
 
     description of IDs:
     rid (0 to number of links - 1): relationship id
-    cid (max rid + 1 to max rid + number of consultants)
-    sid (max cid + 1 to max cid + number of skills)
+    cid (max rid + 1 to max rid + number of consultants): consultant id
+    sid (max cid + 1 to max cid + number of skills): skill id
     """
     df = pd.read_csv("mock_skills_data.csv")
     df.insert(0, "rid", pd.Series([i for i in range(len(df))]))
