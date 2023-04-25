@@ -80,20 +80,46 @@ class TestUserSkills:
             user_skills_test_data.UserSkillsTrainSkills.QUERY_PATH,
             json=user_skills_test_data.UserSkillsTrainSkills.INPUT,
         )
-        load_neo4j(reset=True)
         assert response.status_code == 200
         assert (
             response.json()
             == user_skills_test_data.UserSkillsTrainSkills.EXPECTED_OUTPUT
         )
 
+        double_check = test_client.get(
+            user_skills_test_data.UserSkillsGetAll.QUERY_PATH
+        )
+        load_neo4j(reset=True)
+        import json
+
+        print(json.dumps(double_check.json(), indent=4))
+
+        assert double_check.status_code == 200
+        assert (
+            double_check.json()
+            == user_skills_test_data.UserSkillsTrainSkills.EXPECTED_DOUBLE_CHECK
+        )
+
     def test_userskills_forget_skills(self):
         response = test_client.delete(
             user_skills_test_data.UserSkillsForgetSkills.QUERY_PATH
         )
-        load_neo4j(reset=True)
         assert response.status_code == 200
         assert (
             response.json()["message"]
             == user_skills_test_data.UserSkillsForgetSkills.EXPECTED_MESSAGE
+        )
+
+        double_check = test_client.get(
+            user_skills_test_data.UserSkillsGetAll.QUERY_PATH
+        )
+
+        import json
+
+        print(json.dumps(double_check.json(), indent=4))
+        load_neo4j(reset=True)
+        assert double_check.status_code == 200
+        assert (
+            double_check.json()
+            == user_skills_test_data.UserSkillsForgetSkills.EXPECTED_DOUBLE_CHECK
         )

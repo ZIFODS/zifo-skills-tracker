@@ -304,15 +304,8 @@ class CreateConsultant:
     QUERY_PATH = "/consultants/"
     EXPECTED_RESULT = {"name": INPUT_NAME, "email": INPUT_MAIL, "type": "Consultant"}
 
-
-class CreateConsultantCheckResult:
-    """
-    input: same email as in CreateConsultant!
-    """
-
-    INPUT = CreateConsultant.INPUT_MAIL
-    QUERY_PATH = f"/consultants/{url_encode(INPUT)}"
-    EXPECTED_RESULT = CreateConsultant.EXPECTED_RESULT
+    QUERY_PATH_DOUBLE_CHECK = f"/consultants/{url_encode(INPUT_MAIL)}"
+    EXPECTED_DOUBLE_CHECK_RESULT = EXPECTED_RESULT
 
 
 class DeleteConsultant:
@@ -323,13 +316,4 @@ class DeleteConsultant:
     INPUT = "duffy@gmail.com"
     QUERY_PATH = f"/consultants/{url_encode(INPUT)}"
     EXPECTED_MESSAGE = f"Deleted consultant {INPUT}"
-
-
-class DeleteConsultantCheckResult:
-    """
-    input: same email as in DeleteConsultant!
-    """
-
-    INPUT = DeleteConsultant.INPUT
-    QUERY_PATH = DeleteConsultant.QUERY_PATH
-    EXPECTED_DETAIL = "Consultant not found"
+    EXPECTED_DOUBLE_CHECK_DETAIL = "Consultant not found"

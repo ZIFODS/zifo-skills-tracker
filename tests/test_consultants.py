@@ -1,4 +1,3 @@
-import pytest
 from fastapi.testclient import TestClient
 
 from app import main
@@ -16,7 +15,6 @@ class TestConsultants:
             response.json() == consultants_test_data.GetAllConsultants.EXPECTED_RESULT
         )
 
-    @pytest.mark.dependency()
     def test_get_single_consultant(self):
         response = test_client.get(consultants_test_data.GetSingleConsultant.QUERY_PATH)
         assert response.status_code == 200
@@ -55,7 +53,6 @@ class TestConsultants:
             == consultants_test_data.DeleteConsultantNotFound.EXPECTED_DETAIL
         )
 
-    @pytest.mark.dependency()
     def test_create_consultant(self):
         response = test_client.post(
             consultants_test_data.CreateConsultant.QUERY_PATH,
@@ -64,24 +61,16 @@ class TestConsultants:
         assert response.status_code == 200
         assert response.json() == consultants_test_data.CreateConsultant.EXPECTED_RESULT
 
-    @pytest.mark.dependency(
-        depends=[
-            "TestConsultants::test_get_single_consultant",
-            "TestConsultants" "::test_create_consultant",
-        ]
-    )
-    def test_create_consultant_check_result(self):
         double_check = test_client.get(
-            consultants_test_data.CreateConsultantCheckResult.QUERY_PATH
+            consultants_test_data.CreateConsultant.QUERY_PATH_DOUBLE_CHECK
         )
         load_neo4j(reset=True)
         assert double_check.status_code == 200
         assert (
             double_check.json()
-            == consultants_test_data.CreateConsultantCheckResult.EXPECTED_RESULT
+            == consultants_test_data.CreateConsultant.EXPECTED_DOUBLE_CHECK_RESULT
         )
 
-    @pytest.mark.dependency()
     def test_delete_consultant(self):
         response = test_client.delete(consultants_test_data.DeleteConsultant.QUERY_PATH)
         assert response.status_code == 200
@@ -90,19 +79,12 @@ class TestConsultants:
             == consultants_test_data.DeleteConsultant.EXPECTED_MESSAGE
         )
 
-    @pytest.mark.dependency(
-        depends=[
-            "TestConsultants::test_get_single_consultant",
-            "TestConsultants" "::test_delete_consultant",
-        ]
-    )
-    def test_delete_consultant_check_result(self):
         double_check = test_client.get(
-            consultants_test_data.DeleteConsultantCheckResult.QUERY_PATH
+            consultants_test_data.DeleteConsultant.QUERY_PATH
         )
         load_neo4j(reset=True)
         assert double_check.status_code == 404
         assert (
             double_check.json()["detail"]
-            == consultants_test_data.DeleteConsultantCheckResult.EXPECTED_DETAIL
+            == consultants_test_data.DeleteConsultant.EXPECTED_DOUBLE_CHECK_DETAIL
         )

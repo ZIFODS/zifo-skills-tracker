@@ -1,4 +1,3 @@
-import pytest
 from fastapi.testclient import TestClient
 
 from app import main
@@ -19,7 +18,6 @@ class TestCategories:
         assert response.status_code == 200
         assert response.json() == skills_test_data.GetSkillPerCategory.EXPECTED_RESULT
 
-    @pytest.mark.dependency()
     def test_get_single_skill(self):
         response = test_client.get(skills_test_data.GetSingleSkill.QUERY_PATH)
         assert response.status_code == 200
@@ -52,7 +50,6 @@ class TestCategories:
             == skills_test_data.DeleteSkillNotFound.EXPECTED_DETAIL
         )
 
-    @pytest.mark.dependency()
     def test_create_skill(self):
         response = test_client.post(
             skills_test_data.CreateSkill.QUERY_PATH,
@@ -61,24 +58,16 @@ class TestCategories:
         assert response.status_code == 200
         assert response.json() == skills_test_data.CreateSkill.EXPECTED_RESULT
 
-    @pytest.mark.dependency(
-        depends=[
-            "TestCategories::test_get_single_skill",
-            "TestCategories::test_create_skill",
-        ]
-    )
-    def test_create_skill_check_result(self):
         double_check = test_client.get(
-            skills_test_data.CreateSkillCheckResult.QUERY_PATH
+            skills_test_data.CreateSkill.QUERY_PATH_DOUBLE_CHECK
         )
         load_neo4j(reset=True)
         assert double_check.status_code == 200
         assert (
             double_check.json()
-            == skills_test_data.CreateSkillCheckResult.EXPECTED_RESULT
+            == skills_test_data.CreateSkill.EXPECTED_DOUBLE_CHECK_RESULT
         )
 
-    @pytest.mark.dependency()
     def test_delete_skill(self):
         response = test_client.delete(skills_test_data.DeleteSkill.QUERY_PATH)
         assert response.status_code == 200
@@ -86,19 +75,10 @@ class TestCategories:
             response.json()["message"] == skills_test_data.DeleteSkill.EXPECTED_MESSAGE
         )
 
-    @pytest.mark.dependency(
-        depends=[
-            "TestCategories::test_get_single_skill",
-            "TestCategories::test_delete_skill",
-        ]
-    )
-    def test_delete_skill_check_result(self):
-        double_check = test_client.get(
-            skills_test_data.DeleteSkillCheckResult.QUERY_PATH
-        )
+        double_check = test_client.get(skills_test_data.DeleteSkill.QUERY_PATH)
         load_neo4j(reset=True)
         assert double_check.status_code == 404
         assert (
             double_check.json()["detail"]
-            == skills_test_data.DeleteSkillCheckResult.EXPECTED_DETAIL
+            == skills_test_data.DeleteSkill.EXPECTED_DOUBLE_CHECK_DETAIL
         )
