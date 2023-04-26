@@ -15,13 +15,13 @@ def main():
     sid: skill id
     """
     df = pd.read_csv("mock_skills_data.csv")
-    df.insert(0, "rid", pd.Series([uuid.uuid4() for _ in list(range(len(df)))]))
+    df.insert(0, "rid", pd.Series([uuid.uuid4() for _ in df.index]))
 
     consultants_df = pd.DataFrame(df.name.unique())
     consultants_df.insert(
-        0, "cid", pd.Series([uuid.uuid4() for _ in list(range(len(consultants_df)))])
+        0, "cid", pd.Series([uuid.uuid4() for _ in consultants_df.index])
     )
-
+    print(consultants_df)
     df.insert(
         1,
         "cid",
@@ -34,9 +34,7 @@ def main():
     )
 
     skills_df = pd.DataFrame(df.skill.unique())
-    skills_df.insert(
-        0, "sid", pd.Series([uuid.uuid4() for _ in list(range(len(skills_df)))])
-    )
+    skills_df.insert(0, "sid", pd.Series([uuid.uuid4() for _ in skills_df.index]))
 
     df.insert(
         4,
