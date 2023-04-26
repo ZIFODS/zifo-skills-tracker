@@ -1,8 +1,9 @@
+import uuid
+
 from fastapi import APIRouter, HTTPException
 
 from app.models.common import Message
 from app.models.consultants import Consultant, ConsultantCreate, ConsultantList
-from app.utils.get_next_uid import get_next_uid
 from app.utils.neo4j_connect import Neo4jConnection
 
 consultants_router = APIRouter(prefix="/consultants", tags=["Consultants"])
@@ -22,7 +23,7 @@ async def list_all_consultants() -> ConsultantList:
     query = """
     MATCH (c:Consultant)
     UNWIND c as consultants
-    WITH COLLECT(DISTINCT {id: c.uid, name: c.name, type: labels(c)[0], email: c.email}) as consultantsOut
+    WITH COLLECT(DISTINCT {name: c.name, type: labels(c)[0], email: c.email}) as consultantsOut
     RETURN consultantsOut
     """
 
@@ -57,7 +58,7 @@ async def get_consultant(consultant_email: str) -> Consultant:
     """
     query = """
     MATCH (c:Consultant {email: $email})
-    WITH {id: c.uid, name: c.name, type: labels(c)[0], email: c.email} as consultantOut
+    WITH {name: c.name, type: labels(c)[0], email: c.email} as consultantOut
     RETURN consultantOut
     """
 
@@ -97,12 +98,12 @@ async def create_consultant(consultant: ConsultantCreate) -> Consultant:
 
     query = """
     MERGE (c:Consultant {uid: $uid, name: $name, email: $email})
-    WITH {id: c.uid, name: c.name, type: labels(c)[0], email: c.email} as consultantOut
+    WITH {name: c.name, type: labels(c)[0], email: c.email} as consultantOut
     RETURN consultantOut
     """
     conn = Neo4jConnection()
     result = conn.query(
-        query, uid=get_next_uid(), name=consultant.name, email=consultant.email
+        query, uid=str(uuid.uuid4()), name=consultant.name, email=consultant.email
     )
     conn.close()
 

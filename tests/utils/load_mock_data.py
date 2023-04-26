@@ -17,7 +17,10 @@ def load_neo4j(reset: bool = False, empty: bool = False):
         "MATCH (n) DETACH DELETE n",
         "CALL apoc.schema.assert({},{},true) YIELD label, key RETURN *",
         "CREATE CONSTRAINT ON (c:Consultant) ASSERT c.email IS UNIQUE",
+        "CREATE CONSTRAINT ON (c:Consultant) ASSERT c.uid IS UNIQUE",
         "CREATE CONSTRAINT ON (s:Skill) ASSERT s.name IS UNIQUE",
+        "CREATE CONSTRAINT ON (s:Skill) ASSERT s.uid IS UNIQUE",
+        "CREATE CONSTRAINT ON (r:KNOWS) ASSERT r.uid IS UNIQUE",
         """
         LOAD CSV WITH HEADERS FROM 'file:///mock_skills_data.csv' AS row
         MERGE (c:Consultant {uid: row.cid, name: row.name, email: row.email})
@@ -27,7 +30,14 @@ def load_neo4j(reset: bool = False, empty: bool = False):
     ]
 
     if not reset and not empty:
-        queries = [queries[2], queries[3], queries[4]]
+        queries = [
+            queries[2],
+            queries[3],
+            queries[4],
+            queries[5],
+            queries[6],
+            queries[7],
+        ]
     elif empty:
         queries = [queries[0], queries[1]]
 

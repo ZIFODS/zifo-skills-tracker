@@ -11,7 +11,6 @@ class ConsultantCreate(ConsultantBase):
 
 
 class Consultant(ConsultantBase):
-    id: int
     type: str
 
 
