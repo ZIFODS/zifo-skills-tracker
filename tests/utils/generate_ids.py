@@ -21,7 +21,7 @@ def main():
     consultants_df.insert(
         0, "cid", pd.Series([uuid.uuid4() for _ in consultants_df.index])
     )
-    print(consultants_df)
+
     df.insert(
         1,
         "cid",
