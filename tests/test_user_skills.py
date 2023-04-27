@@ -1,13 +1,12 @@
-import pytest
 from fastapi.testclient import TestClient
 
 import tests.expected_results.user_skills_test_data as user_skills_test_data
 from app import main
+from tests.utils.load_mock_data import load_neo4j
 
 test_client = TestClient(main.app)
 
 
-@pytest.mark.order(4)
 class TestUserSkills:
     def test_userskills_get_all(self):
         response = test_client.get(user_skills_test_data.UserSkillsGetAll.QUERY_PATH)
@@ -87,6 +86,20 @@ class TestUserSkills:
             == user_skills_test_data.UserSkillsTrainSkills.EXPECTED_OUTPUT
         )
 
+        double_check = test_client.get(
+            user_skills_test_data.UserSkillsGetAll.QUERY_PATH
+        )
+        load_neo4j(reset=True)
+        import json
+
+        print(json.dumps(double_check.json(), indent=4))
+
+        assert double_check.status_code == 200
+        assert (
+            double_check.json()
+            == user_skills_test_data.UserSkillsTrainSkills.EXPECTED_DOUBLE_CHECK
+        )
+
     def test_userskills_forget_skills(self):
         response = test_client.delete(
             user_skills_test_data.UserSkillsForgetSkills.QUERY_PATH
@@ -95,4 +108,18 @@ class TestUserSkills:
         assert (
             response.json()["message"]
             == user_skills_test_data.UserSkillsForgetSkills.EXPECTED_MESSAGE
+        )
+
+        double_check = test_client.get(
+            user_skills_test_data.UserSkillsGetAll.QUERY_PATH
+        )
+
+        import json
+
+        print(json.dumps(double_check.json(), indent=4))
+        load_neo4j(reset=True)
+        assert double_check.status_code == 200
+        assert (
+            double_check.json()
+            == user_skills_test_data.UserSkillsForgetSkills.EXPECTED_DOUBLE_CHECK
         )
