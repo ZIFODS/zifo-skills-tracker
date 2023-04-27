@@ -8,10 +8,18 @@ from app.utils.neo4j_connect import Neo4jConnection  # noqa: E402
 
 def load_neo4j(reset: bool = False, empty: bool = False):
     """
+    load_neo4j(reset: bool = False, empty: bool = False)
     Load mock data into Neo4j
-    No flags: load from csv
-    reset = True: delete DB data and constraints, create constraints, load data from csv - has priority over 'empty'
-    empty = True: delete DB data and constraints. Ignored if reset = True.
+
+    Function to handle the mock data DB. It can be called with no parameters to create constraints and load mock data
+    into an empty DB (needed after loading the Neo4J docker container).
+
+    Parameters
+    ----------
+    reset : bool
+        If True, delete existing DB data/constraints and then re-create constraints and load data.
+    empty : bool
+        If True, delete DB data/constraints only. Ignored if reset = True.
     """
     queries = [
         "MATCH (n) DETACH DELETE n",
