@@ -49,14 +49,14 @@ class TestGraph:
             == graph_test_data.GraphConsultantHideAllCategories.EXPECTED_OUTPUT
         )
 
-    def test_graph_skillrules_one_skill(self):
+    def test_graph_skill_rules_one_skill(self):
         response = test_client.get(graph_test_data.GraphSkillRulesOneSkill.QUERY_PATH)
         assert response.status_code == 200
         assert (
             response.json() == graph_test_data.GraphSkillRulesOneSkill.EXPECTED_OUTPUT
         )
 
-    def test_graph_skillrules_two_skills_and(self):
+    def test_graph_skill_rules_two_skills_and(self):
         response = test_client.get(
             graph_test_data.GraphSkillRulesTwoSkillsAnd.QUERY_PATH
         )
@@ -66,7 +66,7 @@ class TestGraph:
             == graph_test_data.GraphSkillRulesTwoSkillsAnd.EXPECTED_OUTPUT
         )
 
-    def test_graph_skillrules_three_skills_or(self):
+    def test_graph_skill_rules_three_skills_or(self):
         response = test_client.get(
             graph_test_data.GraphSkillRulesThreeSkillsOr.QUERY_PATH
         )
@@ -76,7 +76,7 @@ class TestGraph:
             == graph_test_data.GraphSkillRulesThreeSkillsOr.EXPECTED_OUTPUT
         )
 
-    def test_graph_skillrules_three_skills_and_or(self):
+    def test_graph_skill_rules_three_skills_and_or(self):
         response = test_client.get(
             graph_test_data.GraphSkillRulesThreeSkillsAndOr.QUERY_PATH
         )
@@ -86,7 +86,7 @@ class TestGraph:
             == graph_test_data.GraphSkillRulesThreeSkillsAndOr.EXPECTED_OUTPUT
         )
 
-    def test_graph_skillrules_three_skills_parenthesis(self):
+    def test_graph_skill_rules_three_skills_parenthesis(self):
         response = test_client.get(
             graph_test_data.GraphSkillRulesThreeSkillsParenthesis.QUERY_PATH
         )
@@ -96,7 +96,7 @@ class TestGraph:
             == graph_test_data.GraphSkillRulesThreeSkillsParenthesis.EXPECTED_OUTPUT
         )
 
-    def test_graph_skillrules_three_skills_parenthesis_missing(self):
+    def test_graph_skill_rules_three_skills_parenthesis_missing(self):
         response = test_client.get(
             graph_test_data.GraphSkillRulesThreeSkillsParenthesisMissing.QUERY_PATH
         )
@@ -106,7 +106,7 @@ class TestGraph:
             == graph_test_data.GraphSkillRulesThreeSkillsParenthesisMissing.EXPECTED_OUTPUT
         )
 
-    def test_graph_skillrules_four_skills_parenthesis(self):
+    def test_graph_skill_rules_four_skills_parenthesis(self):
         response = test_client.get(
             graph_test_data.GraphSkillRulesFourSkillsParenthesis.QUERY_PATH
         )
@@ -116,7 +116,7 @@ class TestGraph:
             == graph_test_data.GraphSkillRulesFourSkillsParenthesis.EXPECTED_OUTPUT
         )
 
-    def test_graph_skillrules_five_skills_two_parenthesis(self):
+    def test_graph_skill_rules_five_skills_two_parenthesis(self):
         response = test_client.get(
             graph_test_data.GraphSkillRulesFiveSkillsTwoParenthesis.QUERY_PATH
         )
@@ -126,22 +126,14 @@ class TestGraph:
             == graph_test_data.GraphSkillRulesFiveSkillsTwoParenthesis.EXPECTED_OUTPUT
         )
 
-    def test_graph_skillrules_hide_categories(self):
-        response = test_client.get(
-            graph_test_data.GraphSkillRulesHideCategories.QUERY_PATH
-        )
+    def test_graph_skills_hide_categories(self):
+        response = test_client.get(graph_test_data.GraphSkillsHideCategories.QUERY_PATH)
         assert response.status_code == 200
         assert (
-            response.json()
-            == graph_test_data.GraphSkillRulesHideCategories.EXPECTED_OUTPUT
+            response.json() == graph_test_data.GraphSkillsHideCategories.EXPECTED_OUTPUT
         )
 
     def test_graph_skills_all_hidden(self):
-        response = test_client.get(
-            graph_test_data.GraphSkillRulesHideAllCategories.QUERY_PATH
-        )
+        response = test_client.get(graph_test_data.GraphSkillsAllHidden.QUERY_PATH)
         assert response.status_code == 200
-        assert (
-            response.json()
-            == graph_test_data.GraphSkillRulesHideAllCategories.EXPECTED_OUTPUT
-        )
+        assert response.json() == graph_test_data.GraphSkillsAllHidden.EXPECTED_OUTPUT
