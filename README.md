@@ -1,6 +1,6 @@
 # Zifo Skills Tracker
 
-Zifo Skills Tracker is a full-stack web application that allows the user to visualise and query the skills of Zifo employees, as well as update their own skills. 
+Zifo Skills Tracker is a full-stack web application that allows the user to visualise and query the skills of Zifo employees, as well as update their own skills.
 
 Understanding the skills that employees possess helps with resource allocation and organisation of training.
 
@@ -12,42 +12,40 @@ Once you've configured a Linux environment, install `docker compose`: https://do
 
 ## Getting started
 
-There are 3 environments that can be launched using this application:
+There are 2 environments that can be launched using this application:
 
 - [`prod`](./docker/docker-compose.prod.yml) - The production environment
-- [`demo`](./docker/docker-compose.demo.yml) - The demo environment
 - [`dev`](./docker/docker-compose.dev.yml) - The development environment
 
-You will need to configure specific environment variables depending on the environment you want to launch.
+For production, you will need to configure environment variables by adding the following to a `.env.prod` file in the root directory:
 
-You can simply add them to the corresponding `.env` file in the root directory with the following info:
-
-| .env.prod           | .env.demo          | .env.dev           |
-| ---                 | ---                | ---                |
-| SESSION_SECRET_KEY  | SESSION_SECRET_KEY | SESSION_SECRET_KEY |
-| NEO4J_URI           | NEO4J_URI          | NEO4J_URI          |
-| NEO4J_USER          | NEO4J_USER         | NEO4J_USER         |
-| NEO4J_PASSWORD      | NEO4J_PASSWORD     | NEO4J_PASSWORD     |
-| JWT_SECERET_KEY     | -                  | -                  |
-| AZURE_CLIENT_ID     | -                  | -                  |
-| AZURE_CLIENT_SECRET | -                  | -                  |
-| AZURE_TENANT_ID     | -                  | -                  |
-| AZURE_REDIRECT_URI  | -                  | -                  |
-| FRONTEND_URL        | -                  | -                  |
-| REACT_APP_API_URL   | -                  | -                  |
+| .env.prod           |
+| ------------------- |
+| SESSION_SECRET_KEY  |
+| NEO4J_URI           |
+| NEO4J_USER          |
+| NEO4J_PASSWORD      |
+| JWT_SECERET_KEY     |
+| AZURE_CLIENT_ID     |
+| AZURE_CLIENT_SECRET |
+| AZURE_TENANT_ID     |
+| AZURE_REDIRECT_URI  |
+| FRONTEND_URL        |
+| REACT_APP_API_URL   |
 
 The JWT and session secret keys can be generated using `openssl rand -hex 32`. The Azure keys and Neo4j credentials should be requested from [Joe Smith](mailto:joe.smith@zifornd.com).
 
 More information on Azure configuration can be found in the [Authentication](docs/Authentication.md) documentation.
 
+For the dev environment, environment variables have been hardcoded in [config.py](./app/config.py)
+
 ## Data
 
-The data required to launch the dev and demo environments is stored in an S3 bucket. Data for the prod environment is stored in a Neo4j Aura database in the cloud. To access the data, you will need to request the credentials from
+The data required to launch the dev environment is tracked using DVC. Data for the prod environment is stored in a Neo4j Aura database in the cloud. To access the data, you will need to request the credentials from
 
 [Joseph Smith](mailto:joe.smith@zifornd.com)
 
 [Ross Burton](mailto:ross.burton@zifornd.com)
-
 
 ## Running the application locally
 
