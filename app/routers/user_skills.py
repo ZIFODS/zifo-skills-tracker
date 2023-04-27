@@ -1,3 +1,4 @@
+import uuid
 from typing import Optional
 
 from fastapi import APIRouter, Depends, HTTPException, Query
@@ -158,12 +159,12 @@ async def create_user_skill(
     query = """
     UNWIND $skills as skill
     MATCH (s:Skill {name: skill.name}), (c:Consultant {email: $email})
-    MERGE (c)-[:KNOWS]->(s)
-    WITH {name: s.name, type: labels(s)[0],  category: s.category} as skillsMerged
+    MERGE (c)-[:KNOWS {uid: $uid}]->(s)
+    WITH {name: s.name, type: labels(s)[0], category: s.category} as skillsMerged
     RETURN COLLECT(skillsMerged) as skillsOut
     """
     conn = Neo4jConnection()
-    result = conn.query(query, email=email, skills=skills_dict)
+    result = conn.query(query, uid=str(uuid.uuid4()), email=email, skills=skills_dict)
     conn.close()
 
     if not result[0][0]:
