@@ -21,7 +21,8 @@ jobs:
           role-to-assume: arn:aws:iam::233044492909:role/skills-tracker-dvc
           aws-region: eu-west-2
       - name: Pull data with DVC
+        uses: iterative/setup-dvc@v1
         run: |
-          poetry run dvc pull --recursive
+          dvc pull --recursive
       - name: Start containers
         run: docker compose -f docker-compose.dev.yml up -d --build;
