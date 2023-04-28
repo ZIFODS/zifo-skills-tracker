@@ -6,24 +6,22 @@ on:
     branches: [main, master]
 
 jobs:
-  integration-test:
+  build-dev:
     timeout-minutes: 20
     runs-on: ubuntu-latest
-
+    permissions:
+      id-token: write
+      contents: read
     steps:
       - name: Checkout
-        uses: actions/checkout@v1
-
+        uses: actions/checkout@v3
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          role-to-assume: arn:aws:iam::233044492909:role/skills-tracker-dvc
+          region: eu-west-2
+      - name: Pull data with DVC
+        run: |
+          poetry run dvc pull --recursive
       - name: Start containers
-        run: docker compose up -d --build;
-
-  build-prod:
-    timeout-minutes: 20
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v1
-
-      - name: Start containers
-        run: docker compose up -d --build;
+        run: docker compose -f docker-compose.dev.yml up -d --build;
