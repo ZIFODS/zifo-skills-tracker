@@ -19,7 +19,7 @@ jobs:
         uses: aws-actions/configure-aws-credentials@v1
         with:
           role-to-assume: arn:aws:iam::233044492909:role/skills-tracker-dvc
-          region: eu-west-2
+          aws-region: eu-west-2
       - name: Pull data with DVC
         run: |
           poetry run dvc pull --recursive
