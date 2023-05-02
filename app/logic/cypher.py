@@ -66,7 +66,7 @@ def compile_results_with_nodes() -> str:
     query = " UNWIND nodes(p) as n"
 
     query += (
-        " WITH collect( distinct {id: ID(n), name: n.name, type: labels(n)[0], email: n.email, category: "
+        " WITH collect( distinct {id: n.uid, name: n.name, type: labels(n)[0], email: n.email, category: "
         "n.category}) as nz"
     )
 
@@ -87,8 +87,8 @@ def compile_results_with_nodes_and_links() -> str:
     query = " UNWIND nodes(p) as n UNWIND relationships(p) as r"
 
     query += (
-        " WITH collect( distinct {id: ID(n), name: n.name, type: labels(n)[0], email: n.email, category: "
-        "n.category}) as nz, collect( distinct {id: ID(r), source: ID(startnode(r)), target: ID(endnode(r))}) "
+        " WITH collect( distinct {id: n.uid, name: n.name, type: labels(n)[0], email: n.email, category: "
+        "n.category}) as nz, collect( distinct {id: r.uid, source: startnode(r).uid, target: endnode(r).uid}) "
         "as rz"
     )
 

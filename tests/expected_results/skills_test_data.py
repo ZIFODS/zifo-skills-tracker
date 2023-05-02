@@ -964,13 +964,10 @@ class CreateSkill:
     QUERY_PATH = "/skills/"
     EXPECTED_RESULT = {"name": INPUT_SKILL, "category": INPUT_CATEGORY, "type": "Skill"}
 
-
-class CreateSkillCheckResult:
-    INPUT = CreateSkill.INPUT_SKILL  # same skill as in CreateSkill!
-    QUERY_PATH = f"/skills/{url_encode(INPUT)}"
-    EXPECTED_RESULT = {
-        "name": CreateSkill.INPUT_SKILL,
-        "category": CreateSkill.INPUT_CATEGORY,
+    QUERY_PATH_DOUBLE_CHECK = f"/skills/{url_encode(INPUT_SKILL)}"
+    EXPECTED_DOUBLE_CHECK_RESULT = {
+        "name": INPUT_SKILL,
+        "category": INPUT_CATEGORY,
         "type": "Skill",
     }
 
@@ -979,9 +976,4 @@ class DeleteSkill:
     INPUT = "CDISC Study Data Tabulation Model"
     QUERY_PATH = f"/skills/{url_encode(INPUT)}"
     EXPECTED_MESSAGE = f"Deleted skill {INPUT}"
-
-
-class DeleteSkillCheckResult:
-    INPUT = DeleteSkill.INPUT
-    QUERY_PATH = f"/skills/{url_encode(INPUT)}"
-    EXPECTED_DETAIL = "Skill not found"
+    EXPECTED_DOUBLE_CHECK_DETAIL = "Skill not found"

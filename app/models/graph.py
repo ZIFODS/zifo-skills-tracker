@@ -21,9 +21,9 @@ class Link(BaseModel):
     Relationship in the graph between a source node ID and a target node ID.
     """
 
-    id: int
-    source: int
-    target: int
+    id: str
+    source: str
+    target: str
 
 
 class Node(BaseModel):
@@ -33,7 +33,7 @@ class Node(BaseModel):
     Skills have an category and consultants have an email.
     """
 
-    id: int
+    id: str
     name: str
     type: str
     category: Optional[str]
