@@ -14,7 +14,7 @@ def main():
     cid: consultant id
     sid: skill id
     """
-    df = pd.read_csv("mock_skills_data.csv")
+    df = pd.read_csv("neo4j_import_melt.csv")
     df.insert(0, "rid", pd.Series([uuid.uuid4() for _ in df.index]))
 
     consultants_df = pd.DataFrame(df.name.unique())

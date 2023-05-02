@@ -1,5 +1,5 @@
 from tests.expected_results.categories_test_data import GetAllCategories
-from tests.utils.test_utils import encode_list_json, query_add_hidden_categories
+from tests.utils import encode_list_json, query_add_hidden_categories
 
 
 class GraphConsultantUnfiltered:

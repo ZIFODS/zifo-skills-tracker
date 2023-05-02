@@ -30,6 +30,7 @@ RUN poetry install
 
 # Copy source code
 COPY ./app ./app
+COPY ./pipeline ./pipeline
 COPY ./tests ./tests
 
 # Run the server

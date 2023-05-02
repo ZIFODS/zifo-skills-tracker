@@ -2,7 +2,7 @@ from fastapi.testclient import TestClient
 
 import tests.expected_results.user_skills_test_data as user_skills_test_data
 from app import main
-from tests.utils.load_mock_data import load_neo4j
+from pipeline.load_mock_data import load_neo4j
 
 test_client = TestClient(main.app)
 

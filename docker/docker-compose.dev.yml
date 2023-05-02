@@ -28,10 +28,6 @@ services:
       context: ..
       dockerfile: ./docker/api/Dockerfile.dev
     container_name: zifo-skills-api
-    environment:
-      - SKILLS_ENV=dev
-    volumes:
-      - ../.env.dev:/home/skills-user/.env.dev
     depends_on:
       mongodb:
         condition: service_healthy
