@@ -12,7 +12,7 @@ services:
     network_mode: host
     healthcheck:
       test: wget http://localhost:7474 || exit 1
-      interval: 1s
+      interval: 5s
       timeout: 10s
       retries: 20
       start_period: 3s
