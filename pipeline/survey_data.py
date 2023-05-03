@@ -10,7 +10,7 @@ from pipeline.generate_ids import generate_ids  # noqa: E402
 from pipeline.schemas import Categories, ColumnHeaderMap, Columns  # noqa: E402
 
 INPUT_PATH = "data/skills-survey-export.xlsx"
-OUTPUT_PATH = "data/neo4j-import.csv"
+OUTPUT_PATH = "data/prod_skills_data.csv"
 
 
 def main():
