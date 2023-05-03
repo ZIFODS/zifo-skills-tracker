@@ -1,13 +1,22 @@
-import pandas as pd
-import numpy as np
-from pipeline.schemas import ColumnHeaderMap, Columns, Categories
+import sys
+from pathlib import Path
 
-INPUT_PATH = "skills-survey-export.xlsx"
-OUTPUT_PATH = "neo4j-import.csv"
+import numpy as np
+import pandas as pd
+
+sys.path.append(str(Path(__file__).parent.parent))
+
+from pipeline.generate_ids import generate_ids  # noqa: E402
+from pipeline.schemas import Categories, ColumnHeaderMap, Columns  # noqa: E402
+
+INPUT_PATH = "data/skills-survey-export.xlsx"
+OUTPUT_PATH = "data/neo4j-import.csv"
 
 
 def main():
-    generate_from_survey()
+    df = generate_from_survey()
+    df = generate_ids(df)
+    df.to_csv(OUTPUT_PATH, index=False)
 
 
 def generate_from_survey():
@@ -17,9 +26,7 @@ def generate_from_survey():
     all_data = pd.read_excel(INPUT_PATH)
     all_data = all_data.rename({v: k for k, v in ColumnHeaderMap.map.items()}, axis=1)
 
-    name_data = all_data[
-        [Columns.ID.value, Columns.NAME.value, Columns.EMAIL.value]
-    ]
+    name_data = all_data[[Columns.ID.value, Columns.NAME.value, Columns.EMAIL.value]]
     skill_data = all_data[[i.value for i in Categories]]
 
     # Split strings by semi-colon and convert nan to empty list
@@ -75,8 +82,7 @@ def generate_from_survey():
     # convert strings in email column to lowercase
     melted_df[Columns.EMAIL.value] = melted_df[Columns.EMAIL.value].str.lower()
 
-    # write to csv
-    melted_df.to_csv(OUTPUT_PATH, index=False)
+    return melted_df
 
 
 def split_strings(input):

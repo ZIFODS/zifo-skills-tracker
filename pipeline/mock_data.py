@@ -1,6 +1,13 @@
 import random
+import sys
+from pathlib import Path
 
 import pandas as pd
+
+sys.path.append(str(Path(__file__).parent.parent))
+
+from pipeline.generate_ids import generate_ids  # noqa: E402
+from pipeline.schemas import Columns  # noqa: E402
 
 mock_consultants = [
     "Anthony Hopkins",
@@ -61,20 +68,24 @@ MIN_SKILLS = 10
 MAX_SKILLS = 20
 MAX_SKILLS_PER_CATEGORY = 5
 
+INPUT_PATH = "data/skills-list.csv"
+OUTPUT_PATH = "data/neo4j_import.csv"
+
 
 def main():
     skills = load_skills()
     df = assign_skills(skills)
-    df.to_csv("mock_data.csv", index=False)
+    df = generate_ids(df)
+    df.to_csv(OUTPUT_PATH, index=False)
 
 
 def load_skills():
-    skill_df = pd.read_csv("../skills-list.csv")
+    skill_df = pd.read_csv(INPUT_PATH)
     return skill_df
 
 
 def get_categories(skill_df: pd.DataFrame) -> list[str]:
-    categories = skill_df["Category"].unique()
+    categories = skill_df[Columns.CATEGORY.value].unique()
     return list(categories)
 
 
@@ -96,7 +107,12 @@ def assign_skills(skill_df: pd.DataFrame) -> pd.DataFrame:
         per row
     """
     categories = get_categories(skill_df)
-    columns = ["name", "email", "skill", "category"]
+    columns = [
+        Columns.NAME.value,
+        Columns.EMAIL.value,
+        Columns.SKILL.value,
+        Columns.CATEGORY.value,
+    ]
     df = pd.DataFrame(columns=columns)
 
     for consultant in mock_consultants:
@@ -104,16 +120,19 @@ def assign_skills(skill_df: pd.DataFrame) -> pd.DataFrame:
         category_skill_numbers = generate_category_skill_numbers(categories)
 
         for category in categories:
-            category_skills = skill_df[skill_df["Category"] == category].sample(
-                n=category_skill_numbers[category]
-            )
+            category_skills = skill_df[
+                skill_df[Columns.CATEGORY.value] == category
+            ].sample(n=category_skill_numbers[category])
+
             for _, sampled_skill in category_skills.iterrows():
                 row = {
-                    "name": [consultant],
-                    "email": [consultant.replace(" ", "_").lower() + "@gmail.com"],
+                    Columns.NAME.value: [consultant],
+                    Columns.EMAIL.value: [
+                        consultant.replace(" ", "_").lower() + "@gmail.com"
+                    ],
                 }
-                row["skill"] = [sampled_skill["Skill"]]
-                row["category"] = [sampled_skill["Category"]]
+                row[Columns.SKILL.value] = [sampled_skill[Columns.SKILL.value]]
+                row[Columns.CATEGORY.value] = [sampled_skill[Columns.CATEGORY.value]]
                 consultant_df = pd.concat(
                     [consultant_df, pd.DataFrame(row)], ignore_index=True
                 )

@@ -1,8 +1,8 @@
 from fastapi.testclient import TestClient
 
 from app import main
+from pipeline.load_neo4j import load_neo4j
 from tests.expected_results import consultants_test_data
-from pipeline.load_mock_data import load_neo4j
 
 test_client = TestClient(main.app)
 
