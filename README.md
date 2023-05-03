@@ -46,7 +46,10 @@ The data required to launch the dev environment and successfully run tests is pr
 To access this data, you will need to configure DVC with AWS credentials that permit access to the `zifo-ds-eu` S3 bucket. Follow the instructions [here](https://dvc.org/doc/user-guide/data-management/remote-storage/amazon-s3) to do this using the method most suitable for your setup.
 
 Alternatively, you can generate the mock data from scratch, as shown in the following section.
+
 **NOTE**: the mock data is generated randomly so the existing tests will fail if you regenerate the data.
+
+**NOTE**: if you generate the mock data from scratch, this will overwrite the DVC tracked file if you have it downloaded so it will need to be pulled again.
 
 Data for the prod environment is stored in a Neo4j Aura database in the cloud. To access the prod data, you will need to request the credentials from:
 

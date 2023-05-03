@@ -29,7 +29,6 @@ services:
       dockerfile: ./docker/api/Dockerfile.dev
     container_name: zifo-skills-api
     volumes:
-      - ../data:/home/skills-user/data
       - skills-data:/home/skills-user/data
     depends_on:
       mongodb:
@@ -52,3 +51,8 @@ services:
 
 volumes:
   skills-data:
+    driver: local
+    driver_opts:
+      type: none
+      device: ../data
+      o: bind
