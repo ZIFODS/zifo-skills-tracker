@@ -1,2 +1,2 @@
-docker compose -f ../docker/docker-compose.prod.yml down -v;
+bash ./init-letsencrypt.sh;
 docker compose -f ../docker/docker-compose.prod.yml up -d --build;
