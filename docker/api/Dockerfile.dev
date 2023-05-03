@@ -32,6 +32,7 @@ RUN poetry install
 COPY ./app ./app
 COPY ./pipeline ./pipeline
 COPY ./tests ./tests
+RUN mkdir ./data
 
 # Run the server
 EXPOSE 8080
