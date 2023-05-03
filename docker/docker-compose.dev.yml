@@ -8,11 +8,11 @@ services:
       - NEO4JLABS_PLUGINS=["apoc"]
       - NEO4J_dbms_security_procedures_unrestricted=apoc.*
     volumes:
-      - ../data:/var/lib/neo4j/import
+      - skills-data:/var/lib/neo4j/import
     network_mode: host
     healthcheck:
       test: wget http://localhost:7474 || exit 1
-      interval: 1s
+      interval: 5s
       timeout: 10s
       retries: 20
       start_period: 3s
@@ -28,10 +28,8 @@ services:
       context: ..
       dockerfile: ./docker/api/Dockerfile.dev
     container_name: zifo-skills-api
-    environment:
-      - SKILLS_ENV=dev
     volumes:
-      - ../.env.dev:/home/skills-user/.env.dev
+      - skills-data:/home/skills-user/data
     depends_on:
       mongodb:
         condition: service_healthy
@@ -52,4 +50,9 @@ services:
       - python-api
 
 volumes:
-  skills-data-volume:
+  skills-data:
+    driver: local
+    driver_opts:
+      type: none
+      device: ../data
+      o: bind

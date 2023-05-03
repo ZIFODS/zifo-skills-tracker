@@ -47,7 +47,7 @@ class AccessTokenCookieBearer(OAuth2AuthorizationCodeBearer):
     async def __call__(self, request: Request) -> str:
         async with exception_handling():
             if not config.PROD_ENV:
-                return "demo"
+                return "dev"
 
             internal_access_token = request.cookies.get("access_token")
             if not internal_access_token:

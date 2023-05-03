@@ -1,3 +1,4 @@
+import uuid
 from typing import Optional
 
 from fastapi import APIRouter, HTTPException
@@ -105,12 +106,14 @@ async def create_skill(skill: SkillCreate) -> Skill:
         raise HTTPException(status_code=409, detail="Skill already exists")
 
     query = """
-    MERGE (s:Skill {name: $name, category: $category})
+    MERGE (s:Skill {uid: $uid, name: $name, category: $category})
     WITH {name: s.name, type: labels(s)[0],  category: s.category} as skillOut
     RETURN skillOut
     """
     conn = Neo4jConnection()
-    result = conn.query(query, name=skill.name, category=skill.category)
+    result = conn.query(
+        query, uid=str(uuid.uuid4()), name=skill.name, category=skill.category
+    )
     conn.close()
 
     return result[0][0]

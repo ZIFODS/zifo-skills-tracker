@@ -1,3 +1,5 @@
+import uuid
+
 from fastapi import APIRouter, HTTPException
 
 from app.models.common import Message
@@ -95,12 +97,14 @@ async def create_consultant(consultant: ConsultantCreate) -> Consultant:
         raise HTTPException(status_code=409, detail="Consultant already exists")
 
     query = """
-    MERGE (c:Consultant {name: $name, email: $email})
+    MERGE (c:Consultant {uid: $uid, name: $name, email: $email})
     WITH {name: c.name, type: labels(c)[0], email: c.email} as consultantOut
     RETURN consultantOut
     """
     conn = Neo4jConnection()
-    result = conn.query(query, name=consultant.name, email=consultant.email)
+    result = conn.query(
+        query, uid=str(uuid.uuid4()), name=consultant.name, email=consultant.email
+    )
     conn.close()
 
     return result[0][0]
