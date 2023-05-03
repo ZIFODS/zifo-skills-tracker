@@ -65,6 +65,12 @@ You can launch the dev environment in two ways:
 - Using pre-assembled mock data: [run-dev.sh](./scripts/run-dev.sh)
 - Generating mock data from scratch: [run-dev-fresh.sh](./scripts/test-dev.sh)
 
+Run the script as follows:
+
+```bash
+./scripts/run-dev.sh
+```
+
 ## Testing
 
 To run the tests, simply run the [test-dev.sh](./test_docker.sh) script in the root directory.
