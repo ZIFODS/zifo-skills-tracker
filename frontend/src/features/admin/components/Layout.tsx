@@ -11,7 +11,7 @@ export const Layout = ({ children }: LayoutProps) => {
       sx={{
         display: "flex",
         py: 2,
-        px: 3,
+        px: 6,
       }}
     >
       {children}

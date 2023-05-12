@@ -1,5 +1,9 @@
 export type Consultant = {
   name: string;
   email: string;
-  type: string;
+};
+
+export type SkillCreate = {
+  name: string;
+  category: string;
 };

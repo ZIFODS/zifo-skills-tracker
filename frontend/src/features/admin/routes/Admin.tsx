@@ -16,8 +16,11 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import { useCreateSkill } from "../api/createSkill";
 import { useDeleteSkill } from "../api/deleteSkill";
 import { useDeleteConsultant } from "../api/deleteConsultant";
+import { AddSkills } from "../components/AddSkills";
 
 export function Admin() {
+  const [addOpen, setAddOpen] = React.useState(false);
+
   const [filterQuery, setFilterQuery] = React.useState("");
   const [resource, setResource] = React.useState("Skill");
 
@@ -42,7 +45,7 @@ export function Admin() {
   };
 
   const handleAddClicked = () => {
-    console.log("Add clicked");
+    setAddOpen(!addOpen);
   };
 
   const handleDeleteClicked = () => {
@@ -62,8 +65,8 @@ export function Admin() {
 
   return (
     <Layout>
-      <Grid container columnSpacing={2}>
-        <Grid item xs={7}>
+      <Grid container columnSpacing={4}>
+        <Grid item xs={addOpen ? 7 : 12}>
           <Paper sx={{ p: 2 }}>
             <Stack spacing={3}>
               <Stack
@@ -116,6 +119,13 @@ export function Admin() {
             </Stack>
           </Paper>
         </Grid>
+        {addOpen && (
+          <Grid item xs={5}>
+            <Paper sx={{ p: 2 }}>
+              <AddSkills />
+            </Paper>
+          </Grid>
+        )}
       </Grid>
     </Layout>
   );
