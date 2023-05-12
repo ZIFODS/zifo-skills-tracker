@@ -103,7 +103,9 @@ async def create_skill(skill: SkillCreate) -> Skill:
     result = conn.query(exists_query, name=skill.name)
     conn.close()
     if result:
-        raise HTTPException(status_code=409, detail="Skill already exists")
+        raise HTTPException(
+            status_code=409, detail=f"'{skill.name}' skill already exists"
+        )
 
     query = """
     MERGE (s:Skill {uid: $uid, name: $name, category: $category})

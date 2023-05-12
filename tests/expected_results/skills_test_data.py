@@ -948,7 +948,7 @@ class CreatDuplicateSkill:
     INPUT_CATEGORY = "Data_Management"  # inputs: single skill name and corresponding skill category (existing)
     INPUT = {"name": INPUT_SKILL, "category": INPUT_CATEGORY}
     QUERY_PATH = "/skills/"
-    EXPECTED_DETAIL = "Skill already exists"
+    EXPECTED_DETAIL = "'CDISC Study Data Tabulation Model' skill already exists"
 
 
 class DeleteSkillNotFound:

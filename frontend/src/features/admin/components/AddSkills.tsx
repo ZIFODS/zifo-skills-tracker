@@ -14,6 +14,9 @@ export function AddSkills() {
   const categories = useGetAllCategories().data?.items || [];
 
   const mutateCreateSkill = useCreateSkill().mutateAsync;
+  const [createSkillError, setCreateSkillError] = React.useState<string | null>(
+    null
+  );
 
   const handlePlusClick = () => {
     if (name === "" || category === null || category === "") {
@@ -27,19 +30,24 @@ export function AddSkills() {
       setSkillsToAdd([...skillsToAdd, { name: name, category: category }]);
       setName("");
       setCategory(null);
+      setCreateSkillError(null);
     }
   };
 
   const handleAddClick = () => {
     skillsToAdd.forEach((skill) => {
-      mutateCreateSkill(skill).then((res) => {
-        // remove skill from skillsToAdd
-        setSkillsToAdd((prev: SkillCreate[]) => {
-          const newSkillsToAdd = [...prev];
-          newSkillsToAdd.splice(newSkillsToAdd.indexOf(skill), 1);
-          return newSkillsToAdd;
+      mutateCreateSkill(skill)
+        .then((res) => {
+          // remove skill from skillsToAdd
+          setSkillsToAdd((prev: SkillCreate[]) => {
+            const newSkillsToAdd = [...prev];
+            newSkillsToAdd.splice(newSkillsToAdd.indexOf(skill), 1);
+            return newSkillsToAdd;
+          });
+        })
+        .catch((error) => {
+          setCreateSkillError(error.response.data.detail);
         });
-      });
     });
   };
 
@@ -74,6 +82,9 @@ export function AddSkills() {
             Add
           </Button>
           <Button variant="outlined">Clear</Button>
+          {createSkillError && (
+            <Typography sx={{ color: "red" }}>{createSkillError}</Typography>
+          )}
         </Stack>
       </Stack>
     </Box>
