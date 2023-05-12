@@ -174,10 +174,7 @@ async def user_session_status(
         if not config.PROD_ENV:
             return JSONResponse(
                 content=jsonable_encoder(
-                    {
-                        "userLoggedIn": True,
-                        "userName": "Test User",
-                    }
+                    {"userLoggedIn": True, "userName": "Test User", "isAdmin": True}
                 ),
             )
 
@@ -189,11 +186,20 @@ async def user_session_status(
 
         logged_id = True if internal_user else False
 
+        with open("data/admin_users.txt", "r") as f:
+            admin_users = f.read().splitlines()
+            admin_users = [user.lower() for user in admin_users]
+
+        is_admin = False
+        if internal_user and external_user.email in admin_users:
+            is_admin = True
+
         response = JSONResponse(
             content=jsonable_encoder(
                 {
                     "userLoggedIn": logged_id,
                     "userName": external_user.username,
+                    "isAdmin": is_admin,
                 }
             ),
         )

@@ -27,7 +27,8 @@
     "react-error-boundary": "*",
     "react-helmet-async": "*",
     "d3": "*",
-    "@types/d3": "*"
+    "@types/d3": "*",
+    "@mui/x-data-grid": "*"
   },
   "scripts": {
     "start": "react-scripts start",

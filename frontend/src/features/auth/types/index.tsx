@@ -5,4 +5,5 @@ export type LogoutResponse = {
 export type UserResponse = {
   userLoggedIn: boolean;
   userName: string;
+  isAdmin: boolean;
 };
