@@ -91,9 +91,11 @@ export function Admin() {
                   sx={{ flexGrow: 1 }}
                 />
                 <Stack direction="row" spacing={2}>
-                  <IconButton onClick={handleAddClicked}>
-                    <AddIcon />
-                  </IconButton>
+                  {resource === "Skill" && (
+                    <IconButton onClick={handleAddClicked}>
+                      <AddIcon />
+                    </IconButton>
+                  )}
                   <IconButton
                     onClick={handleDeleteClicked}
                     disabled={
