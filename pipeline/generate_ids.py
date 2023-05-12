@@ -3,18 +3,25 @@ import uuid
 import pandas as pd
 
 
-def main():
+def generate_ids(df: pd.DataFrame) -> pd.DataFrame:
     """
-    Add 3 unique uuid fields to mock_skills_data.csv.
-    How to use: copy mock_skills_data.csv into utils folder, execute generate_ids.py, new file
-    mock_skills_data_out.csv is generated with 3 unique integer ID fields.
+    Add 3 unique UUID fields to skills data for import into neo4j.
 
     description of IDs:
     rid: relationship id
     cid: consultant id
     sid: skill id
+
+    Parameters
+    ----------
+    df : pd.DataFrame
+        skills data for consultants
+
+    Returns
+    -------
+    df : pd.DataFrame
+        skills data for consultants with UUIDs for each node/relationship.
     """
-    df = pd.read_csv("mock_skills_data.csv")
     df.insert(0, "rid", pd.Series([uuid.uuid4() for _ in df.index]))
 
     consultants_df = pd.DataFrame(df.name.unique())
@@ -47,8 +54,4 @@ def main():
         ),
     )
 
-    df.to_csv("mock_skills_data_out.csv", index=False)
-
-
-if __name__ == "__main__":
-    main()
+    return df

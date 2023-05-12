@@ -26,7 +26,7 @@ jobs:
           dvc pull --recursive
       - name: Start containers
         run: |
-          bash test_docker.sh
+          bash scripts/test-dev.sh
 
   pre-commit:
     runs-on: ubuntu-latest
