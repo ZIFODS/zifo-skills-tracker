@@ -1,16 +1,34 @@
 # Zifo Skills Tracker
 
-Zifo Skills Tracker is a full-stack web application that allows the user to visualise and query the skills of Zifo employees, as well as update their own skills.
+Zifo Skills Tracker is a full-stack web application that allows the user to visualise, query and update the skills of Zifo employees.
 
 Understanding the skills that employees possess helps with resource allocation and organisation of training.
 
-## Getting started
+The production instance can be found at [https://skills.zifo-tech.com](https://skills.zifo-tech.com). You will need a Zifo Microsoft account to access it.
+
+## Contents
+
+- [Quickstart](#quickstart)
+- [Environments](#environments)
+- [Installation](#installation)
+- [Data](#data)
+- [Running the application locally](#running-the-application-locally)
+- [Testing](#testing)
+- [Running the application in production](#running-the-application-in-production)
+
+## Quickstart
 
 If you're using Windows, you will need to install a Linux environment using `WSL 2`: https://learn.microsoft.com/en-us/windows/wsl/install
 
 Once you've configured a Linux environment, install `docker compose`: https://docs.docker.com/compose/install/
 
-## Getting started
+To launch the dev environment with randomly generated mock data, run the following script:
+
+```bash
+./scripts/run-dev-fresh.sh
+```
+
+## Environments
 
 There are 2 environments that can be launched using this application:
 
@@ -40,10 +58,34 @@ More information on Azure configuration can be found in the [Authentication](doc
 
 For the dev environment, environment variables have been hardcoded in [config.py](./app/config.py)
 
+## Installation
+
+To install the Python backend as a developer, you will need to install `poetry` and then use the following commands:
+
+```bash
+poetry install
+poetry shell
+```
+
+Installation of the frontend requires `npm` and the following commands to be run:
+
+```bash
+cd frontend
+npm install
+```
+
 ## Data
 
 The data required to launch the dev environment and successfully run tests is pre-assembled in a CSV and is tracked using DVC. This CSV is used to import the data into neo4j.
 To access this data, you will need to configure DVC with AWS credentials that permit access to the `zifo-ds-eu` S3 bucket. Follow the instructions [here](https://dvc.org/doc/user-guide/data-management/remote-storage/amazon-s3) to do this using the method most suitable for your setup.
+
+One way to do this is as follows:
+
+```bash
+dvc remote modify s3 --local access_key_id <access_key_id>
+dvc remote modify s3 --local secret_access_key <secret_access_key>
+dvc pull --recursive
+```
 
 Alternatively, you can generate the mock data from scratch, as shown in the following section.
 
@@ -89,4 +131,4 @@ Run this script once to generate the SSL certificate. The certificate should be 
 
 Once the SSL certificate has been generated, you can load the environment variables and launch the application.
 
-You can use the [run-prod.sh] script to execute all of this.
+You can use the [run-prod.sh](./scripts/run-prod.sh) script to execute all of this.
