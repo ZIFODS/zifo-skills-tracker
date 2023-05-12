@@ -64,11 +64,9 @@ function ResponsiveAppBar() {
       name: "Update",
       onClick: updateOnClick,
     },
-    {
-      name: "Admin",
-      onClick: adminOnClick,
-    },
   ];
+
+  user?.isAdmin && pages.push({ name: "Admin", onClick: adminOnClick });
 
   const settingOnClick = () => {
     navigate("/settings");
