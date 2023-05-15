@@ -23,15 +23,19 @@ access_token_cookie_scheme = auth_schemes.AccessTokenCookieBearer(
 
 
 @lru_cache()
-def get_admin_users():
-    import os
+def get_admin_users() -> list[str]:
+    """
+    Returns a list of admin users' emails from local text file.
 
-    logger.warn(os.getcwd())
+    Returns
+    -------
+    admin_users : list[str]
+        List of admin users' emails
+    """
     with open("data/admin_users.txt", "r") as f:
         admin_users = f.read().splitlines()
-        admin_users = [user.lower() for user in admin_users]
-        logger.warn(admin_users)
-        return admin_users
+    admin_users = [user.lower() for user in admin_users]
+    return admin_users
 
 
 @auth_router.get("/login")
