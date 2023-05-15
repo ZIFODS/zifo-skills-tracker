@@ -39,7 +39,7 @@ services:
     container_name: zifo-skills-frontend
     network_mode: host
     environment:
-      - REACT_APP_API_URL=http://skills.zifo-tech.com/api/
+      - REACT_APP_API_URL=https://skills.zifo-tech.com/api/
     volumes:
       - /node_modules
     depends_on:
