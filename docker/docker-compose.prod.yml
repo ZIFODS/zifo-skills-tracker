@@ -20,6 +20,7 @@ services:
       - SKILLS_ENV=production
     volumes:
       - ../.env.prod:/home/skills-user/.env.prod
+      - ../data/admin_users.txt:/home/skills-user/data/admin_users.txt
     depends_on:
       mongodb:
         condition: service_healthy
