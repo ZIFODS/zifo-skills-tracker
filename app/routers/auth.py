@@ -206,9 +206,7 @@ async def user_session_status(
 
         logged_id = True if internal_user else False
 
-        is_admin = False
-        if internal_user and external_user.email in admin_users:
-            is_admin = True
+        is_admin = True if external_user.email in admin_users else False
 
         response = JSONResponse(
             content=jsonable_encoder(
