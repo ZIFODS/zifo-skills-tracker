@@ -1,4 +1,5 @@
 import logging
+from functools import lru_cache
 
 from fastapi import APIRouter, Depends, Request
 from fastapi.encoders import jsonable_encoder
@@ -19,6 +20,18 @@ csrf_token_redirect_cookie_scheme = auth_schemes.CSRFTokenRedirectCookieBearer()
 access_token_cookie_scheme = auth_schemes.AccessTokenCookieBearer(
     authorizationUrl="/auth/login", tokenUrl="/auth/callback"
 )
+
+
+@lru_cache()
+def get_admin_users():
+    import os
+
+    logger.warn(os.getcwd())
+    with open("data/admin_users.txt", "r") as f:
+        admin_users = f.read().splitlines()
+        admin_users = [user.lower() for user in admin_users]
+        logger.warn(admin_users)
+        return admin_users
 
 
 @auth_router.get("/login")
@@ -154,6 +167,7 @@ async def logout(
 @auth_router.get("/me")
 async def user_session_status(
     external_access_token: str = Depends(access_token_cookie_scheme),
+    admin_users: list[str] = Depends(get_admin_users),
 ) -> JSONResponse:
     """
     Endpoint for checking the status of the user's session based on validity
@@ -163,6 +177,8 @@ async def user_session_status(
     ----------
     external_access_token : str
         Azure access token
+    admin_users : list[str]
+        List of admin users' emails
 
     Returns
     -------
@@ -185,10 +201,6 @@ async def user_session_status(
         internal_user = await db_client.get_user_by_external_id(external_user)
 
         logged_id = True if internal_user else False
-
-        with open("data/admin_users.txt", "r") as f:
-            admin_users = f.read().splitlines()
-            admin_users = [user.lower() for user in admin_users]
 
         is_admin = False
         if internal_user and external_user.email in admin_users:
