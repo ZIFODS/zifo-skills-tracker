@@ -61,17 +61,14 @@ async def filter_graph(
         query = process_skills_query(rules, hidden_categories, all_hidden)
         result = conn.query(query)
 
-        result[0][0]["nodes"].sort(key=lambda x: x.get("name"))
-        result[0][0]["links"].sort(key=lambda x: x.get("uid"))
-
         output = result[0][0]
+
+        output["nodes"].sort(key=lambda x: x.get("id"))
+        output["links"].sort(key=lambda x: x.get("id"))
 
     elif consultant:
         query = process_consultant_query(consultant, hidden_categories, all_hidden)
         result = conn.query(query)
-
-        result[0][0]["nodes"].sort(key=lambda x: x.get("name"))
-        result[0][0]["links"].sort(key=lambda x: x.get("uid"))
 
         output = result[0][0]
         if not output["nodes"]:
@@ -79,6 +76,9 @@ async def filter_graph(
                 status_code=404,
                 detail="A Consultant could not be found with the name provided.",
             )
+
+        output["nodes"].sort(key=lambda x: x.get("id"))
+        output["links"].sort(key=lambda x: x.get("id"))
 
     else:
         output = {"nodes": [], "links": []}
