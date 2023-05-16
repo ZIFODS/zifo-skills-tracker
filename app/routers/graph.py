@@ -62,7 +62,7 @@ async def filter_graph(
         result = conn.query(query)
 
         result[0][0]["nodes"].sort(key=lambda x: x.get("name"))
-        result[0][0]["links"].sort(key=lambda x: x.get("name"))
+        result[0][0]["links"].sort(key=lambda x: x.get("uid"))
 
         output = result[0][0]
 
@@ -71,7 +71,7 @@ async def filter_graph(
         result = conn.query(query)
 
         result[0][0]["nodes"].sort(key=lambda x: x.get("name"))
-        result[0][0]["links"].sort(key=lambda x: x.get("name"))
+        result[0][0]["links"].sort(key=lambda x: x.get("uid"))
 
         output = result[0][0]
         if not output["nodes"]:
