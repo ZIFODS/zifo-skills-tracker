@@ -32,6 +32,9 @@ def get_admin_users() -> list[str]:
     admin_users : list[str]
         List of admin users' emails
     """
+    if not config.PROD_ENV:
+        return []
+
     with open("data/admin_users.txt", "r") as f:
         admin_users = f.read().splitlines()
     admin_users = [user.lower() for user in admin_users]
