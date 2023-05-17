@@ -20,6 +20,7 @@ services:
       - SKILLS_ENV=production
     volumes:
       - ../.env.prod:/home/skills-user/.env.prod
+      - ../data/admin_users.txt:/home/skills-user/data/admin_users.txt
     depends_on:
       mongodb:
         condition: service_healthy
@@ -37,6 +38,8 @@ services:
       dockerfile: ./docker/frontend/Dockerfile
     container_name: zifo-skills-frontend
     network_mode: host
+    environment:
+      - REACT_APP_API_URL=https://skills.zifo-tech.com/api/
     volumes:
       - /node_modules
     depends_on:

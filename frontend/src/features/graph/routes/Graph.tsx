@@ -7,10 +7,15 @@ import UserGuide from "../components/UserGuide";
 import GraphPlaceholder from "../components/GraphPlaceholder";
 import GraphVis from "../components/GraphVis";
 import { SkillSearchElement } from "../types";
-import { GetGraphQuery, useGetGraph } from "../api/getGraph";
-import { getUniqueCategories } from "../../../utils/skillCategories";
-import { useGetAllCategories } from "../api/getAllCategories";
+import {
+  GetGraphQuery,
+  useGetSearchedGraph,
+  useGetDisplayedGraph,
+} from "../api/getGraph";
 import Loading from "../../../components/Loading/Loading";
+import { useGetAllSkills } from "../api/getAllSkills";
+import { Skill } from "../../update";
+import { useGetAllCategories } from "../api/getAllCategories";
 
 export default function Graph() {
   const [skillSearch, setSkillSearch] = React.useState<SkillSearchElement[]>(
@@ -30,14 +35,14 @@ export default function Graph() {
   const [searchedCategories, setSearchedCategories] = React.useState(
     [] as string[]
   );
-  const [filteredCategories, setFilteredCategories] = React.useState(
+  const [displayedCategories, setDisplayedCategories] = React.useState(
     [] as string[]
   );
   const [hiddenCategories, setHiddenCategories] = React.useState(
     [] as string[]
   );
 
-  const [filteredConsultants, setFilteredConsultants] = React.useState(
+  const [displayedConsultants, setDisplayedConsultants] = React.useState(
     [] as string[]
   );
   const [hoveredConsultants, setHoveredConsultants] = React.useState(
@@ -46,37 +51,58 @@ export default function Graph() {
 
   const [userGuideOpen, setUserGuideOpen] = React.useState(false);
 
-  const [graphQuery, setGraphQuery] = React.useState<GetGraphQuery | null>(
-    null
-  );
-  const [searchedGraphData, setSearchedGraphData] = React.useState<any>({});
+  const [searchGraphQuery, setSearchGraphQuery] =
+    React.useState<GetGraphQuery | null>(null);
+  const [displayGraphQuery, setDisplayGraphQuery] =
+    React.useState<GetGraphQuery | null>(null);
 
   const [graphSearched, setGraphSearched] = React.useState(false);
   const [graphFilled, setGraphFilled] = React.useState(false);
 
-  const graphData = useGetGraph(
-    graphQuery,
+  useGetSearchedGraph(
+    searchGraphQuery,
     setGraphSearched,
     setGraphFilled,
-    setSearchedGraphData,
-    setSearchedCategories,
-    setFilteredCategories,
-    setFilteredConsultants
+    setSearchedCategories
   );
+  const graphData = useGetDisplayedGraph(
+    displayGraphQuery,
+    setDisplayedCategories,
+    setDisplayedConsultants
+  );
+
+  const allSkills = useGetAllSkills().data?.items;
+  const allCategories = useGetAllCategories().data?.items;
 
   React.useEffect(() => {
     if (skillApplyClicked && skillSearch.length > 0) {
-      setGraphQuery({
+      setSearchGraphQuery({
         skills: skillSearch,
       });
       setAppliedSkillSearch(skillSearch);
       setSkillApplyClicked(false);
+      const skillSearchNames = skillSearch.map((skill) => skill.name);
+      const skillSearchCategories = skillSearchNames.map((skillName) => {
+        const skill = allSkills?.find(
+          (skill: Skill) => skill.name === skillName
+        );
+        return skill?.category;
+      });
+      const hiddenCategories = allCategories?.filter(
+        (category: string) =>
+          !skillSearchCategories?.includes(category) &&
+          !searchedCategories.includes(category)
+      );
+      setHiddenCategories(hiddenCategories || []);
     }
   }, [skillApplyClicked]);
 
   React.useEffect(() => {
     if (consultantApplyClicked && consultantSearch !== null) {
-      setGraphQuery({
+      setSearchGraphQuery({
+        consultant: consultantSearch,
+      });
+      setDisplayGraphQuery({
         consultant: consultantSearch,
       });
       setConsultantApplyClicked(false);
@@ -84,15 +110,15 @@ export default function Graph() {
   }, [consultantApplyClicked]);
 
   React.useEffect(() => {
-    if (graphQuery?.consultant !== undefined) {
-      setGraphQuery({
-        consultant: graphQuery.consultant,
+    if (searchGraphQuery?.consultant !== undefined) {
+      setDisplayGraphQuery({
+        consultant: searchGraphQuery.consultant,
         hiddenCategories: hiddenCategories,
       });
     }
-    if (graphQuery?.skills !== undefined) {
-      setGraphQuery({
-        skills: graphQuery.skills,
+    if (searchGraphQuery?.skills !== undefined) {
+      setDisplayGraphQuery({
+        skills: searchGraphQuery.skills,
         hiddenCategories: hiddenCategories,
       });
     }
@@ -119,7 +145,7 @@ export default function Graph() {
           hiddenCategories={hiddenCategories}
           setHiddenCategories={setHiddenCategories}
           searchedCategories={searchedCategories}
-          filteredCategories={filteredCategories}
+          displayedCategories={displayedCategories}
         />
       </Stack>
       <Box
@@ -139,7 +165,7 @@ export default function Graph() {
           <Loading />
         ) : graphSearched && graphFilled ? (
           <GraphVis
-            graphData={graphData.data}
+            graphData={graphData?.data}
             appliedSkillSearch={appliedSkillSearch}
             setHoveredConsultants={setHoveredConsultants}
           />
@@ -154,7 +180,7 @@ export default function Graph() {
         consultantSearch={consultantSearch}
         setConsultantSearch={setConsultantSearch}
         setConsultantApplyClicked={setConsultantApplyClicked}
-        filteredConsultants={filteredConsultants}
+        displayedConsultants={displayedConsultants}
         hoveredConsultants={hoveredConsultants}
       />
     </Stack>

@@ -32,7 +32,7 @@ interface CategoriesProps {
   hiddenCategories: string[];
   setHiddenCategories: React.Dispatch<React.SetStateAction<string[]>>;
   searchedCategories: string[];
-  filteredCategories: string[];
+  displayedCategories: string[];
 }
 
 /**
@@ -42,7 +42,7 @@ export default function Categories({
   hiddenCategories,
   setHiddenCategories,
   searchedCategories,
-  filteredCategories,
+  displayedCategories,
 }: CategoriesProps) {
   const allCategories = useGetAllCategories().data?.items;
   const allCategoriesChunked =
@@ -122,7 +122,7 @@ export default function Categories({
                           control={
                             <Checkbox
                               checked={
-                                filteredCategories.includes(category) ||
+                                displayedCategories.includes(category) ||
                                 !hiddenCategories.includes(category)
                               }
                               onChange={handleCheckboxChange}
