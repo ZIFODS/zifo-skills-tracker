@@ -17,7 +17,7 @@ interface ConsultantsProps {
   consultantSearch: string | null;
   setConsultantSearch: React.Dispatch<React.SetStateAction<string | null>>;
   setConsultantApplyClicked: React.Dispatch<React.SetStateAction<boolean>>;
-  filteredConsultants: string[];
+  displayedConsultants: string[];
   hoveredConsultants: string[];
 }
 
@@ -28,7 +28,7 @@ export default function Consultants({
   consultantSearch,
   setConsultantSearch,
   setConsultantApplyClicked,
-  filteredConsultants,
+  displayedConsultants,
   hoveredConsultants,
 }: ConsultantsProps) {
   const allConsultantsData = useGetAllConsultants().data?.items;
@@ -96,7 +96,7 @@ export default function Consultants({
           </IconButton>
         </Stack>
         <Stack spacing={2} sx={{ overflow: "scroll", py: 2 }}>
-          {filteredConsultants.map(function (name: string) {
+          {displayedConsultants.map(function (name: string) {
             const initials = consultantInitials(name);
             return (
               <Paper

@@ -44,40 +44,51 @@ export const getGraph = ({
   });
 };
 
-export const useGetGraph = (
+export const useGetSearchedGraph = (
   getGraphQuery: GetGraphQuery | null,
   setGraphSearched: React.Dispatch<React.SetStateAction<boolean>>,
   setGraphFilled: React.Dispatch<React.SetStateAction<boolean>>,
-  setSearchedGraphData: React.Dispatch<React.SetStateAction<any>>,
-  setSearchedCategories: React.Dispatch<React.SetStateAction<string[]>>,
-  setFilteredCategories: React.Dispatch<React.SetStateAction<string[]>>,
-  setFilteredConsultants: React.Dispatch<React.SetStateAction<string[]>>
+  setSearchedCategories: React.Dispatch<React.SetStateAction<string[]>>
 ) => {
   return useQuery({
-    queryKey: ["get-graph", getGraphQuery],
+    queryKey: ["get-searched-graph", getGraphQuery],
     queryFn: () => getGraphQuery !== null && getGraph(getGraphQuery),
     onSuccess: (data) => {
       if (getGraphQuery !== null) {
         setGraphSearched(true);
         if (data.nodes.length > 0) {
           setGraphFilled(true);
-          setFilteredCategories(
-            getUniqueCategories(
-              data.nodes.filter((node: any) => node.type == "Skill")
-            )
-          );
-          setFilteredConsultants(
-            data.nodes
-              .filter((node: any) => node.type == "Consultant")
-              .map((node: any) => node.name)
-          );
-        }
-        if (getGraphQuery.hiddenCategories === undefined) {
-          setSearchedGraphData(data);
           setSearchedCategories(
             getUniqueCategories(
               data.nodes.filter((node: any) => node.type == "Skill")
             )
+          );
+        }
+      }
+    },
+  });
+};
+
+export const useGetDisplayedGraph = (
+  getGraphQuery: GetGraphQuery | null,
+  setDisplayedCategories: React.Dispatch<React.SetStateAction<string[]>>,
+  setDisplayedConsultants: React.Dispatch<React.SetStateAction<string[]>>
+) => {
+  return useQuery({
+    queryKey: ["get-displayed-graph", getGraphQuery],
+    queryFn: () => getGraphQuery !== null && getGraph(getGraphQuery),
+    onSuccess: (data) => {
+      if (getGraphQuery !== null) {
+        if (data.nodes.length > 0) {
+          setDisplayedCategories(
+            getUniqueCategories(
+              data.nodes.filter((node: any) => node.type == "Skill")
+            )
+          );
+          setDisplayedConsultants(
+            data.nodes
+              .filter((node: any) => node.type == "Consultant")
+              .map((node: any) => node.name)
           );
         }
       }
