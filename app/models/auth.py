@@ -12,6 +12,7 @@ class ExternalUser(BaseModel):
     id: str
     email: str
     username: str
+    display_name: str
 
 
 class InternalUser(BaseModel):

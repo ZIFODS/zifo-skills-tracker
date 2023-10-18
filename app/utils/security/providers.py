@@ -77,6 +77,7 @@ class AzureAuthProvider:
 
         user_id = response_data.get("id")
         username = response_data.get("userPrincipalName")
+        display_name = response_data.get("displayName")
         email = response_data.get("mail")
 
         if email:
@@ -85,7 +86,9 @@ class AzureAuthProvider:
         if not user_id or not username or not email:
             raise UnauthorizedUser("User account not verified by Azure.")
 
-        external_user = ExternalUser(id=user_id, email=email, username=username)
+        external_user = ExternalUser(
+            id=user_id, email=email, username=username, display_name=display_name
+        )
 
         return external_user
 
