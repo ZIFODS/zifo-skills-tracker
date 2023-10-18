@@ -11,7 +11,12 @@ class Neo4jConnection:
     Class for initiating Neo4j session.
     """
 
-    def __init__(self):
+    def __init__(
+        self,
+        uri: str = NEO4J_URI,
+        user: str = NEO4J_USER,
+        password: str = NEO4J_PASSWORD,
+    ):
         """
         Init method
         Arguments
@@ -20,7 +25,7 @@ class Neo4jConnection:
         user : str
         password: str
         """
-        self.driver = GraphDatabase.driver(NEO4J_URI, auth=(NEO4J_USER, NEO4J_PASSWORD))
+        self.driver = GraphDatabase.driver(uri, auth=(user, password))
 
     def close(self):
         """
