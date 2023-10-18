@@ -6,6 +6,7 @@ import pandas as pd
 
 sys.path.append(str(Path(__file__).parent.parent))
 
+from app.utils.neo4j_connect import Neo4jConnection  # noqa: E402
 from pipeline.generate_ids import generate_ids  # noqa: E402
 from pipeline.schemas import Categories, ColumnHeaderMap, Columns  # noqa: E402
 
@@ -13,9 +14,14 @@ INPUT_PATH = "data/skills-survey-export.xlsx"
 OUTPUT_PATH = "data/prod_skills_data.csv"
 
 
+class MultipleSkillsFoundError(Exception):
+    pass
+
+
 def main():
     df = generate_from_survey()
     df = generate_ids(df)
+    df = update_skills_ids(df)
     df.to_csv(OUTPUT_PATH, index=False)
 
 
@@ -108,6 +114,66 @@ def extend_list(list_value, max_length):
     """
     list_value.extend([np.nan for _ in range(max_length - len(list_value))])
     return list_value
+
+
+def update_skills_ids(survey_df: pd.DataFrame) -> pd.DataFrame:
+    """
+    Update skill ID with existing value if skill name already exists in neo4j.
+
+    Parameters
+    ----------
+    survey_df : pd.DataFrame
+        dataframe with consultant - skill relationship on each row
+        IDs for skills must already be added
+
+    Returns
+    -------
+    survey_df : pd.DataFrame
+        dataframe with IDs updated for skills that already exist
+    """
+    conn = Neo4jConnection()
+    survey_df["sid"] = survey_df.apply(
+        lambda x: get_skill_id_from_name(conn, x["skill"], x["sid"]), axis=1
+    )
+    conn.close()
+    return survey_df
+
+
+def get_skill_id_from_name(
+    conn: Neo4jConnection, skill_name: str, skill_id: str
+) -> str:
+    """
+    Given a skills name, get the ID of that skill from neo4j.
+    If it doesn't exist, use the new skill ID that is already in the dataframe.
+
+    Parameters
+    ----------
+    conn : Neo4jConnection
+        connection to neo4j database
+    skill_name : str
+        name of skill
+    skill_id : str
+        new skill ID assigned if skill doesn't exist
+
+    Returns
+    -------
+    str
+        id of skill to be used
+
+    Raises
+    ------
+    MultipleSkillsFoundError
+        If multiple skills with same name are found in neo4j
+    """
+    result = conn.query("MATCH (s:Skill {name: $name}) RETURN s.uid", name=skill_name)
+    if len(result) == 0:
+        return skill_id
+    if len(result) == 1:
+        return result[0][0]
+    else:
+        raise MultipleSkillsFoundError(
+            f"Multiple skills were found with name {skill_name}"
+        )
 
 
 if __name__ == "__main__":
