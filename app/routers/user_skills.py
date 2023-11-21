@@ -114,6 +114,7 @@ async def create_user_skill(
 ) -> SkillList:
     """
     Creates a relationship between a skill and the current user.
+    If the user does not exist, they are created using their Microsoft Azure info.
 
     Parameters
     ----------
@@ -131,6 +132,7 @@ async def create_user_skill(
     """
     if not config.PROD_ENV:
         email = "anthony_hopkins@gmail.com"
+        display_name = "Anthony Hopkins"
 
     else:
         provider = AzureAuthProvider()
@@ -138,16 +140,38 @@ async def create_user_skill(
             external_access_token=external_access_token
         )
         email = external_user.email
+        display_name = external_user.display_name
 
     skills_dict = [s.dict() for s in skills]
 
     conn = Neo4jConnection()
-    exists_query = """
+
+    user_exists_query = """
+    MATCH (s:Consultant {email: $email})
+    RETURN s
+    """
+    result = conn.query(user_exists_query, email=email)
+    if not result:
+        create_user_query = """
+        MERGE (c:Consultant {uid: $uid, name: $name, email: $email})
+        WITH {name: c.name, type: labels(c)[0], email: c.email} as consultantOut
+        RETURN consultantOut
+        """
+        result = conn.query(
+            create_user_query, uid=str(uuid.uuid4()), name=display_name, email=email
+        )
+        if not result:
+            raise HTTPException(
+                status_code=409,
+                detail=f"An error occurred creating the consultant {display_name}",
+            )
+
+    user_skills_exist_query = """
     UNWIND $skills as skills
     MATCH (c:Consultant {email: $email})-[:KNOWS]->(s:Skill {name: skills.name})
     RETURN s
     """
-    result = conn.query(exists_query, email=email, skills=skills_dict)
+    result = conn.query(user_skills_exist_query, email=email, skills=skills_dict)
     conn.close()
     if result:
         skill_names_linked = ", ".join([r[0]["name"] for r in result])
@@ -158,7 +182,8 @@ async def create_user_skill(
 
     query = """
     UNWIND $skills as skill
-    MATCH (s:Skill {name: skill.name}), (c:Consultant {email: $email})
+    MATCH (s:Skill {name: skill.name})
+    MERGE (c:Consultant {email: $email})
     MERGE (c)-[:KNOWS {uid: $uid}]->(s)
     WITH {name: s.name, type: labels(s)[0], category: s.category} as skillsMerged
     RETURN COLLECT(skillsMerged) as skillsOut
