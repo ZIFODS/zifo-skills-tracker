@@ -31,7 +31,7 @@ jobs:
         run: bash scripts/configure_dvc.sh
 
       - name: Test dev
-        run: bash scripts/test_dev.sh
+        run: bash scripts/test-dev.sh
 
   lint:
     name: "Lint"
