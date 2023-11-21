@@ -9,10 +9,5 @@ sudo apt update
 sudo apt install dvc
 
 # Configure DVC
-TOKEN=$(curl -X PUT 'http://169.254.169.254/latest/api/token' -H 'X-aws-ec2-metadata-token-ttl-seconds: 21600')
-response=$(curl -H 'X-aws-ec2-metadata-token: $TOKEN' -s http://169.254.169.254/latest/meta-data/iam/security-credentials/SkillsTracker-DVCReadS3)
-echo $response
-dvc remote modify --local s3 access_key_id '$(echo '$response' | jq -r '.AccessKeyId')'
-dvc remote modify --local s3 secret_access_key '$(echo '$response' | jq -r '.SecretAccessKey')'
-dvc remote modify --local s3 session_token '$(echo '$response' | jq -r '.Token')'
+dvc remote modify --local s3 credentialpath '~/.aws/credentials
 dvc pull --recursive
