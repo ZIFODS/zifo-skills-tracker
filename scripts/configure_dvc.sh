@@ -9,5 +9,5 @@ sudo apt update
 sudo apt install dvc
 
 # Configure DVC
-dvc remote modify --local s3 credentialpath '~/.aws/credentials
+dvc remote modify --local s3 credentialpath '~/.aws/credentials'
 dvc pull --recursive
