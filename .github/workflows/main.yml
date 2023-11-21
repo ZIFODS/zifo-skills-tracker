@@ -3,7 +3,7 @@ name: Test, lint check and deploy to EC2
 on:
   push:
     branches:
-      - 183-deploy-with-terraform-and-actions
+      - 183-deploy-with-terraform
 
 permissions:
   id-token: write
