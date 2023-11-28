@@ -122,7 +122,7 @@ resource "aws_instance" "skills_tracker_ec2" {
   tags = {
     Name = "SkillsTracker-Test"
   }
-  user_data = file("install_docker.sh")
+  user_data = file("../scripts/initialise_ec2.sh")
 }
 
 resource "aws_eip" "skills_tracker_public_ip" {
