@@ -13,7 +13,7 @@ sudo apt-get -y install docker-ce docker-ce-cli containerd.io docker-buildx-plug
 sudo usermod -aG docker ubuntu
 
 mkdir /home/ubuntu/data /home/ubuntu/docker /home/ubuntu/docker/data
-chmod ubuntu:ubuntu /home/ubuntu/data /home/ubuntu/docker /home/ubuntu/docker/data
+chmod 777 /home/ubuntu/data /home/ubuntu/docker /home/ubuntu/docker/data
 
 touch /var/log/userdata.log
 chmod 644 /var/log/userdata.log
