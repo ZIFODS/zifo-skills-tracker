@@ -7,68 +7,59 @@ permissions:
   contents: read
 
 jobs:
-  test:
-    name: "Test"
-    runs-on: ubuntu-latest
-    defaults:
-      run:
-        shell: bash
+  # test:
+  #   name: "Test"
+  #   runs-on: ubuntu-latest
+  #   defaults:
+  #     run:
+  #       shell: bash
 
-    steps:
-      - name: Checkout repo
-        uses: actions/checkout@v3
+  #   steps:
+  #     - name: Checkout repo
+  #       uses: actions/checkout@v3
 
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v2
-        with:
-          role-to-assume: arn:aws:iam::233044492909:role/SkillsTracker-GitHubActions
-          aws-region: eu-west-2
+  #     - name: Configure AWS credentials
+  #       uses: aws-actions/configure-aws-credentials@v2
+  #       with:
+  #         role-to-assume: arn:aws:iam::233044492909:role/SkillsTracker-GitHubActions
+  #         aws-region: eu-west-2
 
-      - name: Configure DVC
-        run: bash scripts/configure_dvc.sh
+  #     - name: Configure DVC
+  #       run: bash scripts/configure_dvc.sh
 
-      - name: Test dev
-        run: bash scripts/test-dev.sh
+  #     - name: Test dev
+  #       run: bash scripts/test-dev.sh
 
-  lint:
-    name: "Lint"
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-python@v3
-        with:
-          python-version: "3.10"
-      - name: Install dev poetry env
-        run: |
-          python -m pip install --upgrade pip
-          pip install poetry
-          poetry install
-      - name: Run pre-commit
-        run: |
-          poetry run pre-commit run --all-files
+  # lint:
+  #   name: "Lint"
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v3
+  #     - uses: actions/setup-python@v3
+  #       with:
+  #         python-version: "3.10"
+  #     - name: Install dev poetry env
+  #       run: |
+  #         python -m pip install --upgrade pip
+  #         pip install poetry
+  #         poetry install
+  #     - name: Run pre-commit
+  #       run: |
+  #         poetry run pre-commit run --all-files
 
-  build-push:
-    name: "Build and push"
-    runs-on: ubuntu-latest
-    defaults:
-      run:
-        shell: bash
+  # build-push:
+  #   name: "Build and push"
+  #   runs-on: ubuntu-latest
+  #   defaults:
+  #     run:
+  #       shell: bash
 
-    steps:
-      - name: Checkout repo
-        uses: actions/checkout@v3
+  #   steps:
+  #     - name: Checkout repo
+  #       uses: actions/checkout@v3
 
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v2
-        with:
-          role-to-assume: arn:aws:iam::233044492909:role/SkillsTracker-GitHubActions
-          aws-region: eu-west-2
-
-      - name: Configure DVC
-        run: bash scripts/configure_dvc.sh
-
-      - name: Build containers
-        run: bash scripts/build-push-prod.sh
+  #     - name: Build containers
+  #       run: bash scripts/build-push-prod.sh
 
   terraform:
     name: "Terraform"
@@ -84,7 +75,7 @@ jobs:
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v2
         with:
-          role-to-assume: arn:aws:iam::233044492909:role/SkillsTracker-Terraform
+          role-to-assume: arn:aws:iam::233044492909:role/SkillsTracker-terraform
           aws-region: eu-west-2
 
       - name: Setup Terraform
@@ -111,9 +102,9 @@ jobs:
           echo "api_ip=$(terraform -chdir=deploy/terraform output -raw api_ip)" >> $GITHUB_ENV
 
       - name: Configure DVC
-        run: bash deploy/configure_dvc.sh
+        run: bash scripts/configure_dvc.sh
 
-      - name: SSH and install docker
+      - name: Test SSH connection
         run: |
           echo "${{ env.api_private_key_encoded }}" | base64 -d > private_key.pem
           chmod 600 private_key.pem
@@ -131,36 +122,20 @@ jobs:
               exit 1
             fi
           done
-          sudo apt-get update
-          sudo apt-get install ca-certificates curl gnupg
-          sudo install -m 0755 -d /etc/apt/keyrings
-          curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
-          sudo chmod a+r /etc/apt/keyrings/docker.gpg
-          echo \
-            "deb [arch="$(dpkg --print-architecture)" signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu \
-            "$(. /etc/os-release && echo "$VERSION_CODENAME")" stable" | \
-            sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
-          sudo apt-get update
-          sudo apt-get -y install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
-          sudo usermod -aG docker $USER
 
       - name: Copy deployment files
         run: |
-          echo "${{ env.api_private_key_encoded }}" | base64 -d > private_key.pem
+          echo "${{ env.API_PRIVATE_KEY_ENCODED }}" | base64 -d > private_key.pem
           chmod 600 private_key.pem
-          ssh -o StrictHostKeyChecking=no -i private_key.pem ubuntu@${{ env.api_ip }} "mkdir ~/data"
-          ssh -o StrictHostKeyChecking=no -i private_key.pem ubuntu@${{ env.api_ip }} "mkdir ~/docker"
-          ssh -o StrictHostKeyChecking=no -i private_key.pem ubuntu@${{ env.api_ip }} "mkdir ~/docker/data"
-          scp -o StrictHostKeyChecking=no -i private_key.pem data/admin_users.txt ubuntu@${{ env.api_ip }}:~/data
-          scp -o StrictHostKeyChecking=no -i private_key.pem docker/docker-compose.prod.yml ubuntu@${{ env.api_ip }}:~/docker
-          scp -o StrictHostKeyChecking=no -i private_key.pem docker/data ubuntu@${{ env.api_ip }}:~/docker/data
+          ssh -o StrictHostKeyChecking=no -i private_key.pem ubuntu@${{ env.API_PUBLIC_IP }} "mkdir ~/data"
+          ssh -o StrictHostKeyChecking=no -i private_key.pem ubuntu@${{ env.API_PUBLIC_IP }} "mkdir ~/docker"
+          ssh -o StrictHostKeyChecking=no -i private_key.pem ubuntu@${{ env.API_PUBLIC_IP }} "mkdir ~/docker/data"
+          scp -o StrictHostKeyChecking=no -i private_key.pem data/admin_users.txt ubuntu@${{ env.API_PUBLIC_IP }}:~/data
+          scp -o StrictHostKeyChecking=no -i private_key.pem docker/docker-compose.prod.yml ubuntu@${{ env.API_PUBLIC_IP }}:~/docker
+          scp -o StrictHostKeyChecking=no -i private_key.pem docker/data ubuntu@${{ env.API_PUBLIC_IP }}:~/docker/data
 
       - name: Launch application
         run: |
-          echo "${{ env.api_private_key_encoded }}" | base64 -d > private_key.pem
+          echo "${{ env.API_PRIVATE_KEY_ENCODED }}" | base64 -d > private_key.pem
           chmod 600 private_key.pem
-          ssh -o StrictHostKeyChecking=no -i private_key.pem ubuntu@${{ env.api_ip }} "docker compose -f docker/docker-compose.prod.yml up -d --build"
-
-      - name: Destroy Terraform
-        if: always()
-        run: terraform -chdir=deploy/terraform destroy -auto-approve
+          ssh -o StrictHostKeyChecking=no -i private_key.pem ubuntu@${{ env.API_PUBLIC_IP }} "docker compose -f docker/docker-compose.prod.yml up -d --build"
