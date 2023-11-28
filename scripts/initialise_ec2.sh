@@ -12,6 +12,9 @@ sudo apt-get -y update
 sudo apt-get -y install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
 sudo usermod -aG docker ubuntu
 
+sudo apt-get install awscli -y
+aws --version
+
 mkdir /home/ubuntu/data /home/ubuntu/docker /home/ubuntu/docker/data
 chmod 777 /home/ubuntu/data /home/ubuntu/docker /home/ubuntu/docker/data
 
