@@ -114,9 +114,9 @@ resource "aws_route_table_association" "shrnaseq_public_subnet_association" {
 ## EC2
 
 resource "aws_instance" "skills_tracker_ec2" {
-  ami           = "ami-0eb260c4d5475b901"
-  instance_type = "t2.medium"
-  key_name      = aws_key_pair.deployer.key_name
+  ami                    = "ami-0eb260c4d5475b901"
+  instance_type          = "t2.medium"
+  key_name               = aws_key_pair.deployer.key_name
   vpc_security_group_ids = [aws_security_group.skills_tracker_security_group.id]
   subnet_id              = aws_subnet.skills_tracker_public_subnet.id
   tags = {
