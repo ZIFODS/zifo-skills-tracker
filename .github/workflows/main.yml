@@ -50,6 +50,49 @@ jobs:
         run: |
           poetry run pre-commit run --all-files
 
+  build:
+    name: "Build"
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          role-to-assume: arn:aws:iam::233044492909:role/SkillsTracker-DVCReadS3
+          aws-region: eu-west-2
+
+      - name: Configure DVC
+        run: bash scripts/configure_dvc.sh
+
+      - name: Test dev
+        run: bash scripts/build-prod.sh
+
+  push:
+    name: "Push"
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          role-to-assume: arn:aws:iam::233044492909:role/SkillsTracker-DVCReadS3
+          aws-region: eu-west-2
+
+      - name: Test dev
+        run: bash scripts/push-prod.sh
+
   # terraform:
   #   name: "Terraform"
   #   runs-on: ubuntu-latest
