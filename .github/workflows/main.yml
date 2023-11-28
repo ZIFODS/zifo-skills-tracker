@@ -98,20 +98,20 @@ jobs:
       - name: Fetch SSH Key and EIP from Terraform Outputs
         id: fetch-outputs
         run: |
-          echo "api_private_key_encoded=$(terraform -chdir=terraform output -raw private_key | base64 -w0)" >> $GITHUB_ENV
-          echo "api_ip=$(terraform -chdir=terraform output -raw api_ip)" >> $GITHUB_ENV
+          echo "API_PRIVATE_KEY_ENCODED=$(terraform -chdir=terraform output -raw private_key | base64 -w0)" >> $GITHUB_ENV
+          echo "API_IP=$(terraform -chdir=terraform output -raw API_IP)" >> $GITHUB_ENV
 
       - name: Configure DVC
         run: bash scripts/configure_dvc.sh
 
       - name: Test SSH connection
         run: |
-          echo "${{ env.api_private_key_encoded }}" | base64 -d > private_key.pem
+          echo "${{ env.API_PRIVATE_KEY_ENCODED }}" | base64 -d > private_key.pem
           chmod 600 private_key.pem
           attempts=0
           max_attempts=24  # 5-second sleep x 24 = 2 minutes
           while true; do
-            if ssh -o StrictHostKeyChecking=no -i private_key.pem ubuntu@${{ env.api_ip }} "echo 'ready'"; then
+            if ssh -o StrictHostKeyChecking=no -i private_key.pem ubuntu@${{ env.API_IP }} "echo 'ready'"; then
               break  # Exit the loop once SSH succeeds
             fi
             echo "Waiting for EC2 SSH..."
