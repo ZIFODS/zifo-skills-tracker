@@ -12,9 +12,9 @@ sudo apt-get -y update
 sudo apt-get -y install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
 sudo usermod -aG docker ubuntu
 
-mkdir ~/data
-mkdir ~/docker
-mkdir ~/docker/data
+mkdir /home/ubuntu/data
+mkdir /home/ubuntu/docker
+mkdir /home/ubuntu/docker/data
 
 touch /var/log/userdata.log
 chmod 644 /var/log/userdata.log
