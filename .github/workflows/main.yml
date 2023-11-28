@@ -3,7 +3,7 @@ name: Test, lint check and deploy to EC2
 on:
   push:
     branches:
-      - 183-deploy-with-terraform
+      - "*"
 
 permissions:
   id-token: write
@@ -74,7 +74,7 @@ jobs:
         run: bash scripts/build-prod.sh
 
   push:
-    name: "Push to ECR"
+    name: "Push"
     runs-on: ubuntu-latest
     defaults:
       run:
