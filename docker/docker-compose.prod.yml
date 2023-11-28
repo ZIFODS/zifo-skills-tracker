@@ -11,16 +11,10 @@ services:
       retries: 20
 
   python-api:
-    image: zifo-skills-api
-    build:
-      context: ..
-      dockerfile: ./docker/api/Dockerfile
+    image: 233044492909.dkr.ecr.eu-west-2.amazonaws.com/skills-tracker-frontend:latest
     container_name: zifo-skills-api
     environment:
       - SKILLS_ENV=production
-    volumes:
-      - ../.env.prod:/home/skills-user/.env.prod
-      - ../data/admin_users.txt:/home/skills-user/data/admin_users.txt
     depends_on:
       mongodb:
         condition: service_healthy
@@ -32,16 +26,11 @@ services:
       retries: 20
 
   react-frontend:
-    image: zifo-skills-frontend
-    build:
-      context: ..
-      dockerfile: ./docker/frontend/Dockerfile
+    image: 233044492909.dkr.ecr.eu-west-2.amazonaws.com/skills-tracker-frontend:latest
     container_name: zifo-skills-frontend
     network_mode: host
     environment:
       - REACT_APP_API_URL=https://skills.zifo-tech.com/api/
-    volumes:
-      - /node_modules
     depends_on:
       python-api:
         condition: service_healthy
