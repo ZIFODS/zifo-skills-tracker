@@ -99,7 +99,7 @@ jobs:
         id: fetch-outputs
         run: |
           echo "API_PRIVATE_KEY_ENCODED=$(terraform -chdir=terraform output -raw private_key | base64 -w0)" >> $GITHUB_ENV
-          echo "API_IP=$(terraform -chdir=terraform output -raw API_IP)" >> $GITHUB_ENV
+          echo "API_IP=$(terraform -chdir=terraform output -raw api_ip)" >> $GITHUB_ENV
 
       - name: Configure DVC
         run: bash scripts/configure_dvc.sh
