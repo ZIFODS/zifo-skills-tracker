@@ -1,4 +1,4 @@
-name: Test, lint check and deploy to EC2
+name: Test, lint, build, push
 
 on: workflow_dispatch
 
