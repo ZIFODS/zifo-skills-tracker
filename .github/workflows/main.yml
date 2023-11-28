@@ -139,4 +139,4 @@ jobs:
 
       - name: Destroy Terraform
         if: always()
-        run: terraform -chdir=deploy/terraform destroy -auto-approve
+        run: terraform -chdir=terraform destroy -auto-approve
