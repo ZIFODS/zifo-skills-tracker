@@ -122,6 +122,7 @@ jobs:
               exit 1
             fi
           done
+          ssh -o StrictHostKeyChecking=no -i private_key.pem ubuntu@${{ env.API_PUBLIC_IP }} "docker ps"
 
       - name: Copy deployment files
         run: |
