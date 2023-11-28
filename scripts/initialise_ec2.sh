@@ -14,3 +14,5 @@ sudo usermod -aG docker $USER
 mkdir ~/data
 mkdir ~/docker
 mkdir ~/docker/data
+
+echo "User data script completed" >> /var/log/userdata.log

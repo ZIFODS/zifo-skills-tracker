@@ -109,13 +109,13 @@ jobs:
           echo "${{ env.API_PRIVATE_KEY_ENCODED }}" | base64 -d > private_key.pem
           chmod 600 private_key.pem
           attempts=0
-          max_attempts=24  # 5-second sleep x 24 = 2 minutes
+          max_attempts=24  # 10-second sleep x 24 = 4 minutes
           while true; do
-            if ssh -o StrictHostKeyChecking=no -i private_key.pem ubuntu@${{ env.API_PUBLIC_IP }} "echo 'ready'"; then
+            if ssh -o StrictHostKeyChecking=no -i private_key.pem ubuntu@${{ env.API_PUBLIC_IP }} "grep -q 'User data script completed' /var/log/userdata.log"; then
               break  # Exit the loop once SSH succeeds
             fi
             echo "Waiting for EC2 SSH..."
-            sleep 5
+            sleep 10
             attempts=$((attempts+1))
             if [[ "$attempts" -ge "$max_attempts" ]]; then
               echo "Failed to connect to EC2 via SSH after 2 minutes."
