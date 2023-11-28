@@ -74,7 +74,7 @@ jobs:
         run: bash scripts/build-prod.sh
 
   push:
-    name: "Push"
+    name: "Push to ECR"
     runs-on: ubuntu-latest
     defaults:
       run:
