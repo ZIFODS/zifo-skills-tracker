@@ -75,7 +75,7 @@ jobs:
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v2
         with:
-          role-to-assume: arn:aws:iam::233044492909:role/SkillsTracker-terraform
+          role-to-assume: arn:aws:iam::233044492909:role/SkillsTracker-Terraform
           aws-region: eu-west-2
 
       - name: Setup Terraform
