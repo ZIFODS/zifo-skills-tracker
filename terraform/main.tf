@@ -111,11 +111,61 @@ resource "aws_route_table_association" "shrnaseq_public_subnet_association" {
   route_table_id = aws_route_table.shrnaseq_public_route_table.id
 }
 
+## IAM
+
+resource "aws_iam_policy" "ecr_read" {
+  name        = "ecr-read-policy"
+  description = "Policy to allow reading from ECR"
+
+  policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [
+      {
+        Action = [
+          "ecr:GetDownloadUrlForLayer",
+          "ecr:BatchGetImage",
+          "ecr:BatchCheckLayerAvailability"
+        ],
+        Resource = "*",
+        Effect   = "Allow"
+      }
+    ]
+  })
+}
+
+resource "aws_iam_role" "skills_tracker_ec2_role" {
+  name = "SkillsTracker-EC2"
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [
+      {
+        Action = "sts:AssumeRole",
+        Effect = "Allow",
+        Principal = {
+          Service = "ec2.amazonaws.com"
+        }
+      }
+    ]
+  })
+}
+
+resource "aws_iam_role_policy_attachment" "ecr_read_attach" {
+  role       = aws_iam_role.skills_tracker_ec2_role.name
+  policy_arn = aws_iam_policy.ecr_read.arn
+}
+
+resource "aws_iam_instance_profile" "ec2_profile" {
+  name = "skills_tracker_ec2_profile"
+  role = aws_iam_role.skills_tracker_ec2_role.name
+}
+
 ## EC2
 
 resource "aws_instance" "skills_tracker_ec2" {
   ami                    = "ami-0eb260c4d5475b901"
   instance_type          = "t2.medium"
+  iam_instance_profile   = aws_iam_instance_profile.ec2_profile.name
   key_name               = aws_key_pair.deployer.key_name
   vpc_security_group_ids = [aws_security_group.skills_tracker_security_group.id]
   subnet_id              = aws_subnet.skills_tracker_public_subnet.id
