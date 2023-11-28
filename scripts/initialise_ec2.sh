@@ -1,3 +1,4 @@
+#!/bin/bash
 sudo apt-get -y update
 sudo apt-get -y install ca-certificates curl gnupg
 sudo install -m 0755 -d /etc/apt/keyrings
@@ -9,10 +10,12 @@ echo \
   sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
 sudo apt-get -y update
 sudo apt-get -y install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
-sudo usermod -aG docker $USER
+sudo usermod -aG docker ubuntu
 
 mkdir ~/data
 mkdir ~/docker
 mkdir ~/docker/data
 
+touch /var/log/userdata.log
+chmod 644 /var/log/userdata.log
 echo "User data script completed" >> /var/log/userdata.log
