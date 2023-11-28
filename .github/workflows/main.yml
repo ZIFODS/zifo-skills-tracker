@@ -129,7 +129,7 @@ jobs:
           chmod 600 private_key.pem
           scp -o StrictHostKeyChecking=no -i private_key.pem data/admin_users.txt ubuntu@${{ env.API_PUBLIC_IP }}:~/data
           scp -o StrictHostKeyChecking=no -i private_key.pem docker/docker-compose.prod.yml ubuntu@${{ env.API_PUBLIC_IP }}:~/docker
-          scp -o StrictHostKeyChecking=no -i private_key.pem docker/data ubuntu@${{ env.API_PUBLIC_IP }}:~/docker/data
+          scp -o StrictHostKeyChecking=no -i private_key.pem -r docker/data ubuntu@${{ env.API_PUBLIC_IP }}:~/docker/data
 
       - name: Launch application
         run: |
