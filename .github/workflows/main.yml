@@ -136,3 +136,7 @@ jobs:
           echo "${{ env.API_PRIVATE_KEY_ENCODED }}" | base64 -d > private_key.pem
           chmod 600 private_key.pem
           ssh -o StrictHostKeyChecking=no -i private_key.pem ubuntu@${{ env.API_PUBLIC_IP }} "docker compose -f docker/docker-compose.prod.yml up -d --build"
+
+      - name: Destroy Terraform
+        if: always()
+        run: terraform -chdir=deploy/terraform destroy -auto-approve
