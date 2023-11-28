@@ -69,3 +69,98 @@ jobs:
 
       - name: Build containers
         run: bash scripts/build-push-prod.sh
+
+  terraform:
+    name: "Terraform"
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          role-to-assume: arn:aws:iam::233044492909:role/SkillsTracker-Terraform
+          aws-region: eu-west-2
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_wrapper: false
+
+      - name: Initialize Terraform
+        run: terraform -chdir=deploy/terraform init
+
+      - name: Format Terraform
+        run: terraform -chdir=deploy/terraform fmt -check
+
+      - name: Plan Terraform
+        run: terraform -chdir=deploy/terraform plan -input=false
+
+      - name: Apply Terraform
+        run: terraform -chdir=deploy/terraform apply -auto-approve -input=false
+
+      - name: Fetch SSH Key and EIP from Terraform Outputs
+        id: fetch-outputs
+        run: |
+          echo "api_private_key_encoded=$(terraform -chdir=deploy/terraform output -raw private_key | base64 -w0)" >> $GITHUB_ENV
+          echo "api_ip=$(terraform -chdir=deploy/terraform output -raw api_ip)" >> $GITHUB_ENV
+
+      - name: Configure DVC
+        run: bash deploy/configure_dvc.sh
+
+      - name: SSH and install docker
+        run: |
+          echo "${{ env.api_private_key_encoded }}" | base64 -d > private_key.pem
+          chmod 600 private_key.pem
+          attempts=0
+          max_attempts=24  # 5-second sleep x 24 = 2 minutes
+          while true; do
+            if ssh -o StrictHostKeyChecking=no -i private_key.pem ubuntu@${{ env.api_ip }} "echo 'ready'"; then
+              break  # Exit the loop once SSH succeeds
+            fi
+            echo "Waiting for EC2 SSH..."
+            sleep 5
+            attempts=$((attempts+1))
+            if [[ "$attempts" -ge "$max_attempts" ]]; then
+              echo "Failed to connect to EC2 via SSH after 2 minutes."
+              exit 1
+            fi
+          done
+          sudo apt-get update
+          sudo apt-get install ca-certificates curl gnupg
+          sudo install -m 0755 -d /etc/apt/keyrings
+          curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+          sudo chmod a+r /etc/apt/keyrings/docker.gpg
+          echo \
+            "deb [arch="$(dpkg --print-architecture)" signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu \
+            "$(. /etc/os-release && echo "$VERSION_CODENAME")" stable" | \
+            sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+          sudo apt-get update
+          sudo apt-get -y install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+          sudo usermod -aG docker $USER
+
+      - name: Copy deployment files
+        run: |
+          echo "${{ env.api_private_key_encoded }}" | base64 -d > private_key.pem
+          chmod 600 private_key.pem
+          ssh -o StrictHostKeyChecking=no -i private_key.pem ubuntu@${{ env.api_ip }} "mkdir ~/data"
+          ssh -o StrictHostKeyChecking=no -i private_key.pem ubuntu@${{ env.api_ip }} "mkdir ~/docker"
+          ssh -o StrictHostKeyChecking=no -i private_key.pem ubuntu@${{ env.api_ip }} "mkdir ~/docker/data"
+          scp -o StrictHostKeyChecking=no -i private_key.pem data/admin_users.txt ubuntu@${{ env.api_ip }}:~/data
+          scp -o StrictHostKeyChecking=no -i private_key.pem docker/docker-compose.prod.yml ubuntu@${{ env.api_ip }}:~/docker
+          scp -o StrictHostKeyChecking=no -i private_key.pem docker/data ubuntu@${{ env.api_ip }}:~/docker/data
+
+      - name: Launch application
+        run: |
+          echo "${{ env.api_private_key_encoded }}" | base64 -d > private_key.pem
+          chmod 600 private_key.pem
+          ssh -o StrictHostKeyChecking=no -i private_key.pem ubuntu@${{ env.api_ip }} "docker compose -f docker/docker-compose.prod.yml up -d --build"
+
+      - name: Destroy Terraform
+        if: always()
+        run: terraform -chdir=deploy/terraform destroy -auto-approve
