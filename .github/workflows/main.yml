@@ -68,7 +68,7 @@ jobs:
           MONGODB_HOST=${{ env.MONGODB_HOST }} \
           FRONTEND_URL=${{ env.FRONTEND_URL }} \
           REACT_APP_API_URL=${{ env.REACT_APP_API_URL }} \
-          docker compose -f docker/docker-compose.prod.yml up -d --build mongodb python-api react-frontend
+          docker compose -f docker/docker-compose.qa.yml up -d --build
 
       - name: Test mongo
         run: |
@@ -112,84 +112,84 @@ jobs:
       - name: Build ECR containers
         run: bash scripts/build-push-prod.sh
 
-  terraform:
-    name: "Terraform"
-    runs-on: ubuntu-latest
-    defaults:
-      run:
-        shell: bash
+  # terraform:
+  #   name: "Terraform"
+  #   runs-on: ubuntu-latest
+  #   defaults:
+  #     run:
+  #       shell: bash
 
-    steps:
-      - name: Checkout repo
-        uses: actions/checkout@v3
+  #   steps:
+  #     - name: Checkout repo
+  #       uses: actions/checkout@v3
 
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v2
-        with:
-          role-to-assume: arn:aws:iam::233044492909:role/SkillsTracker-Terraform
-          aws-region: eu-west-2
+  #     - name: Configure AWS credentials
+  #       uses: aws-actions/configure-aws-credentials@v2
+  #       with:
+  #         role-to-assume: arn:aws:iam::233044492909:role/SkillsTracker-Terraform
+  #         aws-region: eu-west-2
 
-      - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v2
-        with:
-          terraform_wrapper: false
+  #     - name: Setup Terraform
+  #       uses: hashicorp/setup-terraform@v2
+  #       with:
+  #         terraform_wrapper: false
 
-      - name: Initialize Terraform
-        run: terraform -chdir=terraform init
+  #     - name: Initialize Terraform
+  #       run: terraform -chdir=terraform init
 
-      - name: Format Terraform
-        run: terraform -chdir=terraform fmt -check
+  #     - name: Format Terraform
+  #       run: terraform -chdir=terraform fmt -check
 
-      - name: Plan Terraform
-        run: terraform -chdir=terraform plan -input=false
+  #     - name: Plan Terraform
+  #       run: terraform -chdir=terraform plan -input=false
 
-      - name: Apply Terraform
-        run: terraform -chdir=terraform apply -auto-approve -input=false
+  #     - name: Apply Terraform
+  #       run: terraform -chdir=terraform apply -auto-approve -input=false
 
-      - name: Fetch SSH Key and EIP from Terraform Outputs
-        id: fetch-outputs
-        run: |
-          echo "API_PRIVATE_KEY_ENCODED=$(terraform -chdir=terraform output -raw private_key | base64 -w0)" >> $GITHUB_ENV
-          echo "API_PUBLIC_IP=$(terraform -chdir=terraform output -raw api_ip)" >> $GITHUB_ENV
+  #     - name: Fetch SSH Key and EIP from Terraform Outputs
+  #       id: fetch-outputs
+  #       run: |
+  #         echo "API_PRIVATE_KEY_ENCODED=$(terraform -chdir=terraform output -raw private_key | base64 -w0)" >> $GITHUB_ENV
+  #         echo "API_PUBLIC_IP=$(terraform -chdir=terraform output -raw api_ip)" >> $GITHUB_ENV
 
-      - name: Configure DVC
-        run: bash scripts/configure_dvc.sh
+  #     - name: Configure DVC
+  #       run: bash scripts/configure_dvc.sh
 
-      - name: Test SSH connection
-        run: |
-          echo "${{ env.API_PRIVATE_KEY_ENCODED }}" | base64 -d > private_key.pem
-          chmod 600 private_key.pem
-          attempts=0
-          max_attempts=24  # 10-second sleep x 24 = 2 minutes
-          while true; do
-            if ssh -o StrictHostKeyChecking=no -i private_key.pem ubuntu@${{ env.API_PUBLIC_IP }} "grep -q 'User data script completed' /var/log/userdata.log"; then
-              break  # Exit the loop once SSH succeeds
-            fi
-            echo "Waiting for EC2 SSH..."
-            sleep 5
-            attempts=$((attempts+1))
-            if [[ "$attempts" -ge "$max_attempts" ]]; then
-              echo "Failed to connect to EC2 via SSH after 2 minutes."
-              exit 1
-            fi
-          done
-          ssh -o StrictHostKeyChecking=no -i private_key.pem ubuntu@${{ env.API_PUBLIC_IP }} "docker ps"
+  #     - name: Test SSH connection
+  #       run: |
+  #         echo "${{ env.API_PRIVATE_KEY_ENCODED }}" | base64 -d > private_key.pem
+  #         chmod 600 private_key.pem
+  #         attempts=0
+  #         max_attempts=24  # 10-second sleep x 24 = 2 minutes
+  #         while true; do
+  #           if ssh -o StrictHostKeyChecking=no -i private_key.pem ubuntu@${{ env.API_PUBLIC_IP }} "grep -q 'User data script completed' /var/log/userdata.log"; then
+  #             break  # Exit the loop once SSH succeeds
+  #           fi
+  #           echo "Waiting for EC2 SSH..."
+  #           sleep 5
+  #           attempts=$((attempts+1))
+  #           if [[ "$attempts" -ge "$max_attempts" ]]; then
+  #             echo "Failed to connect to EC2 via SSH after 2 minutes."
+  #             exit 1
+  #           fi
+  #         done
+  #         ssh -o StrictHostKeyChecking=no -i private_key.pem ubuntu@${{ env.API_PUBLIC_IP }} "docker ps"
 
-      - name: Copy deployment files
-        run: |
-          echo "${{ env.API_PRIVATE_KEY_ENCODED }}" | base64 -d > private_key.pem
-          chmod 600 private_key.pem
-          scp -o StrictHostKeyChecking=no -i private_key.pem data/admin_users.txt ubuntu@${{ env.API_PUBLIC_IP }}:~/data
-          scp -o StrictHostKeyChecking=no -i private_key.pem docker/docker-compose.prod.yml ubuntu@${{ env.API_PUBLIC_IP }}:~/docker
-          scp -o StrictHostKeyChecking=no -i private_key.pem -r docker/data ubuntu@${{ env.API_PUBLIC_IP }}:~/docker/data
+  #     - name: Copy deployment files
+  #       run: |
+  #         echo "${{ env.API_PRIVATE_KEY_ENCODED }}" | base64 -d > private_key.pem
+  #         chmod 600 private_key.pem
+  #         scp -o StrictHostKeyChecking=no -i private_key.pem data/admin_users.txt ubuntu@${{ env.API_PUBLIC_IP }}:~/data
+  #         scp -o StrictHostKeyChecking=no -i private_key.pem docker/docker-compose.prod.yml ubuntu@${{ env.API_PUBLIC_IP }}:~/docker
+  #         scp -o StrictHostKeyChecking=no -i private_key.pem -r docker/data ubuntu@${{ env.API_PUBLIC_IP }}:~/docker/data
 
-      - name: Launch application
-        run: |
-          echo "${{ env.API_PRIVATE_KEY_ENCODED }}" | base64 -d > private_key.pem
-          chmod 600 private_key.pem
-          ssh -o StrictHostKeyChecking=no -i private_key.pem ubuntu@${{ env.API_PUBLIC_IP }} "aws ecr get-login-password --region eu-west-2 | docker login --username AWS --password-stdin 233044492909.dkr.ecr.eu-west-2.amazonaws.com"
-          ssh -o StrictHostKeyChecking=no -i private_key.pem ubuntu@${{ env.API_PUBLIC_IP }} "docker compose -f docker/docker-compose.prod.yml up -d --build"
+  #     - name: Launch application
+  #       run: |
+  #         echo "${{ env.API_PRIVATE_KEY_ENCODED }}" | base64 -d > private_key.pem
+  #         chmod 600 private_key.pem
+  #         ssh -o StrictHostKeyChecking=no -i private_key.pem ubuntu@${{ env.API_PUBLIC_IP }} "aws ecr get-login-password --region eu-west-2 | docker login --username AWS --password-stdin 233044492909.dkr.ecr.eu-west-2.amazonaws.com"
+  #         ssh -o StrictHostKeyChecking=no -i private_key.pem ubuntu@${{ env.API_PUBLIC_IP }} "docker compose -f docker/docker-compose.prod.yml up -d --build"
 
-      - name: Destroy Terraform
-        if: always()
-        run: terraform -chdir=terraform destroy -auto-approve
+  #     - name: Destroy Terraform
+  #       if: always()
+  #       run: terraform -chdir=terraform destroy -auto-approve
