@@ -15,8 +15,16 @@ services:
     container_name: zifo-skills-api
     environment:
       - SKILLS_ENV=production
+      - AWS_REGION=${AWS_REGION}
+      - AWS_SECRET_KMS_KEY=${AWS_SECRET_KMS_KEY}
+      - AWS_SECRET_NAME_NEO4J=${AWS_SECRET_NAME_NEO4J}
+      - AWS_SECRET_NAME_AZURE=${AWS_SECRET_NAME_AZURE}
+      - AWS_SECRET_NAME_API=${AWS_SECRET_NAME_API}
+      - MONGODB_HOST=${MONGODB_HOST}
+      - FRONTEND_URL=${FRONTEND_URL}
     volumes:
       - ../data/admin_users.txt:/app/data/admin_users.txt
+      - ~/.aws:/root/.aws:ro
     depends_on:
       mongodb:
         condition: service_healthy
@@ -32,31 +40,31 @@ services:
     container_name: zifo-skills-frontend
     network_mode: host
     environment:
-      - REACT_APP_API_URL=https://skills.zifo-tech.com/api/
+      - REACT_APP_API_URL=${REACT_APP_API_URL}
     depends_on:
       python-api:
         condition: service_healthy
     healthcheck:
-      test: wget http://localhost:3000/docs -O - || exit 1
+      test: wget http://localhost:3000 -O - || exit 1
       interval: 5s
       timeout: 10s
       retries: 20
 
-  # nginx:
-  #   image: nginx:1.15-alpine
-  #   restart: unless-stopped
-  #   volumes:
-  #     - ./data/nginx:/etc/nginx/conf.d
-  #     - ./data/certbot/conf:/etc/letsencrypt
-  #     - ./data/certbot/www:/var/www/certbot
-  #   network_mode: host
-  #   command: '/bin/sh -c ''while :; do sleep 6h & wait $${!}; nginx -s reload; done & nginx -g "daemon off;"'''
+  nginx:
+    image: nginx:1.15-alpine
+    restart: unless-stopped
+    volumes:
+      - ./data/nginx:/etc/nginx/conf.d
+      - ./data/certbot/conf:/etc/letsencrypt
+      - ./data/certbot/www:/var/www/certbot
+    network_mode: host
+    command: '/bin/sh -c ''while :; do sleep 6h & wait $${!}; nginx -s reload; done & nginx -g "daemon off;"'''
 
-  # certbot:
-  #   image: certbot/certbot
-  #   restart: unless-stopped
-  #   volumes:
-  #     - ./data/certbot/conf:/etc/letsencrypt
-  #     - ./data/certbot/www:/var/www/certbot
-  #   network_mode: host
-  #   entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
+  certbot:
+    image: certbot/certbot
+    restart: unless-stopped
+    volumes:
+      - ./data/certbot/conf:/etc/letsencrypt
+      - ./data/certbot/www:/var/www/certbot
+    network_mode: host
+    entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"

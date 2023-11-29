@@ -8,7 +8,7 @@ permissions:
 
 jobs:
   # test:
-  #   name: "Test"
+  #   name: "Test dev"
   #   runs-on: ubuntu-latest
   #   defaults:
   #     run:
@@ -47,19 +47,69 @@ jobs:
   #       run: |
   #         poetry run pre-commit run --all-files
 
-  # build-push:
-  #   name: "Build and push"
-  #   runs-on: ubuntu-latest
-  #   defaults:
-  #     run:
-  #       shell: bash
+  build-push:
+    name: "Build, test and push prod"
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash
 
-  #   steps:
-  #     - name: Checkout repo
-  #       uses: actions/checkout@v3
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
 
-  #     - name: Build containers
-  #       run: bash scripts/build-push-prod.sh
+      - name: Build compose
+        run: |
+          AWS_SECRET_KMS_KEY=${{ secrets.AWS_SECRET_KMS_KEY }} \
+          AWS_SECRET_NAME_NEO4J=${{ secrets.AWS_SECRET_NAME_NEO4J }} \
+          AWS_SECRET_NAME_AZURE=${{ secrets.AWS_SECRET_NAME_AZURE }} \
+          AWS_SECRET_NAME_API=${{ secrets.AWS_SECRET_NAME_API }} \
+          AWS_REGION=${{ env.AWS_REGION }} \
+          MONGODB_HOST=${{ env.MONGODB_HOST }} \
+          FRONTEND_URL=${{ env.FRONTEND_URL }} \
+          docker compose -f docker/docker-compose.prod.yml up -d --build mongodb python-api react-frontend
+
+      - name: Test mongo
+        run: |
+          timeout=120 # 2 minutes timeout
+          while ! curl --fail http://localhost:27017/test; do
+            sleep 10
+            timeout=$((timeout - 10))
+            if [ "$timeout" -le 0 ]; then
+              echo "MongoDB failed to start within the expected time."
+              exit 1
+            fi
+          done
+          echo "MongoDB is up and running."
+
+      - name: Test API
+        run: |
+          timeout=120 # 2 minutes timeout
+          while ! curl --fail http://localhost:8080/health; do
+            sleep 10
+            timeout=$((timeout - 10))
+            if [ "$timeout" -le 0 ]; then
+              echo "API failed to start within the expected time."
+              exit 1
+            fi
+          done
+          echo "API is up and running."
+
+      - name: Test frontend
+        run: |
+          timeout=120 # 2 minutes timeout
+          while ! curl --fail http://localhost:3000; do
+            sleep 10
+            timeout=$((timeout - 10))
+            if [ "$timeout" -le 0 ]; then
+              echo "Frontend failed to start within the expected time."
+              exit 1
+            fi
+          done
+          echo "Frontend is up and running."
+
+      - name: Build ECR containers
+        run: bash scripts/build-push-prod.sh
 
   terraform:
     name: "Terraform"
