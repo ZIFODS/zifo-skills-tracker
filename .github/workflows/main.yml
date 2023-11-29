@@ -58,6 +58,12 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v3
 
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          role-to-assume: arn:aws:iam::233044492909:role/SkillsTracker-GitHubActions
+          aws-region: eu-west-2
+
       - name: Build compose
         run: |
           AWS_SECRET_KMS_KEY=${{ secrets.AWS_SECRET_KMS_KEY }} \
