@@ -67,6 +67,7 @@ jobs:
           AWS_REGION=${{ env.AWS_REGION }} \
           MONGODB_HOST=${{ env.MONGODB_HOST }} \
           FRONTEND_URL=${{ env.FRONTEND_URL }} \
+          REACT_APP_API_URL=${{ env.REACT_APP_API_URL }} \
           docker compose -f docker/docker-compose.prod.yml up -d --build mongodb python-api react-frontend
 
       - name: Test mongo
