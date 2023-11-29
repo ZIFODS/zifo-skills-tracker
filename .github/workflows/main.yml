@@ -66,7 +66,6 @@ jobs:
 
       - name: Build compose
         run: |
-          AWS_SECRET_KMS_KEY=${{ secrets.AWS_SECRET_KMS_KEY }} \
           AWS_SECRET_NAME_NEO4J=${{ secrets.AWS_SECRET_NAME_NEO4J }} \
           AWS_SECRET_NAME_AZURE=${{ secrets.AWS_SECRET_NAME_AZURE }} \
           AWS_SECRET_NAME_API=${{ secrets.AWS_SECRET_NAME_API }} \
