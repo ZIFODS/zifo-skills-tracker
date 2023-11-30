@@ -163,7 +163,6 @@ jobs:
         run: |
           echo "API_PRIVATE_KEY_ENCODED=$(terraform -chdir=terraform output -raw private_key | base64 -w0)" >> $GITHUB_ENV
           echo "API_PUBLIC_IP=$(terraform -chdir=terraform output -raw api_ip)" >> $GITHUB_ENV
-          echo "NEW_DEPLOYMENT_TAG=$(terraform -chdir=terraform output -raw deployment_tag)" >> $GITHUB_ENV
 
       - name: Configure DVC
         run: bash scripts/configure_dvc.sh
