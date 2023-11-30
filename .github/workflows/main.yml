@@ -67,6 +67,9 @@ jobs:
 
       - name: Build compose
         run: |
+          AWS_ACCESS_KEY_ID=${{ env.AWS_ACCESS_KEY_ID }} \
+          AWS_SECRET_ACCESS_KEY=${{ env.AWS_SECRET_ACCESS_KEY }} \
+          AWS_SESSION_TOKEN=${{ env.AWS_SESSION_TOKEN }} \
           AWS_SECRET_NAME_NEO4J=${{ secrets.AWS_SECRET_NAME_NEO4J }} \
           AWS_SECRET_NAME_AZURE=${{ secrets.AWS_SECRET_NAME_AZURE }} \
           AWS_SECRET_NAME_API=${{ secrets.AWS_SECRET_NAME_API }} \
