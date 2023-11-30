@@ -213,6 +213,6 @@ jobs:
           MONGODB_HOST=${{ vars.MONGODB_HOST }} \
           FRONTEND_URL=${{ vars.FRONTEND_URL }} \
           REACT_APP_API_URL=${{ vars.REACT_APP_API_URL }} \
-          bash scripts/init-letsencrypt.sh
+          bash scripts/init-letsencrypt.sh && \
           docker compose -f docker/docker-compose.prod.yml up -d --build
           EOF
