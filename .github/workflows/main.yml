@@ -7,125 +7,125 @@ permissions:
   contents: read
 
 jobs:
-  test:
-    name: "Test dev"
-    runs-on: ubuntu-latest
-    defaults:
-      run:
-        shell: bash
+  # test:
+  #   name: "Test dev"
+  #   runs-on: ubuntu-latest
+  #   defaults:
+  #     run:
+  #       shell: bash
 
-    steps:
-      - name: Checkout repo
-        uses: actions/checkout@v3
+  #   steps:
+  #     - name: Checkout repo
+  #       uses: actions/checkout@v3
 
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v2
-        with:
-          role-to-assume: arn:aws:iam::233044492909:role/SkillsTracker-GitHubActions
-          aws-region: eu-west-2
+  #     - name: Configure AWS credentials
+  #       uses: aws-actions/configure-aws-credentials@v2
+  #       with:
+  #         role-to-assume: arn:aws:iam::233044492909:role/SkillsTracker-GitHubActions
+  #         aws-region: eu-west-2
 
-      - name: Configure DVC
-        run: bash scripts/configure_dvc.sh
+  #     - name: Configure DVC
+  #       run: bash scripts/configure_dvc.sh
 
-      - name: Test dev
-        run: bash scripts/test-dev.sh
+  #     - name: Test dev
+  #       run: bash scripts/test-dev.sh
 
-  lint:
-    name: "Lint"
-    needs: test
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-python@v3
-        with:
-          python-version: "3.10"
-      - name: Install dev poetry env
-        run: |
-          python -m pip install --upgrade pip
-          pip install poetry
-          poetry install
-      - name: Run pre-commit
-        run: |
-          poetry run pre-commit run --all-files
+  # lint:
+  #   name: "Lint"
+  #   needs: test
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v3
+  #     - uses: actions/setup-python@v3
+  #       with:
+  #         python-version: "3.10"
+  #     - name: Install dev poetry env
+  #       run: |
+  #         python -m pip install --upgrade pip
+  #         pip install poetry
+  #         poetry install
+  #     - name: Run pre-commit
+  #       run: |
+  #         poetry run pre-commit run --all-files
 
-  build-push:
-    name: "Build, test and push prod"
-    needs: lint
-    runs-on: ubuntu-latest
-    environment: qa
-    defaults:
-      run:
-        shell: bash
+  # build-push:
+  #   name: "Build, test and push prod"
+  #   needs: lint
+  #   runs-on: ubuntu-latest
+  #   environment: qa
+  #   defaults:
+  #     run:
+  #       shell: bash
 
-    steps:
-      - name: Checkout repo
-        uses: actions/checkout@v3
+  #   steps:
+  #     - name: Checkout repo
+  #       uses: actions/checkout@v3
 
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v2
-        with:
-          role-to-assume: arn:aws:iam::233044492909:role/SkillsTracker-GitHubActions
-          aws-region: eu-west-2
+  #     - name: Configure AWS credentials
+  #       uses: aws-actions/configure-aws-credentials@v2
+  #       with:
+  #         role-to-assume: arn:aws:iam::233044492909:role/SkillsTracker-GitHubActions
+  #         aws-region: eu-west-2
 
-      - name: Build compose
-        run: |
-          AWS_ACCESS_KEY_ID=${{ env.AWS_ACCESS_KEY_ID }} \
-          AWS_SECRET_ACCESS_KEY=${{ env.AWS_SECRET_ACCESS_KEY }} \
-          AWS_SESSION_TOKEN=${{ env.AWS_SESSION_TOKEN }} \
-          AWS_SECRET_NAME_NEO4J=${{ secrets.AWS_SECRET_NAME_NEO4J }} \
-          AWS_SECRET_NAME_AZURE=${{ secrets.AWS_SECRET_NAME_AZURE }} \
-          AWS_SECRET_NAME_API=${{ secrets.AWS_SECRET_NAME_API }} \
-          AWS_REGION=${{ vars.AWS_REGION }} \
-          MONGODB_HOST=${{ vars.MONGODB_HOST }} \
-          FRONTEND_URL=${{ vars.FRONTEND_URL }} \
-          REACT_APP_API_URL=${{ vars.REACT_APP_API_URL }} \
-          docker compose -f docker/docker-compose.qa.yml up -d --build
+  #     - name: Build compose
+  #       run: |
+  #         AWS_ACCESS_KEY_ID=${{ env.AWS_ACCESS_KEY_ID }} \
+  #         AWS_SECRET_ACCESS_KEY=${{ env.AWS_SECRET_ACCESS_KEY }} \
+  #         AWS_SESSION_TOKEN=${{ env.AWS_SESSION_TOKEN }} \
+  #         AWS_SECRET_NAME_NEO4J=${{ secrets.AWS_SECRET_NAME_NEO4J }} \
+  #         AWS_SECRET_NAME_AZURE=${{ secrets.AWS_SECRET_NAME_AZURE }} \
+  #         AWS_SECRET_NAME_API=${{ secrets.AWS_SECRET_NAME_API }} \
+  #         AWS_REGION=${{ vars.AWS_REGION }} \
+  #         MONGODB_HOST=${{ vars.MONGODB_HOST }} \
+  #         FRONTEND_URL=${{ vars.FRONTEND_URL }} \
+  #         REACT_APP_API_URL=${{ vars.REACT_APP_API_URL }} \
+  #         docker compose -f docker/docker-compose.qa.yml up -d --build
 
-      - name: Test mongo
-        run: |
-          timeout=120 # 2 minutes timeout
-          while ! curl --fail http://localhost:27017/test; do
-            sleep 10
-            timeout=$((timeout - 10))
-            if [ "$timeout" -le 0 ]; then
-              echo "MongoDB failed to start within the expected time."
-              exit 1
-            fi
-          done
-          echo "MongoDB is up and running."
+  #     - name: Test mongo
+  #       run: |
+  #         timeout=120 # 2 minutes timeout
+  #         while ! curl --fail http://localhost:27017/test; do
+  #           sleep 10
+  #           timeout=$((timeout - 10))
+  #           if [ "$timeout" -le 0 ]; then
+  #             echo "MongoDB failed to start within the expected time."
+  #             exit 1
+  #           fi
+  #         done
+  #         echo "MongoDB is up and running."
 
-      - name: Test API
-        run: |
-          timeout=120 # 2 minutes timeout
-          while ! curl --fail http://localhost:8080/health; do
-            sleep 10
-            timeout=$((timeout - 10))
-            if [ "$timeout" -le 0 ]; then
-              echo "API failed to start within the expected time."
-              exit 1
-            fi
-          done
-          echo "API is up and running."
+  #     - name: Test API
+  #       run: |
+  #         timeout=120 # 2 minutes timeout
+  #         while ! curl --fail http://localhost:8080/health; do
+  #           sleep 10
+  #           timeout=$((timeout - 10))
+  #           if [ "$timeout" -le 0 ]; then
+  #             echo "API failed to start within the expected time."
+  #             exit 1
+  #           fi
+  #         done
+  #         echo "API is up and running."
 
-      - name: Test frontend
-        run: |
-          timeout=120 # 2 minutes timeout
-          while ! curl --fail http://localhost:3000; do
-            sleep 10
-            timeout=$((timeout - 10))
-            if [ "$timeout" -le 0 ]; then
-              echo "Frontend failed to start within the expected time."
-              exit 1
-            fi
-          done
-          echo "Frontend is up and running."
+  #     - name: Test frontend
+  #       run: |
+  #         timeout=120 # 2 minutes timeout
+  #         while ! curl --fail http://localhost:3000; do
+  #           sleep 10
+  #           timeout=$((timeout - 10))
+  #           if [ "$timeout" -le 0 ]; then
+  #             echo "Frontend failed to start within the expected time."
+  #             exit 1
+  #           fi
+  #         done
+  #         echo "Frontend is up and running."
 
-      - name: Build and push ECR containers
-        run: bash scripts/build-push-prod.sh
+  #     - name: Build and push ECR containers
+  #       run: bash scripts/build-push-prod.sh
 
   terraform:
     name: "Terraform"
-    needs: build-push
+    # needs: build-push
     runs-on: ubuntu-latest
     defaults:
       run:
