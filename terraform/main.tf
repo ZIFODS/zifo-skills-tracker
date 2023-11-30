@@ -201,6 +201,6 @@ resource "aws_route53_record" "skills_tracker_record" {
   zone_id = "Z08968053PXG7F1APWLYQ"
   name    = "skills.zifo-tech.com"
   type    = "A"
-  ttl     = "300"
+  ttl     = "60"
   records = [aws_eip.skills_tracker_public_ip.public_ip]
 }
