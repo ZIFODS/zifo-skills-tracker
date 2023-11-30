@@ -23,7 +23,6 @@ services:
       - FRONTEND_URL=${FRONTEND_URL}
     volumes:
       - ../data/admin_users.txt:/app/data/admin_users.txt
-      - ~/.aws:/root/.aws:ro
     depends_on:
       mongodb:
         condition: service_healthy

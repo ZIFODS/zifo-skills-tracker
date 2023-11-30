@@ -4,6 +4,16 @@ provider "aws" {
   shared_credentials_files = ["$HOME/.aws/credentials"]
 }
 
+terraform {
+  backend "s3" {
+    bucket         = "zifo-ds-eu"
+    key            = "skill-graph/terraform-state/terraform.tfstate"
+    region         = "eu-west-2"
+    dynamodb_table = "skills-tracker-lock-table"
+    encrypt        = true
+  }
+}
+
 # SSH
 resource "tls_private_key" "ssh_key" {
   algorithm = "RSA"
@@ -183,4 +193,14 @@ resource "aws_eip" "skills_tracker_public_ip" {
 resource "aws_eip_association" "skills_tracker_eip_assoc" {
   instance_id   = aws_instance.skills_tracker_ec2.id
   allocation_id = aws_eip.skills_tracker_public_ip.id
+}
+
+## Route 53
+
+resource "aws_route53_record" "skills_tracker_record" {
+  zone_id = "Z08968053PXG7F1APWLYQ"
+  name    = "skills.zifo-tech.com"
+  type    = "A"
+  ttl     = "300"
+  records = [aws_eip.skills_tracker_public_ip]
 }

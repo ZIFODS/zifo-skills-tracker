@@ -15,8 +15,8 @@ sudo usermod -aG docker ubuntu
 sudo apt-get install awscli -y
 aws --version
 
-mkdir /home/ubuntu/data /home/ubuntu/docker /home/ubuntu/docker/data
-chmod 777 /home/ubuntu/data /home/ubuntu/docker /home/ubuntu/docker/data
+mkdir /home/ubuntu/data /home/ubuntu/docker /home/ubuntu/docker/data /home/ubuntu/scripts
+chmod 777 /home/ubuntu/data /home/ubuntu/docker /home/ubuntu/docker/data /home/ubuntu/scripts
 
 touch /var/log/userdata.log
 chmod 644 /var/log/userdata.log

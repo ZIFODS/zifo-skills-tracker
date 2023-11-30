@@ -1,4 +1,4 @@
-name: Build, test, push
+name: Test, build and deploy
 
 on: workflow_dispatch
 
@@ -7,45 +7,45 @@ permissions:
   contents: read
 
 jobs:
-  # test:
-  #   name: "Test dev"
-  #   runs-on: ubuntu-latest
-  #   defaults:
-  #     run:
-  #       shell: bash
+  test:
+    name: "Test dev"
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash
 
-  #   steps:
-  #     - name: Checkout repo
-  #       uses: actions/checkout@v3
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
 
-  #     - name: Configure AWS credentials
-  #       uses: aws-actions/configure-aws-credentials@v2
-  #       with:
-  #         role-to-assume: arn:aws:iam::233044492909:role/SkillsTracker-GitHubActions
-  #         aws-region: eu-west-2
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          role-to-assume: arn:aws:iam::233044492909:role/SkillsTracker-GitHubActions
+          aws-region: eu-west-2
 
-  #     - name: Configure DVC
-  #       run: bash scripts/configure_dvc.sh
+      - name: Configure DVC
+        run: bash scripts/configure_dvc.sh
 
-  #     - name: Test dev
-  #       run: bash scripts/test-dev.sh
+      - name: Test dev
+        run: bash scripts/test-dev.sh
 
-  # lint:
-  #   name: "Lint"
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - uses: actions/checkout@v3
-  #     - uses: actions/setup-python@v3
-  #       with:
-  #         python-version: "3.10"
-  #     - name: Install dev poetry env
-  #       run: |
-  #         python -m pip install --upgrade pip
-  #         pip install poetry
-  #         poetry install
-  #     - name: Run pre-commit
-  #       run: |
-  #         poetry run pre-commit run --all-files
+  lint:
+    name: "Lint"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v3
+        with:
+          python-version: "3.10"
+      - name: Install dev poetry env
+        run: |
+          python -m pip install --upgrade pip
+          pip install poetry
+          poetry install
+      - name: Run pre-commit
+        run: |
+          poetry run pre-commit run --all-files
 
   build-push:
     name: "Build, test and push prod"
@@ -118,87 +118,89 @@ jobs:
           done
           echo "Frontend is up and running."
 
-      - name: Build ECR containers
+      - name: Build and push ECR containers
         run: bash scripts/build-push-prod.sh
 
-  # terraform:
-  #   name: "Terraform"
-  #   runs-on: ubuntu-latest
-  #   defaults:
-  #     run:
-  #       shell: bash
+  terraform:
+    name: "Terraform"
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash
 
-  #   steps:
-  #     - name: Checkout repo
-  #       uses: actions/checkout@v3
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
 
-  #     - name: Configure AWS credentials
-  #       uses: aws-actions/configure-aws-credentials@v2
-  #       with:
-  #         role-to-assume: arn:aws:iam::233044492909:role/SkillsTracker-Terraform
-  #         aws-region: eu-west-2
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          role-to-assume: arn:aws:iam::233044492909:role/SkillsTracker-Terraform
+          aws-region: eu-west-2
 
-  #     - name: Setup Terraform
-  #       uses: hashicorp/setup-terraform@v2
-  #       with:
-  #         terraform_wrapper: false
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_wrapper: false
 
-  #     - name: Initialize Terraform
-  #       run: terraform -chdir=terraform init
+      - name: Initialize Terraform
+        run: terraform -chdir=terraform init
 
-  #     - name: Format Terraform
-  #       run: terraform -chdir=terraform fmt -check
+      - name: Format Terraform
+        run: terraform -chdir=terraform fmt -check
 
-  #     - name: Plan Terraform
-  #       run: terraform -chdir=terraform plan -input=false
+      - name: Plan Terraform
+        run: terraform -chdir=terraform plan -input=false
 
-  #     - name: Apply Terraform
-  #       run: terraform -chdir=terraform apply -auto-approve -input=false
+      - name: Destroy previous resources
+        run: terraform -chdir=terraform destroy -auto-approve
 
-  #     - name: Fetch SSH Key and EIP from Terraform Outputs
-  #       id: fetch-outputs
-  #       run: |
-  #         echo "API_PRIVATE_KEY_ENCODED=$(terraform -chdir=terraform output -raw private_key | base64 -w0)" >> $GITHUB_ENV
-  #         echo "API_PUBLIC_IP=$(terraform -chdir=terraform output -raw api_ip)" >> $GITHUB_ENV
+      - name: Apply Terraform
+        run: terraform -chdir=terraform apply -auto-approve -input=false
 
-  #     - name: Configure DVC
-  #       run: bash scripts/configure_dvc.sh
+      - name: Fetch SSH Key and EIP from Terraform Outputs
+        id: fetch-outputs
+        run: |
+          echo "API_PRIVATE_KEY_ENCODED=$(terraform -chdir=terraform output -raw private_key | base64 -w0)" >> $GITHUB_ENV
+          echo "API_PUBLIC_IP=$(terraform -chdir=terraform output -raw api_ip)" >> $GITHUB_ENV
+          echo "NEW_DEPLOYMENT_TAG=$(terraform -chdir=terraform output -raw deployment_tag)" >> $GITHUB_ENV
 
-  #     - name: Test SSH connection
-  #       run: |
-  #         echo "${{ env.API_PRIVATE_KEY_ENCODED }}" | base64 -d > private_key.pem
-  #         chmod 600 private_key.pem
-  #         attempts=0
-  #         max_attempts=24  # 10-second sleep x 24 = 2 minutes
-  #         while true; do
-  #           if ssh -o StrictHostKeyChecking=no -i private_key.pem ubuntu@${{ env.API_PUBLIC_IP }} "grep -q 'User data script completed' /var/log/userdata.log"; then
-  #             break  # Exit the loop once SSH succeeds
-  #           fi
-  #           echo "Waiting for EC2 SSH..."
-  #           sleep 5
-  #           attempts=$((attempts+1))
-  #           if [[ "$attempts" -ge "$max_attempts" ]]; then
-  #             echo "Failed to connect to EC2 via SSH after 2 minutes."
-  #             exit 1
-  #           fi
-  #         done
-  #         ssh -o StrictHostKeyChecking=no -i private_key.pem ubuntu@${{ env.API_PUBLIC_IP }} "docker ps"
+      - name: Configure DVC
+        run: bash scripts/configure_dvc.sh
 
-  #     - name: Copy deployment files
-  #       run: |
-  #         echo "${{ env.API_PRIVATE_KEY_ENCODED }}" | base64 -d > private_key.pem
-  #         chmod 600 private_key.pem
-  #         scp -o StrictHostKeyChecking=no -i private_key.pem data/admin_users.txt ubuntu@${{ env.API_PUBLIC_IP }}:~/data
-  #         scp -o StrictHostKeyChecking=no -i private_key.pem docker/docker-compose.prod.yml ubuntu@${{ env.API_PUBLIC_IP }}:~/docker
-  #         scp -o StrictHostKeyChecking=no -i private_key.pem -r docker/data ubuntu@${{ env.API_PUBLIC_IP }}:~/docker/data
+      - name: Test SSH connection
+        run: |
+          echo "${{ env.API_PRIVATE_KEY_ENCODED }}" | base64 -d > private_key.pem
+          chmod 600 private_key.pem
+          attempts=0
+          max_attempts=24  # 10-second sleep x 24 = 2 minutes
+          while true; do
+            if ssh -o StrictHostKeyChecking=no -i private_key.pem ubuntu@${{ env.API_PUBLIC_IP }} "grep -q 'User data script completed' /var/log/userdata.log"; then
+              break  # Exit the loop once SSH succeeds
+            fi
+            echo "Waiting for EC2 SSH..."
+            sleep 5
+            attempts=$((attempts+1))
+            if [[ "$attempts" -ge "$max_attempts" ]]; then
+              echo "Failed to connect to EC2 via SSH after 2 minutes."
+              exit 1
+            fi
+          done
+          ssh -o StrictHostKeyChecking=no -i private_key.pem ubuntu@${{ env.API_PUBLIC_IP }} "docker ps"
 
-  #     - name: Launch application
-  #       run: |
-  #         echo "${{ env.API_PRIVATE_KEY_ENCODED }}" | base64 -d > private_key.pem
-  #         chmod 600 private_key.pem
-  #         ssh -o StrictHostKeyChecking=no -i private_key.pem ubuntu@${{ env.API_PUBLIC_IP }} "aws ecr get-login-password --region eu-west-2 | docker login --username AWS --password-stdin 233044492909.dkr.ecr.eu-west-2.amazonaws.com"
-  #         ssh -o StrictHostKeyChecking=no -i private_key.pem ubuntu@${{ env.API_PUBLIC_IP }} "docker compose -f docker/docker-compose.prod.yml up -d --build"
+      - name: Copy deployment files
+        run: |
+          echo "${{ env.API_PRIVATE_KEY_ENCODED }}" | base64 -d > private_key.pem
+          chmod 600 private_key.pem
+          scp -o StrictHostKeyChecking=no -i private_key.pem data/admin_users.txt ubuntu@${{ env.API_PUBLIC_IP }}:~/data
+          scp -o StrictHostKeyChecking=no -i private_key.pem docker/docker-compose.prod.yml ubuntu@${{ env.API_PUBLIC_IP }}:~/docker
+          scp -o StrictHostKeyChecking=no -i private_key.pem -r docker/data ubuntu@${{ env.API_PUBLIC_IP }}:~/docker/data
+          scp -o StrictHostKeyChecking=no -i private_key.pem scripts/initialise_ec2.sh ubuntu@${{ env.API_PUBLIC_IP }}:~/scripts
 
-  #     - name: Destroy Terraform
-  #       if: always()
-  #       run: terraform -chdir=terraform destroy -auto-approve
+      - name: Launch application
+        run: |
+          echo "${{ env.API_PRIVATE_KEY_ENCODED }}" | base64 -d > private_key.pem
+          chmod 600 private_key.pem
+          ssh -o StrictHostKeyChecking=no -i private_key.pem ubuntu@${{ env.API_PUBLIC_IP }} "bash scripts/initialise_ec2.sh"
+          ssh -o StrictHostKeyChecking=no -i private_key.pem ubuntu@${{ env.API_PUBLIC_IP }} "aws ecr get-login-password --region eu-west-2 | docker login --username AWS --password-stdin 233044492909.dkr.ecr.eu-west-2.amazonaws.com"
+          ssh -o StrictHostKeyChecking=no -i private_key.pem ubuntu@${{ env.API_PUBLIC_IP }} "docker compose -f docker/docker-compose.prod.yml up -d --build"
