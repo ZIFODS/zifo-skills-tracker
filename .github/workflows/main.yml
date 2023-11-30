@@ -127,6 +127,7 @@ jobs:
     name: "Terraform"
     # needs: build-push
     runs-on: ubuntu-latest
+    environment: prod
     defaults:
       run:
         shell: bash
@@ -205,4 +206,13 @@ jobs:
           chmod 600 private_key.pem
           ssh -o StrictHostKeyChecking=no -i private_key.pem ubuntu@${{ env.API_PUBLIC_IP }} "bash scripts/init-letsencrypt.sh"
           ssh -o StrictHostKeyChecking=no -i private_key.pem ubuntu@${{ env.API_PUBLIC_IP }} "aws ecr get-login-password --region eu-west-2 | docker login --username AWS --password-stdin 233044492909.dkr.ecr.eu-west-2.amazonaws.com"
-          ssh -o StrictHostKeyChecking=no -i private_key.pem ubuntu@${{ env.API_PUBLIC_IP }} "docker compose -f docker/docker-compose.prod.yml up -d --build"
+          ssh -o StrictHostKeyChecking=no -i private_key.pem ubuntu@${{ env.API_PUBLIC_IP }} <<EOF
+          AWS_SECRET_NAME_NEO4J=${{ secrets.AWS_SECRET_NAME_NEO4J }} \
+          AWS_SECRET_NAME_AZURE=${{ secrets.AWS_SECRET_NAME_AZURE }} \
+          AWS_SECRET_NAME_API=${{ secrets.AWS_SECRET_NAME_API }} \
+          AWS_REGION=${{ vars.AWS_REGION }} \
+          MONGODB_HOST=${{ vars.MONGODB_HOST }} \
+          FRONTEND_URL=${{ vars.FRONTEND_URL }} \
+          REACT_APP_API_URL=${{ vars.REACT_APP_API_URL }} \
+          docker compose -f docker/docker-compose.prod.yml up -d --build
+          EOF
