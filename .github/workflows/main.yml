@@ -197,12 +197,12 @@ jobs:
           scp -o StrictHostKeyChecking=no -i private_key.pem data/admin_users.txt ubuntu@${{ env.API_PUBLIC_IP }}:~/data
           scp -o StrictHostKeyChecking=no -i private_key.pem docker/docker-compose.prod.yml ubuntu@${{ env.API_PUBLIC_IP }}:~/docker
           scp -o StrictHostKeyChecking=no -i private_key.pem -r docker/data ubuntu@${{ env.API_PUBLIC_IP }}:~/docker/data
-          scp -o StrictHostKeyChecking=no -i private_key.pem scripts/initialise_ec2.sh ubuntu@${{ env.API_PUBLIC_IP }}:~/scripts
+          scp -o StrictHostKeyChecking=no -i private_key.pem scripts/init-letsencrypt.sh ubuntu@${{ env.API_PUBLIC_IP }}:~/scripts
 
       - name: Launch application
         run: |
           echo "${{ env.API_PRIVATE_KEY_ENCODED }}" | base64 -d > private_key.pem
           chmod 600 private_key.pem
-          ssh -o StrictHostKeyChecking=no -i private_key.pem ubuntu@${{ env.API_PUBLIC_IP }} "bash scripts/initialise_ec2.sh"
+          ssh -o StrictHostKeyChecking=no -i private_key.pem ubuntu@${{ env.API_PUBLIC_IP }} "bash scripts/init-letsencrypt.sh"
           ssh -o StrictHostKeyChecking=no -i private_key.pem ubuntu@${{ env.API_PUBLIC_IP }} "aws ecr get-login-password --region eu-west-2 | docker login --username AWS --password-stdin 233044492909.dkr.ecr.eu-west-2.amazonaws.com"
           ssh -o StrictHostKeyChecking=no -i private_key.pem ubuntu@${{ env.API_PUBLIC_IP }} "docker compose -f docker/docker-compose.prod.yml up -d --build"
