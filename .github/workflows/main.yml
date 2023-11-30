@@ -77,7 +77,7 @@ jobs:
           MONGODB_HOST=${{ vars.MONGODB_HOST }} \
           FRONTEND_URL=${{ vars.FRONTEND_URL }} \
           REACT_APP_API_URL=${{ vars.REACT_APP_API_URL }} \
-          docker compose -f docker/docker-compose.qa.yml up --build
+          docker compose -f docker/docker-compose.qa.yml up -d --build
 
       - name: Test mongo
         run: |
