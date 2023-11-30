@@ -50,6 +50,7 @@ jobs:
   build-push:
     name: "Build, test and push prod"
     runs-on: ubuntu-latest
+    environment: qa
     defaults:
       run:
         shell: bash
@@ -70,9 +71,9 @@ jobs:
           AWS_SECRET_NAME_AZURE=${{ secrets.AWS_SECRET_NAME_AZURE }} \
           AWS_SECRET_NAME_API=${{ secrets.AWS_SECRET_NAME_API }} \
           AWS_REGION=${{ vars.AWS_REGION }} \
-          MONGODB_HOST=${{ vars.MONGODB_HOST }} \
-          FRONTEND_URL=${{ vars.FRONTEND_URL }} \
-          REACT_APP_API_URL=${{ vars.REACT_APP_API_URL }} \
+          MONGODB_HOST=${{ env.MONGODB_HOST }} \
+          FRONTEND_URL=${{ env.FRONTEND_URL }} \
+          REACT_APP_API_URL=${{ env.REACT_APP_API_URL }} \
           docker compose -f docker/docker-compose.qa.yml up -d --build
 
       - name: Test mongo
