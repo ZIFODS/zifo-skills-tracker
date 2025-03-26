@@ -29,11 +29,11 @@ def load_neo4j(reset: bool = False, empty: bool = False):
         "CREATE CONSTRAINT ON (s:Skill) ASSERT s.name IS UNIQUE",
         "CREATE CONSTRAINT ON (s:Skill) ASSERT s.uid IS UNIQUE",
         "CREATE CONSTRAINT ON (r:KNOWS) ASSERT r.uid IS UNIQUE",
-        """
+        f"""
         LOAD CSV WITH HEADERS FROM 'file:///mock_skills_data.csv' AS row
-        MERGE (c:Consultant {uid: row.cid, name: row.name, email: row.email})
-        MERGE (s:Skill {uid: row.sid, name: row.skill, category: row.category})
-        MERGE (c)-[:KNOWS {uid: row.rid}]->(s)
+        MERGE (c:Consultant {{uid: row.cid, name: row.name, email: row.email}})
+        MERGE (s:Skill {{uid: row.sid, name: row.skill, category: row.category}})
+        MERGE (c)-[:KNOWS {{uid: row.rid}}]->(s)
         """,
     ]
 

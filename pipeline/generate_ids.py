@@ -22,36 +22,20 @@ def generate_ids(df: pd.DataFrame) -> pd.DataFrame:
     df : pd.DataFrame
         skills data for consultants with UUIDs for each node/relationship.
     """
-    df.insert(0, "rid", pd.Series([uuid.uuid4() for _ in df.index]))
+    # Ensure consistent index
+    df = df.reset_index(drop=True)
 
-    consultants_df = pd.DataFrame(df.name.unique())
-    consultants_df.insert(
-        0, "cid", pd.Series([uuid.uuid4() for _ in consultants_df.index])
-    )
+    # Unique relationship ID per row
+    df.insert(0, "rid", pd.Series([str(uuid.uuid4()) for _ in df.index]))
 
-    df.insert(
-        1,
-        "cid",
-        pd.Series(
-            [
-                consultants_df.loc[consultants_df[0] == name, "cid"].values[0]
-                for name in df["name"].to_list()
-            ]
-        ),
-    )
+    # Consultant ID based on name
+    unique_names = df["name"].unique()
+    name_to_cid = {name: str(uuid.uuid4()) for name in unique_names}
+    df.insert(1, "cid", df["name"].map(name_to_cid))
 
-    skills_df = pd.DataFrame(df.skill.unique())
-    skills_df.insert(0, "sid", pd.Series([uuid.uuid4() for _ in skills_df.index]))
-
-    df.insert(
-        4,
-        "sid",
-        pd.Series(
-            [
-                skills_df.loc[skills_df[0] == skill, "sid"].values[0]
-                for skill in df["skill"].to_list()
-            ]
-        ),
-    )
+    # Skill ID based on skill name
+    unique_skills = df["skill"].unique()
+    skill_to_sid = {skill: str(uuid.uuid4()) for skill in unique_skills}
+    df.insert(4, "sid", df["skill"].map(skill_to_sid))
 
     return df

@@ -10,9 +10,10 @@ from app.utils.neo4j_connect import Neo4jConnection  # noqa: E402
 from pipeline.generate_ids import generate_ids  # noqa: E402
 from pipeline.schemas import Categories, ColumnHeaderMap, Columns  # noqa: E402
 
-INPUT_PATH = "data/skills-survey-export.xlsx"
-OUTPUT_PATH = "data/prod_skills_data.csv"
-
+INPUT_PATH = "Zifo Europe - Skills Survey 1_clean_final.xlsx"
+OUTPUT_PATH = "new_skills_data.csv"
+# INPUT_PATH = "Zifo Europe - Skills Survey Onboarding 1_clean_emails.xlsx"
+# OUTPUT_PATH = "new_skills_data_onboarding.csv"
 
 class MultipleSkillsFoundError(Exception):
     pass
