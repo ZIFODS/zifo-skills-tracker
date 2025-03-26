@@ -1,15 +1,15 @@
 import requests
 import time
 
-# Define authentication details
-auth_url = "https://primacrm.kebs.app/api/auth/authenticate/refreshTokenforApplication"
-data_url = "https://primacrm.kebs.app/api/employee360/openApiDetails/getOpenApiSkills"
+from app.config import PRIMA_DATA_URL, PRIMA_AUTH_URL, PRIMA_AUTH_PAYLOAD
 
-auth_payload = {
-    "client_id": "a953a28f-bd90-471e-b2e3-d18c3ccd0dfd",
-    "client_secret_id": "dbea593b-5c3c-4f0b-abc5-c6ea7093008c",
-    "token_unique_id": "67de45ca-7f52-40f4-acc4-7fbf8f2442f0"
-}
+# Define authentication details
+print(PRIMA_AUTH_PAYLOAD)
+print(PRIMA_AUTH_URL, PRIMA_DATA_URL)
+auth_url = PRIMA_AUTH_URL
+data_url = PRIMA_DATA_URL
+
+auth_payload = PRIMA_AUTH_PAYLOAD
 
 # Define retry settings
 max_retries = 3

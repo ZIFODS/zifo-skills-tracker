@@ -74,3 +74,13 @@ AZURE_AUTHORITY = config(
     "AZURE_AUTHORITY", f"https://login.microsoftonline.com/{AZURE_TENANT_ID}"
 )
 AZURE_DISCOVERY_URL = f"{AZURE_AUTHORITY}/v2.0/.well-known/openid-configuration"
+
+# PRIMA
+PRIMA_AUTH_URL = config("PRIMA_AUTH_URL", "")
+PRIMA_DATA_URL = config("PRIMA_DATA_URL", "")
+
+PRIMA_AUTH_PAYLOAD = {
+    "client_id": config("PRIMA_CLIENT_ID", ""),
+    "client_secret_id": config("PRIMA_CLIENT_SECRET_ID", ""),
+    "token_unique_id": config("PRIMA_TOKEN_UNIQUE_ID", "")
+}

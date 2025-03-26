@@ -1,7 +1,4 @@
 import pandas as pd
-import uuid
-import datetime
-
 from tqdm import tqdm
 
 from get_prima_data import get_bearer_token, get_data_with_token
@@ -124,8 +121,7 @@ def import_skills_df_to_neo4j(df, reset_db: bool = True):
 
 
 if __name__ == "__main__":
-    timestamp = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
-    filename = f"skills_data_prima_{timestamp}.csv"
+    filename = f"skills_data_prima.csv"
     token = get_bearer_token()
     api_data = get_data_with_token(token)
     new_df = process_skills_data(api_data, ["Europe"], filename)
