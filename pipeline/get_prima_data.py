@@ -71,7 +71,7 @@ token = get_bearer_token()
 if token:
     data = get_data_with_token(token)
     if data:
-        print("Retrieved data:", data)
+        print("Retrieved data!")
     else:
         print("Data retrieval failed.")
 else:
